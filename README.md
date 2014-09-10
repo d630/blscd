@@ -24,7 +24,7 @@ usage: [source] blscd  [-v | --version | -h | --help]
       d                     Move five lines down
       D                     Move ten lines down
       ^F    [ PAGE-DOWN ]   Move half page down
-      gd                    Move to
+      gd                    Move to /dev
       ge                    Move to /etc
       G     [ END ]         Move to bottom
       gg    [ HOME ]        Move to top
