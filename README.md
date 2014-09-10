@@ -6,8 +6,8 @@
 
 ### Install
 
-Explicitly required: `GNU bash >= 4.0`, `file`, `find`, `grep`, `ls`, `sort`, `stty` and `tput`.
-Optional: `less` and its scripts under `lessopen`. W3m
+Explicitly required: `GNU bash >= 4.0`, `file`, `find`, `grep`, `ls`, `sort`, `stty` and `tput`
+Optional: `less` and its scripts under `lessopen`; `w3m` and its patch `w3m-img`
 
 * Get `blscd`(1) with `$ git clone https://github.com/D630/blscd.git` or
   download it on https://github.com/D630/blscd/tags
@@ -73,12 +73,12 @@ A lot.
 
 ### Bugs & Requests
 
-Report it on https://github.com/D630/blscd
+Report it on https://github.com/D630/blscd/issues
 
 ### Credits
 
-`blscd`(1) is a fork and rewrite of `lscd v0.1` [GNU GPLv3] by `hut` aka. [Roman Zimbelmann](https://github.com/hut/lscd)
+`blscd`(1) is a fork and rewrite of `lscd v0.1` [2014, GNU GPLv3] by `hut` aka. [Roman Zimbelmann](https://github.com/hut/lscd)
 
 ### See also
 
-Similar to this project is [deer](https://github.com/vifon/deer), which is written `zsh`.
+Similar to this project is [deer](https://github.com/vifon/deer), which is written in `zsh`.

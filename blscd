@@ -882,7 +882,11 @@ __blscd_open_file()
 {
     case $(command file --mime-type -bL "$1") in
         inode/directory)
-                 __blscd_move_dir "$1"
+            __blscd_move_dir "$1"
+            ;;
+        image*)
+            __blscd_set_action_last
+            w3m -o 'ext_image_viewer=off' -o 'imgdisplay=w3mimgdisplay' "$1"
             ;;
         *)
             __blscd_set_action_last
