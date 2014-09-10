@@ -1,12 +1,13 @@
 ## blscd v0.1.0.0 [GNU GPLv3]
 
-`blscd`(1) is a simple [ranger](http://ranger.nongnu.org/) like file browser/navigator for the command line. Currently, you may browse your file system and search and open files without much features. `blscd`(1) is written in `GNU bash` and has been tested with `xterm`, `urxvt` and the virtual console on `Debian GNU/Linux`.
+`blscd`(1) is a simple [ranger](http://ranger.nongnu.org/) like file browser/navigator for the command line. Currently, you may browse your file system and search and open files without many features. `blscd`(1) is written in `GNU bash` and has been tested with `xterm`, `urxvt` and the virtual console on `Debian GNU/Linux`.
 
 ![](https://raw.githubusercontent.com/D630/blscd/master/doc/blscd.png)
 
 ### Install
 
 Explicitly required: `GNU bash >= 4.0`, `file`, `find`, `grep`, `ls`, `sort`, `stty` and `tput`
+
 Optional: `less` and its scripts under `lessopen`; `w3m` and its patch `w3m-img`
 
 * Get `blscd`(1) with `$ git clone https://github.com/D630/blscd.git` or

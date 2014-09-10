@@ -1,7 +1,6 @@
-### Install
+Explicitly required: `GNU bash >= 4.0`, `file`, `find`, `grep`, `ls`, `sort`, `stty` and `tput`
 
-Explicitly required: `GNU bash >= 4.0`, `file`, `find`, `grep`, `ls`, `sort`, `stty` and `tput`.
-Optional: `less` and its scripts under `lessopen`. W3m
+Optional: `less` and its scripts under `lessopen`; `w3m` and its patch `w3m-img`
 
 * Get `blscd`(1) with `$ git clone https://github.com/D630/blscd.git` or
   download it on https://github.com/D630/blscd/tags
