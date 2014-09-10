@@ -24,7 +24,7 @@
 
 # -- FUNCTIONS.
 
-__blscd_version() { echo "0.1.0.0" ; }
+__blscd_version() { echo "0.1.0.1" ; }
 
 __blscd_help()
 {
@@ -35,7 +35,7 @@ __blscd_help()
       d                     Move five lines down
       D                     Move ten lines down
       ^F    [ PAGE-DOWN ]   Move half page down
-      gd                    Move to
+      gd                    Move to /dev
       ge                    Move to /etc
       G     [ END ]         Move to bottom
       gg    [ HOME ]        Move to top
