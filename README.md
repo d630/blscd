@@ -66,7 +66,7 @@ usage: [source] blscd  [-v | --version | -h | --help]
 
 ### Notes
 
-To use different file handlers, have a look on the functions called `__blscd_open_file()` and `__blscd_declare_set()`. Currently, the last one is also the place, where you need to edit the color configuration.
+To use different file handlers, have a look at the functions called `__blscd_open_file()` and `__blscd_declare_set()`. Currently, the last one is also the place, where you need to edit the color configuration.
 
 ### TODO
 
