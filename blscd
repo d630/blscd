@@ -24,7 +24,7 @@
 
 # -- FUNCTIONS.
 
-__blscd_version() { echo "0.1.0.7" ; }
+__blscd_version() { echo "0.1.0.8" ; }
 
 __blscd_help()
 {
@@ -933,10 +933,13 @@ __blscd_set_marking_number()
 {
     _blscd_marking_number=0
 
-    while IFS= builtin read -r -d ''
+    for i in "${!_blscd_data[@]}"
     do
-        [[ ${_blscd_data[mark ${REPLY}]} == marked ]] && ((++_blscd_marking_number))
-    done < <(__blscd_list_file)
+        [[ $i =~ ^mark..*$ ]] && \
+            [[ ${_blscd_data[$i]} == marked ]] && \
+             ((++_blscd_marking_number))
+    done
+
 
     if ((_blscd_marking_number == 0))
     then
