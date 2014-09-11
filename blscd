@@ -24,7 +24,7 @@
 
 # -- FUNCTIONS.
 
-__blscd_version() { echo "0.1.0.5" ; }
+__blscd_version() { echo "0.1.0.6" ; }
 
 __blscd_help()
 {
@@ -150,11 +150,12 @@ __blscd_build_array_initial()
 
 __blscd_build_array_mark_search()
 {
-    while IFS= builtin read -r -d ''
+    while builtin read -r
     do
-        [[ $REPLY =~ ^[0-9]*:.*$ ]] && _blscd_data[mark ${REPLY#*:}]=marked && \
-            _blscd_files_col_2_array_mark_indexes+=(${REPLY%%:*})
-    done < <(__blscd_list_file "$_blscd_search_pattern")
+        [[ $REPLY =~ ^[0-9]*:.*$ ]] &&
+                _blscd_data[mark ${_blscd_dir_col_1_string}/${REPLY#*:}]=marked && \
+                _blscd_files_col_2_array_mark_indexes+=(${REPLY%%:*})
+    done < <(builtin printf '%s\n' "${_blscd_files_col_2_array[@]}" | command egrep -n -C "${#_blscd_files_col_2_array[@]}" -e "$_blscd_search_pattern")
 
     __blscd_mark_screen_lines_prepare
     __blscd_set_marking_number
