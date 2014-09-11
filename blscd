@@ -24,17 +24,17 @@
 
 # -- FUNCTIONS.
 
-__blscd_version() { echo "0.1.0.1" ; }
+__blscd_version() { echo "0.1.0.2" ; }
 
 __blscd_help()
 {
     printf "usage: [source] blscd [-v | --version | -h | --help]
 
     Key bindings
-      ^B    [ PAGE-UP ]     Move half page up
+      ^B    [ PAGE-UP ]     Move page up
       d                     Move five lines down
       D                     Move ten lines down
-      ^F    [ PAGE-DOWN ]   Move half page down
+      ^F    [ PAGE-DOWN ]   Move page down
       gd                    Move to /dev
       ge                    Move to /etc
       G     [ END ]         Move to bottom
