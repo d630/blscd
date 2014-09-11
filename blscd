@@ -24,7 +24,7 @@
 
 # -- FUNCTIONS.
 
-__blscd_version() { echo "0.1.0.8" ; }
+__blscd_version() { echo "0.1.0.9" ; }
 
 __blscd_help()
 {
@@ -634,6 +634,16 @@ __blscd_draw_screen()
     builtin printf "${_blscd_tput_reset}\033[$((_blscd_cursor + 2));$((screen_col_1_length + 2))H"
 }
 
+__blscd_draw_screen_check()
+{
+    [[ $_blscd_redraw == _blscd_redraw ]] &&
+    {
+        __blscd_draw_screen
+        __blscd_set_resize 0
+        ((++_blscd_redraw_number))
+    }
+}
+
 __blscd_list_file()
 {
     __blscd_list_file_find()
@@ -994,12 +1004,7 @@ while builtin :
 do
     builtin printf "${_blscd_tput_hide}${_blscd_tput_am_off}"
     ((_blscd_redraw_number == 0)) && __blscd_build_array_initial
-    [[ $_blscd_redraw == _blscd_redraw ]] &&
-    {
-        __blscd_draw_screen
-        __blscd_set_resize 0
-        ((++_blscd_redraw_number))
-    }
+    __blscd_draw_screen_check
     builtin read -s -n 1 _blscd_input
     builtin read -s -N 1 -t 0.0001 _blscd_k1
     builtin read -s -N 1 -t 0.0001 _blscd_k2
