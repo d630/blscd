@@ -24,7 +24,7 @@
 
 # -- FUNCTIONS.
 
-__blscd_version() { echo "0.1.0.3" ; }
+__blscd_version() { echo "0.1.0.4" ; }
 
 __blscd_help()
 {
@@ -96,6 +96,8 @@ __blscd_build_array()
             2)
                 [[ ! ${_blscd_data[path ${_blscd_dir_col_1_string}]} ]] && \
                     __blscd_build_array_update
+                [[ ! ${_blscd_data[mark ${_blscd_dir_col_1_string}/${_blscd_screen_lines_current_string}]} ]] && \
+                    __blscd_build_array_mark_update
                 builtin mapfile -t _blscd_files_col_2_array \
                     < <(builtin printf '%s\n' "${_blscd_data[path ${_blscd_dir_col_1_string}]//|/}")
                 _blscd_files_col_2_array_total=${#_blscd_files_col_2_array[@]}
@@ -522,7 +524,6 @@ __blscd_draw_screen()
     builtin printf '%s\n' "${_blscd_screen_lines_header_string//\/\//\/}"
     builtin printf "$_blscd_tput_reset"
 
-    # Print columns with file listing and highlight lines.
     builtin printf "$_blscd_tput_cup_1_0"
     for ((i=0 ; i <= _blscd_screen_lines_body ; ++i))
     do
