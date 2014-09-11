@@ -20,10 +20,10 @@ Optional: `less` and its scripts under `lessopen`; `w3m` and its patch `w3m-img`
 usage: [source] blscd  [-v | --version | -h | --help]
 
     Key bindings
-      ^B    [ PAGE-UP ]     Move half page up
+      ^B    [ PAGE-UP ]     Move page up
       d                     Move five lines down
       D                     Move ten lines down
-      ^F    [ PAGE-DOWN ]   Move half page down
+      ^F    [ PAGE-DOWN ]   Move page down
       gd                    Move to /dev
       ge                    Move to /etc
       G     [ END ]         Move to bottom
