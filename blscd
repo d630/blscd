@@ -24,7 +24,7 @@
 
 # -- FUNCTIONS.
 
-__blscd_version() { echo "0.1.0.6" ; }
+__blscd_version() { echo "0.1.0.7" ; }
 
 __blscd_help()
 {
@@ -96,12 +96,12 @@ __blscd_build_array()
             2)
                 [[ ! ${_blscd_data[path ${_blscd_dir_col_1_string}]} ]] && \
                     __blscd_build_array_update
-                [[ ! ${_blscd_data[mark ${_blscd_dir_col_1_string}/${_blscd_screen_lines_current_string}]} ]] && \
-                    __blscd_build_array_mark_update
                 builtin mapfile -t _blscd_files_col_2_array \
                     < <(builtin printf '%s\n' "${_blscd_data[path ${_blscd_dir_col_1_string}]//|/}")
                 _blscd_files_col_2_array_total=${#_blscd_files_col_2_array[@]}
                 ((_blscd_files_col_2_array_total == 0)) && _blscd_files_col_2_array_total=1
+                [[ ! ${_blscd_data[mark ${_blscd_dir_col_1_string}/${_blscd_files_col_2_array[0]}]} ]] && \
+                    __blscd_build_array_mark_update
                 ;;
             3)
                 if [[ ${_blscd_data[path ${_blscd_dir_col_1_string}/${_blscd_screen_lines_current_string}]} ]]
@@ -145,7 +145,11 @@ __blscd_build_array_initial()
     _blscd_data[mark /]=unmarked
 
     __blscd_build_array_initial_do "$_blscd_dir_col_1_string"
-    __blscd_build_array_mark_update
+
+    while IFS= builtin read -r -d ''
+    do
+        _blscd_data[mark ${REPLY}]=unmarked
+    done < <(__blscd_list_file)
 }
 
 __blscd_build_array_mark_search()
@@ -163,10 +167,10 @@ __blscd_build_array_mark_search()
 
 __blscd_build_array_mark_update()
 {
-    while IFS= builtin read -r -d ''
+    while builtin read -r
     do
-        _blscd_data[mark ${REPLY}]=unmarked
-    done < <(__blscd_list_file)
+        _blscd_data[mark ${_blscd_dir_col_1_string}/${REPLY}]=unmarked
+    done < <(builtin printf '%s\n' "${_blscd_files_col_2_array[@]}")
 }
 
 __blscd_build_array_update()
