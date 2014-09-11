@@ -51,7 +51,7 @@ usage: [source] blscd  [-v | --version | -h | --help]
       q                     Quit
       ^R                    Reload everything
       /                     Search for files in the current directory*
-      SPACE                 Mark a file
+      SPACE                 Toggle the mark-status of a file
       u                     Move five lines up
       U                     Move ten lines up
       vn                    Unmark all files
