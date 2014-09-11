@@ -931,6 +931,8 @@ __blscd_set_action_last() { _blscd_action_last=${FUNCNAME[1]} ; }
 
 __blscd_set_marking_number()
 {
+    declare i=
+
     _blscd_marking_number=0
 
     for i in "${!_blscd_data[@]}"
@@ -939,7 +941,6 @@ __blscd_set_marking_number()
             [[ ${_blscd_data[$i]} == marked ]] && \
              ((++_blscd_marking_number))
     done
-
 
     if ((_blscd_marking_number == 0))
     then
@@ -1109,6 +1110,7 @@ do
             __blscd_search
             __blscd_set_resize 1
             __blscd_move_col_2_line -9999999999
+            #__blscd_move_col_2_line "${_blscd_files_col_2_array_mark_indexes[0]}"
             ;;
         n)
             __blscd_mark_go_down
