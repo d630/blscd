@@ -24,7 +24,7 @@
 
 # -- FUNCTIONS.
 
-__blscd_f_version() { echo "0.1.1.2" ; }
+__blscd_f_version() { echo "0.1.1.3" ; }
 
 __blscd_f_help()
 {
@@ -427,18 +427,18 @@ __blscd_draw_screen()
 
     builtin declare \
         dir_col_0_string= \
-        footer10_string= \
-        footer11_string= \
-        footer12_string= \
-        footer1_string= \
-        footer2_string= \
-        footer3_string= \
-        footer4_string= \
-        footer5_string= \
-        footer6_string= \
-        footer7_string= \
-        footer8_string= \
-        footer9_string= \
+        statusbar10_string= \
+        statusbar11_string= \
+        statusbar12_string= \
+        statusbar1_string= \
+        statusbar2_string= \
+        statusbar3_string= \
+        statusbar4_string= \
+        statusbar5_string= \
+        statusbar6_string= \
+        statusbar7_string= \
+        statusbar8_string= \
+        statusbar9_string= \
         screen_lines_body_col_1_color_1= \
         screen_lines_body_col_1_color_reset= \
         screen_lines_body_col_2_color_1= \
@@ -446,7 +446,7 @@ __blscd_draw_screen()
         screen_lines_body_col_2_color_reset= \
         screen_lines_body_col_3_color_1= \
         screen_lines_body_col_3_color_reset= \
-        screen_lines_footer_string=
+        screen_lines_statusbar_string=
 
     # Get dimension.
     builtin read -r screen_dimension_cols screen_dimension_lines \
@@ -601,48 +601,48 @@ __blscd_draw_screen()
         builtin printf "${screen_lines_body_col_1_color_1}%-${screen_col_1_length}.${screen_col_1_length}s${screen_lines_body_col_1_color_reset} ${screen_lines_body_col_2_color_mark}${screen_lines_body_col_2_color_1}%-${screen_col_2_length}.${screen_col_2_length}s${screen_lines_body_col_2_color_reset} ${screen_lines_body_col_3_color_1}%-${screen_col_3_length}.${screen_col_3_length}s${screen_lines_body_col_3_color_reset}\n" " ${_blscd_files_col_1_a_array[$i]} " " ${screen_lines_body_col_2_color_mark:+ }${_blscd_files_col_2_a_array[$i]} " " ${_blscd_files_col_3_a_array[$i]} "
     done
 
-    # Print the footer.
+    # Print the statusbar.
     builtin printf "${_blscd_tput_blue_f}${_blscd_tput_bold}"
 
-    builtin read -r footer1_string footer2_string footer3_string footer4_string \
-            footer5_string footer6_string footer7_string _ _ footer8_string \
+    builtin read -r statusbar1_string statusbar2_string statusbar3_string statusbar4_string \
+            statusbar5_string statusbar6_string statusbar7_string _ _ statusbar8_string \
         <<<$(command ls -abdlQh --time-style=long-iso "${_blscd_dir_col_1_string}/${_blscd_screen_lines_current_string}")
 
     [[ -d ${_blscd_dir_col_1_string}/${_blscd_screen_lines_current_string} ]] && \
-        footer5_string=$_blscd_files_col_3_array_total
+        statusbar5_string=$_blscd_files_col_3_array_total
 
-    builtin read -r footer9_string footer10_string footer11_string \
+    builtin read -r statusbar9_string statusbar10_string statusbar11_string \
         <<<"$((_blscd_index + _blscd_cursor)) ${_blscd_files_col_2_array_total} \
         $(((100 * (_blscd_index + _blscd_cursor)) / _blscd_files_col_2_array_total))"
 
     if [[ $_blscd_search_pattern || $_blscd_marking == _blscd_marking ]]
     then
-        footer12_string="${_blscd_marking_number} Mrk"
+        statusbar12_string="${_blscd_marking_number} Mrk"
     elif ((_blscd_files_col_2_array_total <= _blscd_screen_lines_body))
     then
-        footer12_string=All
+        statusbar12_string=All
     elif ((_blscd_files_col_2_array_total > _blscd_screen_lines_body && \
             _blscd_cursor + _blscd_index <= _blscd_screen_lines_body_col_2_visible))
     then
-        footer12_string=Top
+        statusbar12_string=Top
     elif ((_blscd_files_col_2_array_total > _blscd_screen_lines_body && \
         _blscd_cursor + _blscd_index >= _blscd_files_col_2_array_total - _blscd_screen_lines_body + 1))
     then
-        footer12_string=Bot
+        statusbar12_string=Bot
     else
-        footer12_string=Mid
+        statusbar12_string=Mid
     fi
 
     #command tput cup "$((_blscd_screen_lines_body + 1))" 0
     builtin printf "\033[$((_blscd_screen_lines_body + 2));0H${_blscd_tput_eel}"
     #builtin printf "$_blscd_tput_eel"
 
-    builtin printf -v screen_lines_footer_string "%s %s %s %s %s %s %s${footer8_string:+ -> %s}  %s/%s  %d%% %s" \
-            "$footer1_string" "$footer2_string" "$footer3_string" "$footer4_string" "$footer5_string" \
-            "$footer6_string" "$footer7_string" ${footer8_string:+"${footer8_string}"} "$footer9_string" \
-            "$footer10_string" "$footer11_string" "$footer12_string"
+    builtin printf -v screen_lines_statusbar_string "%s %s %s %s %s %s %s${statusbar8_string:+ -> %s}  %s/%s  %d%% %s" \
+            "$statusbar1_string" "$statusbar2_string" "$statusbar3_string" "$statusbar4_string" "$statusbar5_string" \
+            "$statusbar6_string" "$statusbar7_string" ${statusbar8_string:+"${statusbar8_string}"} "$statusbar9_string" \
+            "$statusbar10_string" "$statusbar11_string" "$statusbar12_string"
 
-    builtin printf "%s${_blscd_tput_reset} %s %s %s %s %s${footer8_string:+ %s ->} %-$((screen_dimension_cols - ${#screen_lines_footer_string} + ${#footer7_string} ${footer8_string:++ $((${#footer8_string} - ${#footer7_string}))}))s  %s/%s  %d%% %s" "$footer1_string" "$footer2_string" "$footer3_string" "$footer4_string" "$footer5_string" "$footer6_string" "$footer7_string" ${footer8_string:+"${footer8_string}"} "$footer9_string" "$footer10_string" "$footer11_string" "$footer12_string"
+    builtin printf "%s${_blscd_tput_reset} %s %s %s %s %s${statusbar8_string:+ %s ->} %-$((screen_dimension_cols - ${#screen_lines_statusbar_string} + ${#statusbar7_string} ${statusbar8_string:++ $((${#statusbar8_string} - ${#statusbar7_string}))}))s  %s/%s  %d%% %s" "$statusbar1_string" "$statusbar2_string" "$statusbar3_string" "$statusbar4_string" "$statusbar5_string" "$statusbar6_string" "$statusbar7_string" ${statusbar8_string:+"${statusbar8_string}"} "$statusbar9_string" "$statusbar10_string" "$statusbar11_string" "$statusbar12_string"
 
     # Set new position of the _blscd_cursor.
     #builtin printf "$_blscd_tput_reset"
