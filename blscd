@@ -24,7 +24,7 @@
 
 # -- FUNCTIONS.
 
-__blscd_f_version() { echo "0.1.1.7" ; }
+__blscd_f_version() { echo "0.1.1.8" ; }
 
 __blscd_f_help()
 {
@@ -410,10 +410,47 @@ __blscd_p_declare_unset()
         _blscd_tput_yellow_b \
         _blscd_tput_yellow_f
 
+        builtin unset -f \
+            __blscd_f_draw_screen \
+            __blscd_f_help \
+            __blscd_f_list_file \
+            __blscd_f_version \
+            __blscd_p_build_array \
+            __blscd_p_build_array_ini \
+            __blscd_p_build_array_ini_do \
+            __blscd_p_build_array_mark_search \
+            __blscd_p_build_array_mark_update \
+            __blscd_p_build_array_update \
+            __blscd_p_build_col \
+            __blscd_p_declare_set \
+            __blscd_p_declare_unset \
+            __blscd_p_draw_screen_check \
+            __blscd_p_draw_screen_lines \
+            __blscd_p_edit_file \
+            __blscd_p_mark_go_down \
+            __blscd_p_mark_go_up \
+            __blscd_p_mark_screen_lines_all \
+            __blscd_p_mark_screen_lines_all_unmark \
+            __blscd_p_mark_screen_lines_current \
+            __blscd_p_mark_screen_lines_prepare \
+            __blscd_p_move_col_2_line \
+            __blscd_p_move_dir \
+            __blscd_p_move_dir_down \
+            __blscd_p_move_dir_up \
+            __blscd_p_on_exit \
+            __blscd_p_open_file \
+            __blscd_p_open_shell \
+            __blscd_p_reload \
+            __blscd_p_search \
+            __blscd_p_search_marking_non \
+            __blscd_p_set_action_last \
+            __blscd_p_set_marking_number \
+            __blscd_p_set_resize
+
     declare -xg LC_ALL=$_blscd_LC_ALL_old
 }
 
-__blscd_draw_screen()
+__blscd_f_draw_screen()
 {
     builtin declare -i \
         _blscd_highlight_line_col_3_index= \
@@ -553,7 +590,7 @@ __blscd_p_draw_screen_check()
 {
     [[ $_blscd_redraw == _blscd_redraw ]] &&
     {
-        __blscd_draw_screen
+        __blscd_f_draw_screen
         __blscd_p_set_resize 0
         ((++_blscd_redraw_number))
     }
