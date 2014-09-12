@@ -1,4 +1,4 @@
-## blscd v0.1.1.9 [GNU GPLv3]
+## blscd v0.1.1.10 [GNU GPLv3]
 
 `blscd`(1) is a simple [ranger](http://ranger.nongnu.org/)-like file browser/navigator for the command line. Currently, you may browse your file system and search and open files without many features. `blscd`(1) is written in `GNU bash` and has been tested with `xterm`, `urxvt` and the virtual console on `Debian GNU/Linux`.
 
@@ -63,7 +63,7 @@ usage: [source] blscd [-v | --version | -h | --help]
       * During line editing in the search prompt you may use your
         configured Readline key bindings, just as well the other features
         of it; 'read -e' obtains the line in an interactive shell. The
-        regextype is 'posix-egrep', and the tool 'grep'.
+        tool is 'grep', and the regextype is 'posix-egrep'.
 ```
 
 ### Notes
