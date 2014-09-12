@@ -1,4 +1,4 @@
-## blscd v0.1.0.17 [GNU GPLv3]
+## blscd v0.1.0.19 [GNU GPLv3]
 
 `blscd`(1) is a simple [ranger](http://ranger.nongnu.org/)-like file browser/navigator for the command line. Currently, you may browse your file system and search and open files without many features. `blscd`(1) is written in `GNU bash` and has been tested with `xterm`, `urxvt` and the virtual console on `Debian GNU/Linux`.
 
@@ -17,12 +17,14 @@ Optional: `less` and its scripts under `lessopen`; `w3m` and its patch `w3m-img`
 ### Usage
 
 ```
-usage: [source] blscd  [-v | --version | -h | --help]
+usage: [source] blscd [-v | --version | -h | --help]
 
     Key bindings
       ^B    [ PAGE-UP ]     Move page up
       d                     Move five lines down
       D                     Move ten lines down
+      E                     Edit the current file in '<EDITOR>' (fallback:
+                            'nano')
       ^F    [ PAGE-DOWN ]   Move page down
       gd                    Move to /dev
       ge                    Move to /etc
@@ -34,7 +36,7 @@ usage: [source] blscd  [-v | --version | -h | --help]
       gm                    Move to /media
       gM                    Move to /mnt
       go                    Move to /opt
-      g?                    Open this help in '<PAGER>'
+      g?                    Open this help in '<PAGER>' (fallback: 'less')
       gr    [ g/ ]          Move to /
       gs                    Move to /srv
       gu                    Move to /usr
@@ -61,7 +63,6 @@ usage: [source] blscd  [-v | --version | -h | --help]
         configured Readline key bindings, just as well the other features
         of it; 'read -e' obtains the line in an interactive shell. The
         regextype is 'posix-egrep', and the tool 'grep'.
-
 ```
 
 ### Notes
