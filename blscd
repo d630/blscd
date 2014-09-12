@@ -24,7 +24,7 @@
 
 # -- FUNCTIONS.
 
-__blscd_version() { echo "0.1.0.12" ; }
+__blscd_version() { echo "0.1.0.13" ; }
 
 __blscd_help()
 {
@@ -333,6 +333,10 @@ __blscd_declare_set()
     builtin declare -g \
         "_blscd_saved_stty=$(command stty -g)" \
         "_blscd_saved_traps=$(builtin trap)"
+
+    builtin declare -gx \
+        _blscd_LC_ALL_old=$LC_ALL \
+        LC_ALL=C.UTF-8
 }
 
 __blscd_declare_unset()
@@ -400,6 +404,8 @@ __blscd_declare_unset()
         _blscd_tput_white_b \
         _blscd_tput_white_f \
         _blscd_tput_yellow_f
+
+    declare -xg LC_ALL=$_blscd_LC_ALL_old
 }
 
 __blscd_draw_screen()
@@ -997,8 +1003,6 @@ command stty -echo
 #trap 'printf "$_blscd_tput_ealt"' EXIT
 builtin trap '__blscd_set_resize 1' SIGWINCH
 builtin trap 'printf "$_blscd_tput_clear"' SIGINT
-
-builtin export LC_ALL=C.UTF-8
 
 while builtin :
 do
