@@ -24,7 +24,7 @@
 
 # -- FUNCTIONS.
 
-__blscd_version() { echo "0.1.0.14" ; }
+__blscd_version() { echo "0.1.0.15" ; }
 
 __blscd_help()
 {
@@ -700,18 +700,16 @@ __blscd_mark_go_up()
 
 __blscd_mark_screen_lines_all()
 {
-    builtin declare -i i=0
-
-    while IFS= builtin read -r -d ''
+    while builtin read -r
     do
-        if [[ ${_blscd_data[mark ${REPLY}]} == marked ]]
+        if [[ ${_blscd_data[mark ${_blscd_dir_col_1_string}/${REPLY}]} == marked ]]
         then
-            _blscd_data[mark ${REPLY}]=unmarked
-        elif [[ ${_blscd_data[mark ${REPLY}]} == unmarked ]]
+            _blscd_data[mark ${_blscd_dir_col_1_string}/${REPLY}]=unmarked
+        elif [[ ${_blscd_data[mark ${_blscd_dir_col_1_string}/${REPLY}]} == unmarked ]]
         then
-            _blscd_data[mark ${REPLY}]=marked
+            _blscd_data[mark ${_blscd_dir_col_1_string}/${REPLY}]=marked
         fi
-    done < <(__blscd_list_file)
+    done < <(builtin printf '%s\n' "${_blscd_files_col_2_array[@]}")
 
     #__blscd_mark_screen_lines_prepare
     __blscd_set_marking_number
