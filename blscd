@@ -24,7 +24,7 @@
 
 # -- FUNCTIONS.
 
-__blscd_version() { echo "0.1.0.19" ; }
+__blscd_version() { echo "0.1.0.20" ; }
 
 __blscd_help()
 {
@@ -35,7 +35,6 @@ __blscd_help()
       d                     Move five lines down
       D                     Move ten lines down
       E                     Edit the current file in '<EDITOR>' (fallback:
-                            'nano')
       ^F    [ PAGE-DOWN ]   Move page down
       gd                    Move to /dev
       ge                    Move to /etc
@@ -60,9 +59,11 @@ __blscd_help()
       ^L                    Redraw the screen
       l     [ RIGHTARROW ]  Move right
       m                     Go to next match
+                            'nano')
       n                     Go to previous match
       q                     Quit
       ^R                    Reload everything
+      S                     Open a forked shell in the current directory
       /                     Search for files in the current directory*
       SPACE                 Toggle the mark-status of a file
       u                     Move five lines up
@@ -930,6 +931,15 @@ __blscd_open_file()
     esac
 }
 
+__blscd_open_shell()
+{
+    __blscd_set_action_last
+    command stty $_blscd_saved_stty
+    builtin printf "$_blscd_tput_ealt"
+    command "${SHELL:-bash}"
+    command stty -echo
+}
+
 __blscd_reload()
 {
     __blscd_search_marking_non
@@ -1150,6 +1160,12 @@ do
             ;;
         E)
             __blscd_edit_file
+            builtin printf "$_blscd_tput_alt"
+            __blscd_set_resize 1
+            ;;
+        S)
+            builtin printf "${_blscd_tput_show}${_blscd_tput_am_on}"
+            __blscd_open_shell
             builtin printf "$_blscd_tput_alt"
             __blscd_set_resize 1
             ;;
