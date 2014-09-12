@@ -24,7 +24,7 @@
 
 # -- FUNCTIONS.
 
-__blscd_f_version() { echo "0.1.1.8" ; }
+__blscd_f_version() { echo "0.1.1.9" ; }
 
 __blscd_f_help()
 {
@@ -63,7 +63,7 @@ __blscd_f_help()
       n                     Go to previous match
       q                     Quit
       ^R                    Reload everything
-      S                     Open a forked shell in the current directory
+      S                     Fork a shell in the current directory
       /                     Search for files in the current directory*
       SPACE                 Toggle the mark-status of a file
       u                     Move five lines up
