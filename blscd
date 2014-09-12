@@ -24,7 +24,7 @@
 
 # -- FUNCTIONS.
 
-__blscd_f_version() { echo "0.1.1.1" ; }
+__blscd_f_version() { echo "0.1.1.2" ; }
 
 __blscd_f_help()
 {
@@ -281,7 +281,7 @@ __blscd_p_declare_set()
         _blscd_reprint=_blscd_reprint \
         _blscd_screen_lines_body= \
         _blscd_screen_lines_current_string= \
-        _blscd_screen_lines_header_string=
+        _blscd_screen_lines_titlebar_string=
 
     builtin declare -ga \
         "_blscd_files_col_1_a_array=()" \
@@ -383,8 +383,8 @@ __blscd_p_declare_unset()
         _blscd_screen_lines_body \
         _blscd_screen_lines_body_col_2_visible \
         _blscd_screen_lines_current_string \
-        _blscd_screen_lines_header_string \
         _blscd_screen_lines_offset \
+        _blscd_screen_lines_titlebar_string \
         _blscd_search_pattern \
         _blscd_tput_alt \
         _blscd_tput_am_off \
@@ -518,13 +518,13 @@ __blscd_draw_screen()
         _blscd_screen_lines_body_col_2_visible=$_blscd_files_col_2_array_total
     fi
 
-    # Print the header.
+    # Print the titlebar.
     if [[ ($_blscd_reprint == _blscd_reprint && $_blscd_action_last != __blscd_p_move_col_2_line) || \
             $_blscd_search_pattern || $_blscd_marking == _blscd_marking ]]
     then
         builtin printf "$_blscd_tput_home"
         [[ $_blscd_block == _blscd_block ]] && builtin printf "$_blscd_tput_eel"
-        builtin printf -v _blscd_screen_lines_header_string "${_blscd_tput_blue_f}${_blscd_tput_bold}%s@%s:${_blscd_tput_green_f}%s/${_blscd_tput_white_f}%s" \
+        builtin printf -v _blscd_screen_lines_titlebar_string "${_blscd_tput_blue_f}${_blscd_tput_bold}%s@%s:${_blscd_tput_green_f}%s/${_blscd_tput_white_f}%s" \
                 "$USER" "$HOSTNAME" "$PWD" "$_blscd_screen_lines_current_string"
     else
         if [[ $_blscd_dir_col_1_string == / ]]
@@ -535,9 +535,9 @@ __blscd_draw_screen()
             #command tput cup 0 "$((${#USER} + ${#HOSTNAME} + ${#_blscd_dir_col_1_string} + 3))"
             builtin printf "\033[0;$((${#USER} + ${#HOSTNAME} + ${#_blscd_dir_col_1_string} + 4))H"
         fi
-        builtin printf -v _blscd_screen_lines_header_string "${_blscd_tput_eel}${_blscd_tput_bold}${_blscd_tput_white_f}%s" "$_blscd_screen_lines_current_string"
+        builtin printf -v _blscd_screen_lines_titlebar_string "${_blscd_tput_eel}${_blscd_tput_bold}${_blscd_tput_white_f}%s" "$_blscd_screen_lines_current_string"
     fi
-    builtin printf '%s\n' "${_blscd_screen_lines_header_string//\/\//\/}"
+    builtin printf '%s\n' "${_blscd_screen_lines_titlebar_string//\/\//\/}"
     builtin printf "$_blscd_tput_reset"
 
     builtin printf "$_blscd_tput_cup_1_0"
