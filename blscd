@@ -4,8 +4,8 @@
 # Copyright (C) 2014 D630, GNU GPLv3
 # <https://github.com/D630/blscd>
 
-# Fork and rewrite in GNU bash of lscd v0.1 [2014, GNU GPLv3] by hut aka. Roman
-# Zimbelmann, <https://github.com/hut/lscd>
+# Fork and rewrite in GNU bash of lscd v0.1 [2014, GNU GPLv3] by Roman
+# Zimbelmann aka. hut, <https://github.com/hut/lscd>
 
 # -- DEBUGGING.
 

@@ -78,7 +78,7 @@ Report it on https://github.com/D630/blscd/issues
 
 ### Credits
 
-`blscd`(1) is a fork and rewrite of `lscd v0.1` [2014, GNU GPLv3] by `hut` aka. [Roman Zimbelmann](https://github.com/hut/lscd)
+`blscd`(1) is a fork and rewrite of `lscd v0.1` [2014, GNU GPLv3] by [Roman Zimbelmann](https://github.com/hut/lscd) aka. `hut`.
 
 ### See also
 
