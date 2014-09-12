@@ -24,7 +24,7 @@
 
 # -- FUNCTIONS.
 
-__blscd_version() { echo "0.1.0.10" ; }
+__blscd_version() { echo "0.1.0.11" ; }
 
 __blscd_help()
 {
@@ -325,7 +325,7 @@ __blscd_declare_set()
             "_blscd_tput_green_f=$(command tput setaf 2 || command tput AF 2)" \
             "_blscd_tput_red_b=$(command tput setab 1)" \
             "_blscd_tput_white_b=$(command tput setab 7)" \
-            "_blscd_tput_yellow_b=$(command tput setab 3)"
+            "_blscd_tput_yellow_f=$(command tput setaf 3)"
 
     } 2>/dev/null
 
@@ -399,7 +399,7 @@ __blscd_declare_unset()
         _blscd_tput_show \
         _blscd_tput_white_b \
         _blscd_tput_white_f \
-        _blscd_tput_yellow_b
+        _blscd_tput_yellow_f
 }
 
 __blscd_draw_screen()
@@ -578,7 +578,7 @@ __blscd_draw_screen()
         {
             [[ ${_blscd_data[mark ${_blscd_dir_col_1_string}/${_blscd_files_col_2_a_array[$i]}]} == marked ]] &&
             {
-                screen_lines_body_col_2_color_mark=${_blscd_tput_bold}${_blscd_tput_black_f}${_blscd_tput_yellow_b}
+                screen_lines_body_col_2_color_mark="${_blscd_tput_bold}${_blscd_tput_yellow_f} "
                 screen_lines_body_col_2_color_reset=$_blscd_tput_reset
             }
         }
