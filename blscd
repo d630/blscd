@@ -24,7 +24,7 @@
 
 # -- FUNCTIONS.
 
-__blscd_f_version() { echo "0.1.1.6" ; }
+__blscd_f_version() { echo "0.1.1.7" ; }
 
 __blscd_f_help()
 {
@@ -80,7 +80,7 @@ __blscd_f_help()
 
 __blscd_p_build_array()
 {
-    builtin declare i=
+    builtin declare -i i=
 
     for i
     do
