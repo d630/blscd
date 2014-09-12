@@ -24,7 +24,7 @@
 
 # -- FUNCTIONS.
 
-__blscd_f_version() { echo "0.1.1.4" ; }
+__blscd_f_version() { echo "0.1.1.5" ; }
 
 __blscd_f_help()
 {
@@ -416,17 +416,25 @@ __blscd_p_declare_unset()
 __blscd_draw_screen()
 {
     builtin declare -i \
+        _blscd_highlight_line_col_3_index= \
         i= \
         j= \
         screen_col_1_length= \
         screen_col_2_length= \
         screen_col_3_length= \
         screen_dimension_cols= \
-        screen_dimension_lines= \
-        _blscd_highlight_line_col_3_index=
+        screen_dimension_lines=
 
     builtin declare \
         dir_col_0_string= \
+        screen_lines_browser_col_1_color_1= \
+        screen_lines_browser_col_1_color_reset= \
+        screen_lines_browser_col_2_color_1= \
+        screen_lines_browser_col_2_color_mark= \
+        screen_lines_browser_col_2_color_reset= \
+        screen_lines_browser_col_3_color_1= \
+        screen_lines_browser_col_3_color_reset= \
+        screen_lines_statusbar_string= \
         statusbar10_string= \
         statusbar11_string= \
         statusbar12_string= \
@@ -438,15 +446,7 @@ __blscd_draw_screen()
         statusbar6_string= \
         statusbar7_string= \
         statusbar8_string= \
-        statusbar9_string= \
-        screen_lines_browser_col_1_color_1= \
-        screen_lines_browser_col_1_color_reset= \
-        screen_lines_browser_col_2_color_1= \
-        screen_lines_browser_col_2_color_mark= \
-        screen_lines_browser_col_2_color_reset= \
-        screen_lines_browser_col_3_color_1= \
-        screen_lines_browser_col_3_color_reset= \
-        screen_lines_statusbar_string=
+        statusbar9_string=
 
     # Get dimension.
     builtin read -r screen_dimension_cols screen_dimension_lines \
