@@ -24,7 +24,7 @@
 
 # -- FUNCTIONS.
 
-__blscd_version() { echo "0.1.0.17" ; }
+__blscd_version() { echo "0.1.0.18" ; }
 
 __blscd_help()
 {
@@ -1094,7 +1094,7 @@ do
                 r|/)
                     __blscd_move_dir / ;;
                 \?)
-                    __blscd_help | "${PAGER:-less}"
+                    __blscd_help | command "${PAGER:-less}"
                     builtin printf "$_blscd_tput_alt"
                     __blscd_set_action_last
                     __blscd_set_resize 1
