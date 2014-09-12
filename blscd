@@ -24,7 +24,7 @@
 
 # -- FUNCTIONS.
 
-__blscd_version() { echo "0.1.0.13" ; }
+__blscd_version() { echo "0.1.0.14" ; }
 
 __blscd_help()
 {
@@ -146,10 +146,10 @@ __blscd_build_array_initial()
 
     __blscd_build_array_initial_do "$_blscd_dir_col_1_string"
 
-    while IFS= builtin read -r -d ''
+    while builtin read -r
     do
-        _blscd_data[mark ${REPLY}]=unmarked
-    done < <(__blscd_list_file)
+        _blscd_data[mark ${_blscd_dir_col_1_string}/${REPLY}]=unmarked
+    done < <(builtin printf '%s\n' "${_blscd_data[path ${_blscd_dir_col_1_string}]//|/}")
 }
 
 __blscd_build_array_mark_search()
