@@ -24,7 +24,7 @@
 
 # -- FUNCTIONS.
 
-__blscd_version() { echo "0.1.0.15" ; }
+__blscd_version() { echo "0.1.0.16" ; }
 
 __blscd_help()
 {
@@ -325,6 +325,7 @@ __blscd_declare_set()
             "_blscd_tput_green_f=$(command tput setaf 2 || command tput AF 2)" \
             "_blscd_tput_red_b=$(command tput setab 1)" \
             "_blscd_tput_white_b=$(command tput setab 7)" \
+            "_blscd_tput_yellow_b=$(command tput setab 3)" \
             "_blscd_tput_yellow_f=$(command tput setaf 3)"
 
     } 2>/dev/null
@@ -403,6 +404,7 @@ __blscd_declare_unset()
         _blscd_tput_show \
         _blscd_tput_white_b \
         _blscd_tput_white_f \
+        _blscd_tput_yellow_b \
         _blscd_tput_yellow_f
 
     declare -xg LC_ALL=$_blscd_LC_ALL_old
@@ -554,14 +556,19 @@ __blscd_draw_screen()
 
         ((i == _blscd_cursor)) &&
         {
-            if [[ -d $_blscd_screen_lines_current_string ]]
+            if [[ ${_blscd_data[mark ${_blscd_dir_col_1_string}/${_blscd_files_col_2_a_array[$i]}]} == marked ]]
             then
-                screen_lines_body_col_2_color_1=${_blscd_tput_bold}${_blscd_tput_black_f}${_blscd_tput_green_b}
-            elif [[ -f $_blscd_screen_lines_current_string ]]
-            then
-                screen_lines_body_col_2_color_1=${_blscd_tput_bold}${_blscd_tput_black_f}${_blscd_tput_white_b}
+                screen_lines_body_col_2_color_1="${_blscd_tput_bold}${_blscd_tput_black_f}${_blscd_tput_yellow_b}"
             else
-                screen_lines_body_col_2_color_1=${_blscd_tput_bold}${_blscd_tput_white_f}${_blscd_tput_red_b}
+                if [[ -d $_blscd_screen_lines_current_string ]]
+                then
+                    screen_lines_body_col_2_color_1=${_blscd_tput_bold}${_blscd_tput_black_f}${_blscd_tput_green_b}
+                elif [[ -f $_blscd_screen_lines_current_string ]]
+                then
+                    screen_lines_body_col_2_color_1=${_blscd_tput_bold}${_blscd_tput_black_f}${_blscd_tput_white_b}
+                else
+                    screen_lines_body_col_2_color_1=${_blscd_tput_bold}${_blscd_tput_white_f}${_blscd_tput_red_b}
+                fi
             fi
             screen_lines_body_col_2_color_reset=$_blscd_tput_reset
         }
@@ -584,11 +591,11 @@ __blscd_draw_screen()
         {
             [[ ${_blscd_data[mark ${_blscd_dir_col_1_string}/${_blscd_files_col_2_a_array[$i]}]} == marked ]] &&
             {
-                screen_lines_body_col_2_color_mark="${_blscd_tput_bold}${_blscd_tput_yellow_f} "
+                screen_lines_body_col_2_color_mark="${_blscd_tput_bold}${_blscd_tput_yellow_f}"
                 screen_lines_body_col_2_color_reset=$_blscd_tput_reset
             }
         }
-        builtin printf "${screen_lines_body_col_1_color_1}%-${screen_col_1_length}.${screen_col_1_length}s${screen_lines_body_col_1_color_reset} ${screen_lines_body_col_2_color_mark}${screen_lines_body_col_2_color_1}%-${screen_col_2_length}.${screen_col_2_length}s${screen_lines_body_col_2_color_reset} ${screen_lines_body_col_3_color_1}%-${screen_col_3_length}.${screen_col_3_length}s${screen_lines_body_col_3_color_reset}\n" " ${_blscd_files_col_1_a_array[$i]} " " ${_blscd_files_col_2_a_array[$i]} " " ${_blscd_files_col_3_a_array[$i]} "
+        builtin printf "${screen_lines_body_col_1_color_1}%-${screen_col_1_length}.${screen_col_1_length}s${screen_lines_body_col_1_color_reset} ${screen_lines_body_col_2_color_mark}${screen_lines_body_col_2_color_1}%-${screen_col_2_length}.${screen_col_2_length}s${screen_lines_body_col_2_color_reset} ${screen_lines_body_col_3_color_1}%-${screen_col_3_length}.${screen_col_3_length}s${screen_lines_body_col_3_color_reset}\n" " ${_blscd_files_col_1_a_array[$i]} " " ${screen_lines_body_col_2_color_mark:+ }${_blscd_files_col_2_a_array[$i]} " " ${_blscd_files_col_3_a_array[$i]} "
     done
 
     # Print the footer.
