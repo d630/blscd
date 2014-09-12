@@ -24,7 +24,7 @@
 
 # -- FUNCTIONS.
 
-__blscd_version() { echo "0.1.0.18" ; }
+__blscd_version() { echo "0.1.0.19" ; }
 
 __blscd_help()
 {
@@ -34,6 +34,8 @@ __blscd_help()
       ^B    [ PAGE-UP ]     Move page up
       d                     Move five lines down
       D                     Move ten lines down
+      E                     Edit the current file in '<EDITOR>' (fallback:
+                            'nano')
       ^F    [ PAGE-DOWN ]   Move page down
       gd                    Move to /dev
       ge                    Move to /etc
@@ -45,7 +47,7 @@ __blscd_help()
       gm                    Move to /media
       gM                    Move to /mnt
       go                    Move to /opt
-      g?                    Open this help in '<PAGER>'
+      g?                    Open this help in '<PAGER>' (fallback: 'less')
       gr    [ g/ ]          Move to /
       gs                    Move to /srv
       gu                    Move to /usr
@@ -657,6 +659,12 @@ __blscd_draw_screen_check()
     }
 }
 
+__blscd_edit_file()
+{
+    __blscd_set_action_last
+    command "${EDITOR:-nano}" "$_blscd_screen_lines_current_string"
+}
+
 __blscd_list_file()
 {
     __blscd_list_file_find()
@@ -1139,6 +1147,11 @@ do
         $'\x0c') # CTRL+L
             __blscd_set_resize 1
             builtin printf "${_blscd_tput_cup_99999_0}${_blscd_tput_eel}"
+            ;;
+        E)
+            __blscd_edit_file
+            builtin printf "$_blscd_tput_alt"
+            __blscd_set_resize 1
             ;;
         q)
             __blscd_reload
