@@ -1006,7 +1006,7 @@ builtin printf "$_blscd_tput_alt"
 command stty -echo
 
 #trap 'printf "$_blscd_tput_ealt"' EXIT
-builtin trap '__blscd_set_resize 1' SIGWINCH
+builtin trap '__blscd_set_resize 1;builtin printf "${_blscd_tput_cup_99999_0}${_blscd_tput_eel}"' SIGWINCH
 builtin trap 'printf "$_blscd_tput_clear"' SIGINT
 
 while builtin :
@@ -1138,8 +1138,7 @@ do
             ;&
         $'\x0c') # CTRL+L
             __blscd_set_resize 1
-            builtin printf "$_blscd_tput_cup_99999_0"
-            builtin printf "$_blscd_tput_eel"
+            builtin printf "${_blscd_tput_cup_99999_0}${_blscd_tput_eel}"
             ;;
         q)
             __blscd_reload
