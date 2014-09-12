@@ -24,7 +24,7 @@
 
 # -- FUNCTIONS.
 
-__blscd_version() { echo "0.1.0.11" ; }
+__blscd_version() { echo "0.1.0.12" ; }
 
 __blscd_help()
 {
@@ -1114,6 +1114,7 @@ do
             builtin printf "${_blscd_tput_show}${_blscd_tput_am_on}"
             __blscd_search
             __blscd_set_resize 1
+            __blscd_move_col_2_line -9999999999
             __blscd_draw_screen_check
             __blscd_move_col_2_line "$((${_blscd_files_col_2_array_mark_indexes[0]} - 1))"
             ;;
