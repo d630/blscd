@@ -1,0 +1,6 @@
+* 0.1.1.0:
+- Open a forked shell in the current directory with key <S>
+- Edit the current file in '<EDITOR>' with key <E>
+- go to first match after search prompt
+- marked lines with indention and normal bg
+- mini changes

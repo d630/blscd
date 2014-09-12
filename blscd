@@ -24,7 +24,7 @@
 
 # -- FUNCTIONS.
 
-__blscd_version() { echo "0.1.0.20" ; }
+__blscd_version() { echo "0.1.1.0" ; }
 
 __blscd_help()
 {
@@ -35,6 +35,7 @@ __blscd_help()
       d                     Move five lines down
       D                     Move ten lines down
       E                     Edit the current file in '<EDITOR>' (fallback:
+                            'nano')
       ^F    [ PAGE-DOWN ]   Move page down
       gd                    Move to /dev
       ge                    Move to /etc
@@ -59,7 +60,6 @@ __blscd_help()
       ^L                    Redraw the screen
       l     [ RIGHTARROW ]  Move right
       m                     Go to next match
-                            'nano')
       n                     Go to previous match
       q                     Quit
       ^R                    Reload everything
