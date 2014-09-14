@@ -1,17 +1,17 @@
 ## blscd v0.1.1.13 [GNU GPLv3]
 
-`blscd`(1) is a simple [ranger](http://ranger.nongnu.org/)-like file browser/navigator for the command line. Currently, you may browse your file system and search and open files without many features. `blscd`(1) is written in `GNU bash` and has been tested with `xterm`, `urxvt` and the virtual console on `Debian GNU/Linux`.
+`blscd`(1) is a simple [ranger](http://ranger.nongnu.org/)-like file browser/navigator for the command line. Currently, you may browse your file system and search and open files without many features. `blscd`(1) is written in `GNU bash` and has been tested with `xterm`(1), `urxvt`(1) and the virtual console on `Debian GNU/Linux`.
 
 ![](https://raw.githubusercontent.com/D630/blscd/master/doc/blscd.png)
 
 ### Install
 
-Explicitly required: `GNU bash >= 4.0`, `file`, `grep`, `ls`, `stty` and `tput`
+Explicitly required: `GNU bash`(1) >= 4.0, `file`(1), `grep`(1), `ls`(1), `stty`(1) and `tput`(1)
 
-Optional: `less` and its scripts under `lessopen`; `w3m` and its patch `w3m-img`
+Optional: `less`(1) and its scripts under `lessopen`(1); `w3m`(1) and its patch `w3m-img`
 
-* Get `blscd`(1) with `$ git clone https://github.com/D630/blscd.git` or
-  download it on https://github.com/D630/blscd/tags
+* Get the newest version of `blscd`(1) with `$ git clone https://github.com/D630/blscd.git` or
+  download its last release on https://github.com/D630/blscd/tags
 * Copy the script `blscd` elsewhere into `<PATH>` and make it executable.
 
 ### Usage
@@ -77,9 +77,10 @@ usage: [source] blscd [-v | --version | -h | --help]
 
 ### Notes
 
-To use different file handlers, have a look at the functions called `__blscd_p_open_file()` and `__blscd_p_declare_set()`. Currently, the last one is also the place, where you need to edit the color configuration.
+- To use different file handlers, have a look at the functions called `__blscd_p_open_file()` and `__blscd_p_declare_set()`. Currently, the last one is also the place, where you need to edit the color configuration.
+- In this version file names may not contain apostrophes resp. single quotes (').
 
-### TODO
+### To do
 
 A lot.
 
@@ -89,8 +90,8 @@ Report it on https://github.com/D630/blscd/issues
 
 ### Credits
 
-`blscd`(1) is a fork and rewrite of `lscd v0.1` [2014, GNU GPLv3] by [Roman Zimbelmann](https://github.com/hut/lscd) aka. `hut`.
+`blscd`(1) is a fork and rewrite of [lscd v0.1](https://github.com/hut/lscd/blob/989cb7e045a4e5e879db9af0f7f7c721d8a93acc/lscd) (2014, GNU GPLv3) by Roman Zimbelmann aka. [hut](https://github.com/hut).
 
 ### See also
 
-Similar to this project is [deer](https://github.com/vifon/deer), which is written in `zsh`.
+Similar to this project and independent from `lscd` is [deer](https://github.com/vifon/deer), which is written in `zsh`.
