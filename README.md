@@ -1,4 +1,4 @@
-## blscd v0.1.1.10 [GNU GPLv3]
+## blscd v0.1.1.11 [GNU GPLv3]
 
 `blscd`(1) is a simple [ranger](http://ranger.nongnu.org/)-like file browser/navigator for the command line. Currently, you may browse your file system and search and open files without many features. `blscd`(1) is written in `GNU bash` and has been tested with `xterm`, `urxvt` and the virtual console on `Debian GNU/Linux`.
 
@@ -6,7 +6,7 @@
 
 ### Install
 
-Explicitly required: `GNU bash >= 4.0`, `file`, `find`, `grep`, `ls`, `sort`, `stty` and `tput`
+Explicitly required: `GNU bash >= 4.0`, `file`, `grep`, `ls`, `stty` and `tput`
 
 Optional: `less` and its scripts under `lessopen`; `w3m` and its patch `w3m-img`
 
@@ -53,17 +53,26 @@ usage: [source] blscd [-v | --version | -h | --help]
       q                     Quit
       ^R                    Reload everything
       S                     Fork a shell in the current directory
-      /                     Search for files in the current directory*
+      /                     Search for files in the current directory[1]
       SPACE                 Toggle the mark-status of a file
       u                     Move five lines up
       U                     Move ten lines up
       vn                    Unmark all files
       vv                    Toggle the mark-status of all files
 
-      * During line editing in the search prompt you may use your
-        configured Readline key bindings, just as well the other features
-        of it; 'read -e' obtains the line in an interactive shell. The
-        tool is 'grep', and the regextype is 'posix-egrep'.
+    File type indicators
+      b                     File is a block device
+      c                     File is a character device
+      -                     File is a regular file
+      @                     File is a symbolic link
+      |                     File is a named pipe
+      =                     File is a socket
+      *                     File is a regular file and is executable
+
+      [1] During line editing in the search prompt you may use your
+          configured Readline key bindings, just as well the other
+          features of it; 'read -e' obtains the line in an interactive
+          shell. The tool is 'grep', and the regextype is 'posix-egrep'.
 ```
 
 ### Notes

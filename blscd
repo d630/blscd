@@ -24,7 +24,7 @@
 
 # -- FUNCTIONS.
 
-__blscd_f_version() { echo "0.1.1.10" ; }
+__blscd_f_version() { echo "0.1.1.11" ; }
 
 __blscd_f_help()
 {
@@ -64,23 +64,33 @@ __blscd_f_help()
       q                     Quit
       ^R                    Reload everything
       S                     Fork a shell in the current directory
-      /                     Search for files in the current directory*
+      /                     Search for files in the current directory[1]
       SPACE                 Toggle the mark-status of a file
       u                     Move five lines up
       U                     Move ten lines up
       vn                    Unmark all files
       vv                    Toggle the mark-status of all files
 
-      * During line editing in the search prompt you may use your
-        configured Readline key bindings, just as well the other features
-        of it; 'read -e' obtains the line in an interactive shell. The
-        tool is 'grep', and the regextype is 'posix-egrep'.
+    File type indicators
+      b                     File is a block device
+      c                     File is a character device
+      -                     File is a regular file
+      @                     File is a symbolic link
+      |                     File is a named pipe
+      =                     File is a socket
+      *                     File is a regular file and is executable
+
+      [1] During line editing in the search prompt you may use your
+          configured Readline key bindings, just as well the other
+          features of it; 'read -e' obtains the line in an interactive
+          shell. The tool is 'grep', and the regextype is 'posix-egrep'.
 "
 }
 
 __blscd_p_build_array()
 {
     builtin declare -i i=
+    builtin declare path=
 
     for i
     do
@@ -91,29 +101,47 @@ __blscd_p_build_array()
                     _blscd_files_col_1_array=(\~)
                     _blscd_files_col_1_array_cursor_index=0
                 else
-                    builtin mapfile -t _blscd_files_col_1_array \
-                        < <(builtin printf '%s\n' "${_blscd_data[path ${dir_col_0_string}]//|/}")
+                    #builtin mapfile -t _blscd_files_col_1_array \
+                        #< <(builtin printf '%s\n' "${_blscd_data[path ${dir_col_0_string}]//|/}")
+                    _blscd_files_col_1_array=()
+                    while IFS=\' builtin read -r _ path
+                    do
+                        _blscd_files_col_1_array+=("$path")
+                    done < <(builtin printf '%s\n' "${_blscd_data[ls ${dir_col_0_string}]}")
                 fi
                 _blscd_files_col_1_array_total=${#_blscd_files_col_1_array[@]}
                 ;;
             2)
-                [[ ! ${_blscd_data[path ${_blscd_dir_col_1_string}]} ]] && \
+                [[ ! ${_blscd_data[ls ${_blscd_dir_col_1_string}]} ]] && \
                     __blscd_p_build_array_update
-                builtin mapfile -t _blscd_files_col_2_array \
-                    < <(builtin printf '%s\n' "${_blscd_data[path ${_blscd_dir_col_1_string}]//|/}")
+                #builtin mapfile -t _blscd_files_col_2_array \
+                    #< <(builtin printf '%s\n' "${_blscd_data[ls ${_blscd_dir_col_1_string}]}" | command sed 's/  \{1,\}/ /g' | command cut -d ' ' -f 6 | command tr -d "'"
+                    #< <(builtin printf '%s\n' "${_blscd_data[ls ${_blscd_dir_col_1_string}]}" | command sed "s/^\([^']* \)'\(.*\)'$/\2/"
+                    #< <(builtin printf '%s\n' "${_blscd_data[ls ${_blscd_dir_col_1_string}]}" | command awk '{gsub("\047",""); print $6}'
+                    #< <(builtin printf '%s\n' "${_blscd_data[ls ${_blscd_dir_col_1_string}]}" | command awk '{print $6}' | command tr -d "'"
+                _blscd_files_col_2_array=()
+                while IFS=\' builtin read -r _ path
+                do
+                    _blscd_files_col_2_array+=("$path")
+                done < <(builtin printf '%s\n' "${_blscd_data[ls ${_blscd_dir_col_1_string}]}")
                 _blscd_files_col_2_array_total=${#_blscd_files_col_2_array[@]}
                 ((_blscd_files_col_2_array_total == 0)) && _blscd_files_col_2_array_total=1
                 [[ ! ${_blscd_data[mark ${_blscd_dir_col_1_string}/${_blscd_files_col_2_array[0]}]} ]] && \
                     __blscd_p_build_array_mark_update
                 ;;
             3)
-                if [[ ${_blscd_data[path ${_blscd_dir_col_1_string}/${_blscd_screen_lines_current_string}]} ]]
+                if [[ ${_blscd_data[ls ${_blscd_dir_col_1_string}/${_blscd_screen_lines_current_string}]} ]]
                 then
-                    builtin mapfile -t _blscd_files_col_3_array \
-                        < <(builtin printf '%s\n' "${_blscd_data[path ${_blscd_dir_col_1_string}/${_blscd_screen_lines_current_string}]//|/}")
+                    #builtin mapfile -t _blscd_files_col_3_array \
+                        #< <(builtin printf '%s\n' "${_blscd_data[path ${_blscd_dir_col_1_string}/${_blscd_screen_lines_current_string}]//|/}")
+                    _blscd_files_col_3_array=()
+                    while IFS=\' builtin read -r _ path
+                    do
+                        _blscd_files_col_3_array+=("$path")
+                    done < <(builtin printf '%s\n' "${_blscd_data[ls ${_blscd_dir_col_1_string}/${_blscd_screen_lines_current_string}]}")
                 else
                     builtin mapfile -t _blscd_files_col_3_array \
-                        < <(command find -L "$_blscd_screen_lines_current_string" -mindepth 1 -maxdepth 1 -printf '%f\n' | command sort -bg)
+                        < <(command ls -1 -A --color=never "$_blscd_screen_lines_current_string")
                 fi
                 _blscd_files_col_3_array_total=${#_blscd_files_col_3_array[@]}
                 ((_blscd_files_col_3_array_total == 0)) &&
@@ -132,8 +160,9 @@ __blscd_p_build_array_ini()
     __blscd_p_build_array_ini_do()
     {
         builtin declare dir=$1
-        _blscd_data[path ${dir}]=$(command find -L "$dir" -mindepth 1 -maxdepth 1 -printf '|%f|\n' | command sort -t '|' -k 2bg)
-        #_blscd_data[ls ${dir}]=$(command ls -AblQh --time-style=long-iso "$dir")
+        #_blscd_data[path ${dir}]=$(command find -L "$dir" -mindepth 1 -maxdepth 1 -printf '|%f|\n' | command sort -t '|' -k 2bg)
+        _blscd_data[ls ${dir}]=$(command ls --format=long -AL --time-style=long-iso -gGho --color=none --indicator-style=none -b --quoting-style=shell-always "$dir")
+        _blscd_data[ls ${dir}]=${_blscd_data[ls ${dir}]#*$'\n'}
         _blscd_data[mark ${dir}]=unmarked
         if [[ ${dir%/*} ]]
         then
@@ -143,16 +172,13 @@ __blscd_p_build_array_ini()
         fi
     }
 
-    _blscd_data[path /]=$(command find -L "/" -mindepth 1 -maxdepth 1 -printf '|%f|\n' | command sort -t '|' -k 2bg)
-    #_blscd_data[ls /]=$(command ls -AblQh --time-style=long-iso /)
+    #_blscd_data[path /]=$(command find -L "/" -mindepth 1 -maxdepth 1 -printf '|%f|\n' | command sort -t '|' -k 2bg)
+    _blscd_data[ls /]=$(command ls --format=long -AL --time-style=long-iso -gGho --color=none --indicator-style=none -b --quoting-style=shell-always /)
+    _blscd_data[ls /]=${_blscd_data[ls /]#*$'\n'}
     _blscd_data[mark /]=unmarked
 
     __blscd_p_build_array_ini_do "$_blscd_dir_col_1_string"
-
-    while builtin read -r
-    do
-        _blscd_data[mark ${_blscd_dir_col_1_string}/${REPLY}]=unmarked
-    done < <(builtin printf '%s\n' "${_blscd_data[path ${_blscd_dir_col_1_string}]//|/}")
+    __blscd_p_build_array_mark_update
 }
 
 __blscd_p_build_array_mark_search()
@@ -170,17 +196,52 @@ __blscd_p_build_array_mark_search()
 
 __blscd_p_build_array_mark_update()
 {
-    while builtin read -r
+    builtin declare \
+        path= \
+        s1= \
+        s2=
+
+    while IFS=\' builtin read -r
     do
-        _blscd_data[mark ${_blscd_dir_col_1_string}/${REPLY}]=unmarked
-    done < <(builtin printf '%s\n' "${_blscd_files_col_2_array[@]}")
+        IFS=\' builtin read -r s1 s2 <<<"$REPLY"
+        builtin set -- $s1
+        path=${s2//\'/}
+        _blscd_data[mark ${_blscd_dir_col_1_string}/${path}]=unmarked
+        _blscd_data[time ${_blscd_dir_col_1_string}/${path}]="${4} ${5}"
+        _blscd_data[size ${_blscd_dir_col_1_string}/${path}]=$3
+        if [[ -L ${path} ]]
+        then
+            _blscd_data[type ${_blscd_dir_col_1_string}/${path}]=@
+        elif [[ -b ${path} ]]
+        then
+            _blscd_data[type ${_blscd_dir_col_1_string}/${path}]=b
+        elif [[ -c ${path} ]]
+        then
+            _blscd_data[type ${_blscd_dir_col_1_string}/${path}]=c
+        elif [[ -p ${path} ]]
+        then
+            _blscd_data[type ${_blscd_dir_col_1_string}/${path}]=\|
+        elif [[ -S ${path} ]]
+        then
+            _blscd_data[type ${_blscd_dir_col_1_string}/${path}]=\=
+        elif [[ -d ${path} ]]
+        then
+            _blscd_data[type ${_blscd_dir_col_1_string}/${path}]=/
+        elif [[ -f ${path} && -x ${path} ]]
+        then
+            _blscd_data[type ${_blscd_dir_col_1_string}/${path}]=\*
+        else
+            _blscd_data[type ${_blscd_dir_col_1_string}/${path}]=-
+        fi
+    done < <(builtin printf '%s\n' "${_blscd_data[ls ${_blscd_dir_col_1_string}]}")
 }
 
 __blscd_p_build_array_update()
 {
-    _blscd_data[path ${_blscd_dir_col_1_string}]=$(command find -L "$_blscd_dir_col_1_string" -mindepth 1 -maxdepth 1 -printf '|%f|\n' | command sort -t '|' -k 2bg)
+    #_blscd_data[path ${_blscd_dir_col_1_string}]=$(command find -L "$_blscd_dir_col_1_string" -mindepth 1 -maxdepth 1 -printf '|%f|\n' | command sort -t '|' -k 2bg)
+    _blscd_data[ls ${_blscd_dir_col_1_string}]=$(command ls --format=long -AL --time-style=long-iso -gGho --color=none --indicator-style=none -b --quoting-style=shell-always "$_blscd_dir_col_1_string")
+    _blscd_data[ls ${_blscd_dir_col_1_string}]=${_blscd_data[ls ${_blscd_dir_col_1_string}]#*$'\n'}
     __blscd_p_build_array_mark_update
-    #_blscd_data[ls ${_blscd_dir_col_1_string}]=$(command ls -AblQh --time-style=long-iso "$_blscd_dir_col_1_string")
 }
 
 __blscd_p_build_col()
@@ -458,6 +519,7 @@ __blscd_f_draw_screen()
         j= \
         screen_col_1_length= \
         screen_col_2_length= \
+        screen_col_2_2_length= \
         screen_col_3_length= \
         screen_dimension_cols= \
         screen_dimension_lines=
@@ -475,6 +537,7 @@ __blscd_f_draw_screen()
         statusbar10_string= \
         statusbar11_string= \
         statusbar12_string= \
+        statusbar13_string= \
         statusbar1_string= \
         statusbar2_string= \
         statusbar3_string= \
@@ -489,8 +552,10 @@ __blscd_f_draw_screen()
     builtin read -r screen_dimension_cols screen_dimension_lines \
         <<<$(command tput -S < <(builtin printf '%s\n' cols lines))
     screen_col_1_length=$(((screen_dimension_cols - 2) / 5))
-    screen_col_2_length=$((screen_col_1_length * 2))
     screen_col_3_length=$((screen_col_1_length * 2))
+    screen_col_2_1_length=3
+    screen_col_2_2_length=5
+    screen_col_2_length=$(((screen_col_1_length * 2) - screen_col_2_1_length - screen_col_2_2_length))
     _blscd_screen_lines_browser=$((screen_dimension_lines - _blscd_screen_lines_offset + 1))
 
     # Save directories.
@@ -572,13 +637,13 @@ __blscd_f_draw_screen()
         screen_lines_browser_col_3_color_1=
         screen_lines_browser_col_3_color_reset=
         __blscd_p_draw_screen_lines 2
-        builtin printf "${screen_lines_browser_col_1_color_1}%-${screen_col_1_length}.${screen_col_1_length}s${screen_lines_browser_col_1_color_reset} ${screen_lines_browser_col_2_color_mark}${screen_lines_browser_col_2_color_1}%-${screen_col_2_length}.${screen_col_2_length}s${screen_lines_browser_col_2_color_reset} ${screen_lines_browser_col_3_color_1}%-${screen_col_3_length}.${screen_col_3_length}s${screen_lines_browser_col_3_color_reset}\n" " ${_blscd_files_col_1_a_array[$i]} " " ${screen_lines_browser_col_2_color_mark:+ }${_blscd_files_col_2_a_array[$i]} " " ${_blscd_files_col_3_a_array[$i]} "
+        builtin printf "${screen_lines_browser_col_1_color_1}%-${screen_col_1_length}.${screen_col_1_length}s${screen_lines_browser_col_1_color_reset} ${screen_lines_browser_col_2_color_mark}${screen_lines_browser_col_2_color_1}%-${screen_col_2_length}.${screen_col_2_length}s%${screen_col_2_1_length}s%${screen_col_2_2_length}s${screen_lines_browser_col_2_color_reset} ${screen_lines_browser_col_3_color_1}%-${screen_col_3_length}.${screen_col_3_length}s${screen_lines_browser_col_3_color_reset}\n" " ${_blscd_files_col_1_a_array[$i]} " " ${screen_lines_browser_col_2_color_mark:+ }${_blscd_files_col_2_a_array[$i]}" "${_blscd_data[type ${_blscd_dir_col_1_string}/${_blscd_files_col_2_a_array[$i]}]} " "${_blscd_data[size ${_blscd_dir_col_1_string}/${_blscd_files_col_2_a_array[$i]}]} " " ${_blscd_files_col_3_a_array[$i]} "
     done
 
     # Print the statusbar.
     builtin printf "${_blscd_tput_blue_f}${_blscd_tput_bold}"
     __blscd_p_draw_screen_lines 3
-    builtin printf "%s${_blscd_tput_reset} %s %s %s %s %s${statusbar8_string:+ %s ->} %-$((screen_dimension_cols - ${#screen_lines_statusbar_string} + ${#statusbar7_string} ${statusbar8_string:++ $((${#statusbar8_string} - ${#statusbar7_string}))}))s  %s/%s  %d%% %s" "$statusbar1_string" "$statusbar2_string" "$statusbar3_string" "$statusbar4_string" "$statusbar5_string" "$statusbar6_string" "$statusbar7_string" ${statusbar8_string:+"${statusbar8_string}"} "$statusbar9_string" "$statusbar10_string" "$statusbar11_string" "$statusbar12_string"
+    builtin printf "%s${_blscd_tput_reset} %s %s %s %s %s${statusbar8_string:+ %s ->} %-$((screen_dimension_cols - ${#screen_lines_statusbar_string} + ${#statusbar7_string} ${statusbar8_string:++ $((${#statusbar8_string} - ${#statusbar7_string}))}))s  %s/%s  %d%% %s${statusbar13_string:+  %d}" "$statusbar1_string" "$statusbar2_string" "$statusbar3_string" "$statusbar4_string" "$statusbar5_string" "$statusbar6_string" "$statusbar7_string" ${statusbar8_string:+\"${statusbar8_string}\"} "$statusbar9_string" "$statusbar10_string" "$statusbar11_string" "$statusbar12_string" $statusbar13_string
 
     # Set new position of the _blscd_cursor.
     #builtin printf "$_blscd_tput_reset"
@@ -599,6 +664,9 @@ __blscd_p_draw_screen_check()
 __blscd_p_draw_screen_lines()
 {
     builtin declare -i j=
+    builtin declare \
+        path= \
+        s=
 
     for j
     do
@@ -673,14 +741,19 @@ __blscd_p_draw_screen_lines()
                 }
                 ;;
             3)
+                IFS=\' builtin read -r s path \
+                    <<<$(command ls --format=long -Ad --time-style=long-iso -h \
+                        --color=none --indicator-style=none -b --quoting-style=shell-always \
+                        "${_blscd_dir_col_1_string}/${_blscd_screen_lines_current_string}")
                 builtin read -r statusbar1_string statusbar2_string statusbar3_string statusbar4_string \
-                        statusbar5_string statusbar6_string statusbar7_string _ _ statusbar8_string \
-                    <<<$(command ls -abdlQh --time-style=long-iso "${_blscd_dir_col_1_string}/${_blscd_screen_lines_current_string}")
-                [[ -d ${_blscd_dir_col_1_string}/${_blscd_screen_lines_current_string} ]] && \
-                    statusbar5_string=$_blscd_files_col_3_array_total
+                        statusbar5_string statusbar6_string statusbar7_string \
+                    <<< "$s"
+                [[ $path =~ -\> ]] && IFS=\' builtin read -r _ _ statusbar8_string <<<"$path"
                 builtin read -r statusbar9_string statusbar10_string statusbar11_string \
                     <<<"$((_blscd_index + _blscd_cursor)) ${_blscd_files_col_2_array_total} \
                     $(((100 * (_blscd_index + _blscd_cursor)) / _blscd_files_col_2_array_total))"
+                [[ -d ${_blscd_dir_col_1_string}/${_blscd_screen_lines_current_string} ]] && \
+                        statusbar13_string=$_blscd_files_col_3_array_total
                 if [[ $_blscd_search_pattern || $_blscd_marking == _blscd_marking ]]
                 then
                     statusbar12_string="${_blscd_marking_number} Mrk"
@@ -701,10 +774,10 @@ __blscd_p_draw_screen_lines()
                 #command tput cup "$((_blscd_screen_lines_browser + 1))" 0
                 builtin printf "\033[$((_blscd_screen_lines_browser + 2));0H${_blscd_tput_eel}"
                 #builtin printf "$_blscd_tput_eel"
-                builtin printf -v screen_lines_statusbar_string "%s %s %s %s %s %s %s${statusbar8_string:+ -> %s}  %s/%s  %d%% %s" \
+                builtin printf -v screen_lines_statusbar_string "%s %s %s %s %s %s %s${statusbar8_string:+ -> %s}  %s/%s  %d%% %s${statusbar13_string:+  %d}" \
                         "$statusbar1_string" "$statusbar2_string" "$statusbar3_string" "$statusbar4_string" "$statusbar5_string" \
                         "$statusbar6_string" "$statusbar7_string" ${statusbar8_string:+"${statusbar8_string}"} "$statusbar9_string" \
-                        "$statusbar10_string" "$statusbar11_string" "$statusbar12_string"
+                        "$statusbar10_string" "$statusbar11_string" "$statusbar12_string" $statusbar13_string
                 ;;
         esac
     done
