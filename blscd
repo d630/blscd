@@ -24,7 +24,7 @@
 
 # -- FUNCTIONS.
 
-__blscd_f_version() { echo "0.1.1.11" ; }
+__blscd_f_version() { echo "0.1.1.12" ; }
 
 __blscd_f_help()
 {
@@ -519,6 +519,7 @@ __blscd_f_draw_screen()
         j= \
         screen_col_1_length= \
         screen_col_2_length= \
+        screen_col_2_1_length= \
         screen_col_2_2_length= \
         screen_col_3_length= \
         screen_dimension_cols= \
