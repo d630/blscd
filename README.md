@@ -1,4 +1,4 @@
-## blscd v0.1.1.12 [GNU GPLv3]
+## blscd v0.1.1.13 [GNU GPLv3]
 
 `blscd`(1) is a simple [ranger](http://ranger.nongnu.org/)-like file browser/navigator for the command line. Currently, you may browse your file system and search and open files without many features. `blscd`(1) is written in `GNU bash` and has been tested with `xterm`, `urxvt` and the virtual console on `Debian GNU/Linux`.
 
@@ -24,7 +24,7 @@ usage: [source] blscd [-v | --version | -h | --help]
       d                     Move five lines down
       D                     Move ten lines down
       E                     Edit the current file in '<EDITOR>' (fallback:
-                            'nano')
+                            'vi')
       ^F    [ PAGE-DOWN ]   Move page down
       gd                    Move to /dev
       ge                    Move to /etc

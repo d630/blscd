@@ -24,7 +24,7 @@
 
 # -- FUNCTIONS.
 
-__blscd_f_version() { echo "0.1.1.12" ; }
+__blscd_f_version() { echo "0.1.1.13" ; }
 
 __blscd_f_help()
 {
@@ -35,7 +35,7 @@ __blscd_f_help()
       d                     Move five lines down
       D                     Move ten lines down
       E                     Edit the current file in '<EDITOR>' (fallback:
-                            'nano')
+                            'vi')
       ^F    [ PAGE-DOWN ]   Move page down
       gd                    Move to /dev
       ge                    Move to /etc
@@ -787,7 +787,7 @@ __blscd_p_draw_screen_lines()
 __blscd_p_edit_file()
 {
     __blscd_p_set_action_last
-    command "${EDITOR:-nano}" "$_blscd_screen_lines_current_string"
+    command "${EDITOR:-vi}" "$_blscd_screen_lines_current_string"
 }
 
 __blscd_f_list_file()
