@@ -24,7 +24,7 @@
 
 # -- FUNCTIONS.
 
-__blscd_f_version() { echo "0.1.1.13" ; }
+__blscd_f_version() { echo "0.1.1.14" ; }
 
 __blscd_f_help()
 {
@@ -1150,6 +1150,7 @@ command stty -echo
 #trap 'printf "$_blscd_tput_ealt"' EXIT
 builtin trap '__blscd_p_set_resize 1;builtin printf "${_blscd_tput_cup_99999_0}${_blscd_tput_eel}"' SIGWINCH
 builtin trap 'printf "$_blscd_tput_clear"' SIGINT
+builtin trap '' SIGALRM
 
 while builtin :
 do
