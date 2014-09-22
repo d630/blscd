@@ -1,7 +1,7 @@
-Explicitly required: `GNU bash >= 4.0`, `file`, `find`, `grep`, `ls`, `sort`, `stty` and `tput`
+Explicitly required: `GNU bash`(1) >= 4.0, `file`(1), `grep`(1), `ls`(1), `stty`(1) and `tput`(1)
 
-Optional: `less` and its scripts under `lessopen`; `w3m` and its patch `w3m-img`
+Optional: `less`(1) and its scripts under `lessopen`(1); `w3m`(1) and its patch `w3m-img`
 
-* Get `blscd`(1) with `$ git clone https://github.com/D630/blscd.git` or
-  download it on https://github.com/D630/blscd/tags
+* Get the newest version of `blscd`(1) with `$ git clone https://github.com/D630/blscd.git` or
+  download its last release on https://github.com/D630/blscd/tags
 * Copy the script `blscd` elsewhere into `<PATH>` and make it executable.

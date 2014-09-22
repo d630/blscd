@@ -1,4 +1,17 @@
-* 0.1.1.0:
+* 0.1.2.0 2014-09-22 CEST:
+- after exit all variables, arrays and functions will have been unset
+- implement file sizes and file indicators in the browser
+- currently, we do not need 'find' and 'sort' anymore
+- the status line shows the number of files in the highlighted directory
+- 'vi' is now fallback when using key <E>
+- we do not use 'SIGALRM' anymore
+- open the console with key <:>
+- the search mechanism is now also useable as console command named 'search'
+- search is now case insensitive
+- some fixes when using key </> (matching and marking)
+- some internal changes (renaming etc.)
+
+* 0.1.1.0 2014-09-12 22:28:40 CEST:
 - Open a forked shell in the current directory with key <S>
 - Edit the current file in '<EDITOR>' with key <E>
 - go to first match after search prompt
