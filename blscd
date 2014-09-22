@@ -24,7 +24,7 @@
 
 # -- FUNCTIONS.
 
-__blscd_f_version() { echo "0.1.2.2" ; }
+__blscd_f_version() { echo "0.1.2.3" ; }
 
 __blscd_f_help()
 {
@@ -702,8 +702,7 @@ __blscd_p_draw_screen_lines()
             1)
                 if [[ ($_blscd_reprint == _blscd_reprint && $_blscd_action_last != __blscd_p_move_col_2_line) || \
                         $_blscd_marking == _blscd_marking || \
-                        $_blscd_search_pattern || \
-                        ${#_blscd_files_col_2_array_mark_indexes[@]} -eq 0 ]]
+                        $_blscd_search_pattern ]]
                 then
                     builtin printf "$_blscd_tput_home"
                     [[ $_blscd_block == _blscd_block ]] && builtin printf "$_blscd_tput_eel"
