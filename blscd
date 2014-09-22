@@ -24,7 +24,7 @@
 
 # -- FUNCTIONS.
 
-__blscd_f_version() { echo "0.1.2.1" ; }
+__blscd_f_version() { echo "0.1.2.2" ; }
 
 __blscd_f_help()
 {
@@ -862,7 +862,7 @@ __blscd_p_mark_go_up()
 {
     declare -i i=
 
-    if [[ ${_blscd_files_col_2_array_mark_indexes[@]} ]]
+    if [[ ${#_blscd_files_col_2_array_mark_indexes[@]} -gt 0 ]]
     then
         for (( i=${#_blscd_files_col_2_array_mark_indexes[@]}-1 ; i >= 0 ; i--))
         do
