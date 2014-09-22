@@ -24,7 +24,7 @@
 
 # -- FUNCTIONS.
 
-__blscd_f_version() { echo "0.1.2.3" ; }
+__blscd_f_version() { echo "0.1.2.4" ; }
 
 __blscd_f_help()
 {
@@ -853,7 +853,8 @@ __blscd_p_mark_go_down()
             }
         done
     else
-        __blscd_p_search_marking_non
+        _blscd_search_pattern=
+        _blscd_files_col_2_array_mark_indexes=()
     fi
 }
 
@@ -872,7 +873,8 @@ __blscd_p_mark_go_up()
             }
         done
     else
-        __blscd_p_search_marking_non
+        _blscd_search_pattern=
+        _blscd_files_col_2_array_mark_indexes=()
     fi
 }
 
