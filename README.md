@@ -1,4 +1,4 @@
-## blscd v0.1.1.14 [GNU GPLv3]
+## blscd v0.1.1.15 [GNU GPLv3]
 
 `blscd`(1) is a simple [ranger](http://ranger.nongnu.org/)-like file browser/navigator for the command line. Currently, you may browse your file system and search and open files without many features. `blscd`(1) is written in `GNU bash` and has been tested with `xterm`(1), `urxvt`(1) and the virtual console on `Debian GNU/Linux`.
 
@@ -14,7 +14,7 @@ Optional: `less`(1) and its scripts under `lessopen`(1); `w3m`(1) and its patch 
   download its last release on https://github.com/D630/blscd/tags
 * Copy the script `blscd` elsewhere into `<PATH>` and make it executable.
 
-### Usage
+### Help
 
 ```
 usage: [source] blscd [-v | --version | -h | --help]
@@ -50,10 +50,12 @@ usage: [source] blscd [-v | --version | -h | --help]
       l     [ RIGHTARROW ]  Move right
       m                     Go to next match
       n                     Go to previous match
+      :                     Open the console
       q                     Quit
       ^R                    Reload everything
       S                     Fork a shell in the current directory
-      /                     Search for files in the current directory[1]
+      /                     Search for files in the current directory
+                            (like console command 'search')
       SPACE                 Toggle the mark-status of a file
       u                     Move five lines up
       U                     Move ten lines up
@@ -69,10 +71,15 @@ usage: [source] blscd [-v | --version | -h | --help]
       =                     File is a socket
       *                     File is a regular file and is executable
 
-      [1] During line editing in the search prompt you may use your
-          configured Readline key bindings, just as well the other
-          features of it; 'read -e' obtains the line in an interactive
-          shell. The tool is 'grep', and the regextype is 'posix-egrep'.
+    Console Commands
+      During line editing in the console you may use your configured
+      Readline key bindings, just as well the other features of it
+      ('read -e' obtains the line in an interactive shell).
+
+      search '<PATTERN>'    Search for files in the current directory,
+                            that match the given (case insensitive)
+                            regular expression pattern (regextype is
+                            'posix-egrep')
 ```
 
 ### Notes

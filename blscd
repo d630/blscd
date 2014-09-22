@@ -24,7 +24,7 @@
 
 # -- FUNCTIONS.
 
-__blscd_f_version() { echo "0.1.1.14" ; }
+__blscd_f_version() { echo "0.1.1.15" ; }
 
 __blscd_f_help()
 {
@@ -61,10 +61,12 @@ __blscd_f_help()
       l     [ RIGHTARROW ]  Move right
       m                     Go to next match
       n                     Go to previous match
+      :                     Open the console
       q                     Quit
       ^R                    Reload everything
+      /                     Search for files in the current directory
+                            (like console command 'search')
       S                     Fork a shell in the current directory
-      /                     Search for files in the current directory[1]
       SPACE                 Toggle the mark-status of a file
       u                     Move five lines up
       U                     Move ten lines up
@@ -80,10 +82,15 @@ __blscd_f_help()
       =                     File is a socket
       *                     File is a regular file and is executable
 
-      [1] During line editing in the search prompt you may use your
-          configured Readline key bindings, just as well the other
-          features of it; 'read -e' obtains the line in an interactive
-          shell. The tool is 'grep', and the regextype is 'posix-egrep'.
+    Console Commands
+      During line editing in the console you may use your configured
+      Readline key bindings, just as well the other features of it
+      ('read -e' obtains the line in an interactive shell).
+
+      search '<PATTERN>'    Search for files in the current directory,
+                            that match the given (case insensitive)
+                            regular expression pattern (regextype is
+                            'posix-egrep')
 "
 }
 
@@ -187,11 +194,27 @@ __blscd_p_build_array_mark_search()
     do
         [[ $REPLY =~ ^[0-9]*:.*$ ]] &&
                 _blscd_data[mark ${_blscd_dir_col_1_string}/${REPLY#*:}]=marked && \
+                _blscd_data[search ${_blscd_dir_col_1_string}/${REPLY#*:}]=$REPLY && \
                 _blscd_files_col_2_array_mark_indexes+=(${REPLY%%:*})
-    done < <(builtin printf '%s\n' "${_blscd_files_col_2_array[@]}" | command egrep -n -C "${#_blscd_files_col_2_array[@]}" -e "$_blscd_search_pattern")
+    done < <(builtin printf '%s\n' "${_blscd_files_col_2_array[@]}" | command egrep -i -n -C "${#_blscd_files_col_2_array[@]}" -e "$_blscd_search_pattern")
 
     __blscd_p_mark_screen_lines_prepare
     __blscd_p_set_marking_number
+}
+
+__blscd_p_build_array_mark_search_update()
+{
+    _blscd_files_col_2_array_mark_indexes=()
+
+    builtin declare i=
+
+    for i in "${!_blscd_data[@]}"
+    do
+        [[ $i =~ ^search..*$ ]] && \
+            _blscd_files_col_2_array_mark_indexes+=(${_blscd_data[$i]%%:*})
+    done
+
+    __blscd_p_mark_screen_lines_prepare
 }
 
 __blscd_p_build_array_mark_update()
@@ -331,6 +354,7 @@ __blscd_p_declare_set()
     builtin declare -g \
         _blscd_action_last= \
         _blscd_block= \
+        _blscd_console_command_name= \
         _blscd_dir_col_1_string=$PWD \
         _blscd_dir_last= \
         _blscd_input= \
@@ -409,6 +433,7 @@ __blscd_p_declare_unset()
     builtin unset -v \
         _blscd_action_last \
         _blscd_block \
+        _blscd_console_command_name \
         _blscd_cursor \
         _blscd_data \
         _blscd_dir_col_1_string \
@@ -480,6 +505,7 @@ __blscd_p_declare_unset()
             __blscd_p_build_array_ini \
             __blscd_p_build_array_ini_do \
             __blscd_p_build_array_mark_search \
+            __blscd_p_build_array_mark_search_update \
             __blscd_p_build_array_mark_update \
             __blscd_p_build_array_update \
             __blscd_p_build_col \
@@ -499,6 +525,7 @@ __blscd_p_declare_unset()
             __blscd_p_move_dir_down \
             __blscd_p_move_dir_up \
             __blscd_p_on_exit \
+            __blscd_p_open_console \
             __blscd_p_open_file \
             __blscd_p_open_shell \
             __blscd_p_reload \
@@ -674,7 +701,9 @@ __blscd_p_draw_screen_lines()
         case $j in
             1)
                 if [[ ($_blscd_reprint == _blscd_reprint && $_blscd_action_last != __blscd_p_move_col_2_line) || \
-                        $_blscd_search_pattern || $_blscd_marking == _blscd_marking ]]
+                        $_blscd_marking == _blscd_marking || \
+                        $_blscd_search_pattern || \
+                        ${#_blscd_files_col_2_array_mark_indexes[@]} -eq 0 ]]
                 then
                     builtin printf "$_blscd_tput_home"
                     [[ $_blscd_block == _blscd_block ]] && builtin printf "$_blscd_tput_eel"
@@ -840,18 +869,23 @@ __blscd_p_mark_go_up()
 
 __blscd_p_mark_screen_lines_all()
 {
+    builtin declare -i counter=0
+
     while builtin read -r
     do
         if [[ ${_blscd_data[mark ${_blscd_dir_col_1_string}/${REPLY}]} == marked ]]
         then
             _blscd_data[mark ${_blscd_dir_col_1_string}/${REPLY}]=unmarked
+            [[ ${_blscd_data[search ${_blscd_dir_col_1_string}/${REPLY}]} ]] && \
+                builtin unset -v "_blscd_data[search ${_blscd_dir_col_1_string}/${REPLY}]" && \
+                ((++counter))
         elif [[ ${_blscd_data[mark ${_blscd_dir_col_1_string}/${REPLY}]} == unmarked ]]
         then
             _blscd_data[mark ${_blscd_dir_col_1_string}/${REPLY}]=marked
         fi
     done < <(builtin printf '%s\n' "${_blscd_files_col_2_array[@]}")
 
-    #__blscd_p_mark_screen_lines_prepare
+    ((counter > 0)) && __blscd_p_build_array_mark_search_update
     __blscd_p_set_marking_number
 }
 
@@ -863,7 +897,8 @@ __blscd_p_mark_screen_lines_all_unmark()
     do
         [[ $i =~ ^mark..*$ ]] && \
             [[ ${_blscd_data[$i]} == marked ]] && \
-            _blscd_data[$i]=unmarked
+            _blscd_data[$i]=unmarked && \
+            builtin unset -v "_blscd_data[search ${i%% *}]"
     done
 }
 
@@ -871,12 +906,15 @@ __blscd_p_mark_screen_lines_current()
 {
     if [[ ${_blscd_data[mark ${_blscd_dir_col_1_string}/${_blscd_screen_lines_current_string}]} == marked ]]
     then
-         _blscd_data[mark ${_blscd_dir_col_1_string}/${_blscd_screen_lines_current_string}]=unmarked
+        _blscd_data[mark ${_blscd_dir_col_1_string}/${_blscd_screen_lines_current_string}]=unmarked
+        [[ ${_blscd_data[search ${_blscd_dir_col_1_string}/${_blscd_screen_lines_current_string}]} ]] && \
+            builtin unset -v "_blscd_data[search ${_blscd_dir_col_1_string}/${_blscd_screen_lines_current_string}]" && \
+            __blscd_p_build_array_mark_search_update
     elif [[ ${_blscd_data[mark ${_blscd_dir_col_1_string}/${_blscd_screen_lines_current_string}]} == unmarked ]]
     then
         _blscd_data[mark ${_blscd_dir_col_1_string}/${_blscd_screen_lines_current_string}]=marked
     fi
-    #__blscd_p_mark_screen_lines_prepare
+
     __blscd_p_set_marking_number
 }
 
@@ -1037,6 +1075,37 @@ __blscd_p_on_exit()
     __blscd_p_declare_unset
 }
 
+__blscd_p_open_console()
+{
+    builtin declare console_command_arguments=
+
+    builtin printf "$_blscd_tput_cup_99999_0"
+    command stty $_blscd_saved_stty
+    builtin read -e -p ":" -i \
+            "${_blscd_console_command_name:+${_blscd_console_command_name} ${_blscd_search_pattern}}" \
+            _blscd_console_command_name \
+            console_command_arguments
+    command stty -echo
+
+    if [[ $console_command_arguments ]]
+    then
+        case $_blscd_console_command_name in
+            search)
+                __blscd_p_search
+                ;;
+            *)
+                __blscd_p_set_action_last
+                __blscd_p_set_resize 1
+                ;;
+        esac
+    else
+        __blscd_p_set_action_last
+        __blscd_p_set_resize 1
+    fi
+
+    _blscd_console_command_name=
+}
+
 __blscd_p_open_file()
 {
     case $(command file --mime-type -bL "$1") in
@@ -1076,10 +1145,11 @@ __blscd_p_search()
 {
     __blscd_p_set_action_last
     _blscd_block=
-    builtin printf "$_blscd_tput_cup_99999_0"
-    command stty $_blscd_saved_stty
-    builtin read -e -p "/" -i "$_blscd_search_pattern" _blscd_search_pattern
-    command stty -echo
+    _blscd_search_pattern=$console_command_arguments
+    __blscd_p_set_resize 1
+    __blscd_p_move_col_2_line -9999999999
+    __blscd_p_draw_screen_check
+    __blscd_p_move_col_2_line "$((${_blscd_files_col_2_array_mark_indexes[0]} - 1))"
 }
 
 __blscd_p_search_marking_non()
@@ -1262,14 +1332,6 @@ do
             esac
             __blscd_p_set_resize 1
             ;;
-        /)
-            builtin printf "${_blscd_tput_show}${_blscd_tput_am_on}"
-            __blscd_p_search
-            __blscd_p_set_resize 1
-            __blscd_p_move_col_2_line -9999999999
-            __blscd_p_draw_screen_check
-            __blscd_p_move_col_2_line "$((${_blscd_files_col_2_array_mark_indexes[0]} - 1))"
-            ;;
         n)
             __blscd_p_mark_go_down
             ;;
@@ -1293,6 +1355,15 @@ do
             __blscd_p_open_shell
             builtin printf "$_blscd_tput_alt"
             __blscd_p_set_resize 1
+            ;;
+        :)
+            builtin printf "${_blscd_tput_show}${_blscd_tput_am_on}"
+            __blscd_p_open_console
+            ;;
+        /)
+            builtin printf "${_blscd_tput_show}${_blscd_tput_am_on}"
+            _blscd_console_command_name=search
+            __blscd_p_open_console
             ;;
         q)
             __blscd_p_reload
