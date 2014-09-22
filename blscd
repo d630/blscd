@@ -24,7 +24,7 @@
 
 # -- FUNCTIONS.
 
-__blscd_f_version() { echo "0.1.2.0" ; }
+__blscd_f_version() { echo "0.1.2.1" ; }
 
 __blscd_f_help()
 {
@@ -843,28 +843,38 @@ __blscd_p_mark_go_down()
 {
     builtin declare -i i=
 
-    for i in "${_blscd_files_col_2_array_mark_indexes[@]}"
-    do
-        ((i > _blscd_index + _blscd_cursor)) &&
-        {
-            __blscd_p_move_col_2_line "$((i - _blscd_index - _blscd_cursor))"
-            builtin break
-        }
-    done
+    if [[ ${_blscd_files_col_2_array_mark_indexes[@]} ]]
+    then
+        for i in "${_blscd_files_col_2_array_mark_indexes[@]}"
+        do
+            ((i > _blscd_index + _blscd_cursor)) &&
+            {
+                __blscd_p_move_col_2_line "$((i - _blscd_index - _blscd_cursor))"
+                builtin break
+            }
+        done
+    else
+        __blscd_p_search_marking_non
+    fi
 }
 
 __blscd_p_mark_go_up()
 {
     declare -i i=
 
-    for (( i=${#_blscd_files_col_2_array_mark_indexes[@]}-1 ; i >= 0 ; i--))
-    do
-        ((${_blscd_files_col_2_array_mark_indexes[$i]} < _blscd_index + _blscd_cursor)) &&
-        {
-            __blscd_p_move_col_2_line "-$((_blscd_cursor + _blscd_index - ${_blscd_files_col_2_array_mark_indexes[$i]}))"
-            builtin break
-        }
-    done
+    if [[ ${_blscd_files_col_2_array_mark_indexes[@]} ]]
+    then
+        for (( i=${#_blscd_files_col_2_array_mark_indexes[@]}-1 ; i >= 0 ; i--))
+        do
+            ((${_blscd_files_col_2_array_mark_indexes[$i]} < _blscd_index + _blscd_cursor)) &&
+            {
+                __blscd_p_move_col_2_line "-$((_blscd_cursor + _blscd_index - ${_blscd_files_col_2_array_mark_indexes[$i]}))"
+                builtin break
+            }
+        done
+    else
+        __blscd_p_search_marking_non
+    fi
 }
 
 __blscd_p_mark_screen_lines_all()
