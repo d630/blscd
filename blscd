@@ -24,7 +24,7 @@
 
 # -- FUNCTIONS.
 
-__blscd_f_version() { echo "0.1.2.9" ; }
+__blscd_f_version() { echo "0.1.2.10" ; }
 
 __blscd_f_help()
 {
@@ -1246,6 +1246,7 @@ __blscd_f_order_num_asc()
 __blscd_p_reload()
 {
     __blscd_p_search_marking_non
+    _blscd_files_col_2_array_time=()
     _blscd_redraw_number=0
     builtin unset -v _blscd_data
     builtin declare -gA _blscd_data
