@@ -24,7 +24,7 @@
 
 # -- FUNCTIONS.
 
-__blscd_f_version() { echo "0.1.2.7" ; }
+__blscd_f_version() { echo "0.1.2.8" ; }
 
 __blscd_f_help()
 {
@@ -269,11 +269,11 @@ __blscd_p_build_array_time()
     builtin declare i=
 
     builtin mapfile -t _blscd_files_col_2_array_time \
-        < <(__blscd_f_order_num_asc "$(for i in "${!_blscd_data[@]}"
+        < <(for i in "${!_blscd_data[@]}"
             do
                 [[ $i =~ ^time..*$ ]] && \
                     builtin printf '%d000%d\n' "${_blscd_data[$i]}" "${_blscd_data[index ${i#* }]}"
-            done)")
+            done | sort -n)
 }
 
 __blscd_p_build_array_update()
