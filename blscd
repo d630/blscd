@@ -24,7 +24,7 @@
 
 # -- FUNCTIONS.
 
-__blscd_f_version() { echo "0.1.2.10" ; }
+__blscd_f_version() { echo "0.1.2.11" ; }
 
 __blscd_f_help()
 {
@@ -1265,6 +1265,7 @@ __blscd_p_search()
 
 __blscd_p_search_marking_non()
 {
+    __blscd_p_set_action_last
     _blscd_search_pattern=
     _blscd_block=
     _blscd_marking=
