@@ -24,7 +24,7 @@
 
 # -- FUNCTIONS.
 
-__blscd_f_version() { echo "0.1.2.8" ; }
+__blscd_f_version() { echo "0.1.2.9" ; }
 
 __blscd_f_help()
 {
@@ -1090,6 +1090,8 @@ __blscd_p_move_col_2_line_time_newest()
     elif ((j > (_blscd_cursor + _blscd_index)))
     then
         __blscd_p_move_col_2_line "$((j - _blscd_index - _blscd_cursor))"
+    else
+        __blscd_p_move_col_2_line 0
     fi
 }
 
@@ -1120,6 +1122,8 @@ __blscd_p_move_col_2_line_time_oldest()
     elif ((j > (_blscd_cursor + _blscd_index)))
     then
         __blscd_p_move_col_2_line "$((j - _blscd_index - _blscd_cursor))"
+    else
+        __blscd_p_move_col_2_line 0
     fi
 }
 
