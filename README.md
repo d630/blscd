@@ -49,8 +49,7 @@ usage: [source] blscd [-v | --version | -h | --help]
       ^L                    Redraw the screen
       l     [ RIGHTARROW ]  Move right
       n                     Go to next file. By default, go to newest
-                            file in the directory; but after 'search' go
-                            to next match relative to current line
+                            file; but after 'search' go to next match
       N                     Go to previous file
       :                     Open the console
       q                     Quit
