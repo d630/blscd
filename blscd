@@ -24,7 +24,7 @@
 
 # -- FUNCTIONS.
 
-__blscd_f_version() { echo "0.1.2.6" ; }
+__blscd_f_version() { echo "0.1.2.7" ; }
 
 __blscd_f_help()
 {
@@ -59,10 +59,10 @@ __blscd_f_help()
       k     [ UPARROW ]     Move up
       ^L                    Redraw the screen
       l     [ RIGHTARROW ]  Move right
-      m                     Go to next file. By default, go to oldest
-                            file in the directory; but after "search" go
+      n                     Go to next file. By default, go to newest
+                            file in the directory; but after 'search' go
                             to next match relative to current line
-      n                     Go to previous file
+      N                     Go to previous file
       :                     Open the console
       q                     Quit
       ^R                    Reload everything
@@ -1450,7 +1450,7 @@ do
                 __blscd_p_move_col_2_line_time_newest
             fi
             ;;
-        m)
+        N)
             if ((${#_blscd_files_col_2_array_mark_indexes[@]} !=0))
             then
                 __blscd_p_mark_go_up
