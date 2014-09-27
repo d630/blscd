@@ -1,4 +1,8 @@
-* 0.1.2.0 2014-09-22 CEST:
+* 0.1.2.11 So 28. Sep CEST 2014:
+- replace key 'm' with 'N': By default, go to newest/oldest file
+- some fixes
+
+* 0.1.2.0 Mon Sep 22 15:53:30 2014 +0200:
 - after exit all variables, arrays and functions will have been unset
 - implement file sizes and file indicators in the browser
 - currently, we do not need 'find' and 'sort' anymore
@@ -11,7 +15,7 @@
 - some fixes when using key </> (matching and marking)
 - some internal changes (renaming etc.)
 
-* 0.1.1.0 2014-09-12 22:28:40 CEST:
+* 0.1.1.0 Fri Sep 12 20:32:55 2014 +0200:
 - Open a forked shell in the current directory with key <S>
 - Edit the current file in '<EDITOR>' with key <E>
 - go to first match after search prompt
