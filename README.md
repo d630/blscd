@@ -1,4 +1,4 @@
-## blscd v0.1.2.11 [GNU GPLv3]
+## blscd v0.1.2.12 [GNU GPLv3]
 
 `blscd`(1) is a simple [ranger](http://ranger.nongnu.org/)-like file browser/navigator for the command line. Currently, you may browse your file system and search and open files without many features. `blscd`(1) is written in `GNU bash` and has been tested with `xterm`(1), `urxvt`(1) and the virtual console on `Debian GNU/Linux`.
 
@@ -6,7 +6,7 @@
 
 ### Install
 
-Explicitly required: `GNU bash`(1) >= 4.0, `file`(1), `grep`(1), `ls`(1), `sort`(1), `stty`(1) and `tput`(1)
+Explicitly required: `GNU bash`(1) >= 4.0, `file`(1), `find`(1), `grep`(1), `ls`(1), `paste`(1), `sort`(1), `stty`(1) and `tput`(1)
 
 Optional: `less`(1) and its scripts under `lessopen`(1); `w3m`(1) and its patch `w3m-img`
 
@@ -66,13 +66,14 @@ usage: [source] blscd [-v | --version | -h | --help]
     File type indicators
       b                     File is a block device
       c                     File is a character device
-      -                     File is a regular file
-      @                     File is a symbolic link
-      |                     File is a named pipe
-      =                     File is a socket
-      *                     File is a regular file and is executable
+      D                     File is a door
+      f                     File is a regular file
+      l                     File is a symbolic link
+      p                     File is a named pipe
+      s                     File is a socket
+      x                     File is a regular file and is executable
 
-    Console Commands
+    Console commands
       During line editing in the console you may use your configured
       Readline key bindings, just as well the other features of it
       ('read -e' obtains the line in an interactive shell).
