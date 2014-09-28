@@ -24,7 +24,7 @@
 
 # -- FUNCTIONS.
 
-__blscd_f_version() { echo "0.1.2.12" ; }
+__blscd_f_version() { echo "0.1.2.13" ; }
 
 __blscd_f_help()
 {
@@ -253,8 +253,8 @@ __blscd_p_build_array_mark_update()
             _blscd_data[type ${_blscd_dir_col_1_string}/${basename}]=x
         fi
     done < <(command paste -d ' ' \
-            <(printf '%s\n' "${_blscd_data[find ${_blscd_dir_col_1_string}]}") \
-            <(printf '%s\n' "${_blscd_data[ls ${_blscd_dir_col_1_string}]}"))
+            <(builtin printf '%s\n' "${_blscd_data[find ${_blscd_dir_col_1_string}]}") \
+            <(builtin printf '%s\n' "${_blscd_data[ls ${_blscd_dir_col_1_string}]}"))
 }
 
 __blscd_p_build_array_time()
@@ -266,7 +266,7 @@ __blscd_p_build_array_time()
             do
                 [[ $i =~ ^mtime..*$ ]] && \
                     builtin printf '%d000%d\n' "${_blscd_data[$i]}" "${_blscd_data[index ${i#* }]}"
-            done | sort -n)
+            done | command sort -n)
 }
 
 __blscd_p_build_array_update()
