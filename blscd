@@ -24,7 +24,7 @@
 
 # -- FUNCTIONS.
 
-__blscd_f_version() { echo "0.1.2.13" ; }
+__blscd_f_version() { echo "0.1.2.14" ; }
 
 __blscd_f_help()
 {
@@ -170,7 +170,7 @@ __blscd_p_build_array_ini()
                 --indicator-style=none -b --quoting-style=shell-always "$dir")
         _blscd_data[ls ${dir}]=${_blscd_data[ls ${dir}]#*$'\n'}
         _blscd_data[find ${dir}]=$(command find -L "$dir" -mindepth 1 \
-                -maxdepth 1 -printf '%y %A@ %C@\n')
+                -maxdepth 1 -printf "'%P' %y %A@ %C@\n" | command sort)
         _blscd_data[mark ${dir}]=unmarked
         if [[ ${dir%/*} ]]
         then
@@ -185,7 +185,7 @@ __blscd_p_build_array_ini()
             --indicator-style=none -b --quoting-style=shell-always /)
     _blscd_data[ls /]=${_blscd_data[ls /]#*$'\n'}
     _blscd_data[find /]=$(command find -L / -mindepth 1 \
-            -maxdepth 1 -printf '%y %A@ %C@\n')
+            -maxdepth 1 -printf "'%P' %y %A@ %C@\n" | command sort)
     _blscd_data[mark /]=unmarked
 
     __blscd_p_build_array_ini_do "$_blscd_dir_col_1_string"
@@ -226,7 +226,6 @@ __blscd_p_build_array_mark_search_update()
 __blscd_p_build_array_mark_update()
 {
     builtin declare \
-        basename= \
         s1= \
         s2=
 
@@ -235,22 +234,21 @@ __blscd_p_build_array_mark_update()
     while IFS=\' builtin read -r
     do
         ((++i))
-        IFS=\' builtin read -r s1 s2 <<<"$REPLY"
+        IFS=\' builtin read -r _ _ s1 s2 <<< "$REPLY"
         builtin set -- $s1
-        basename=${s2//\'/}
-        _blscd_data[atime ${_blscd_dir_col_1_string}/${basename}]=$2
-        _blscd_data[ctime ${_blscd_dir_col_1_string}/${basename}]=$3
-        _blscd_data[index ${_blscd_dir_col_1_string}/${basename}]=$i
-        _blscd_data[mark ${_blscd_dir_col_1_string}/${basename}]=unmarked
-        _blscd_data[mtime ${_blscd_dir_col_1_string}/${basename}]=$7
-        _blscd_data[size ${_blscd_dir_col_1_string}/${basename}]=$6
-        _blscd_data[type ${_blscd_dir_col_1_string}/${basename}]=$1
-        if [[ -L $basename ]]
+        _blscd_data[atime ${_blscd_dir_col_1_string}/${s2}]=$2
+        _blscd_data[ctime ${_blscd_dir_col_1_string}/${s2}]=$3
+        _blscd_data[index ${_blscd_dir_col_1_string}/${s2}]=$i
+        _blscd_data[mark ${_blscd_dir_col_1_string}/${s2}]=unmarked
+        _blscd_data[mtime ${_blscd_dir_col_1_string}/${s2}]=$7
+        _blscd_data[size ${_blscd_dir_col_1_string}/${s2}]=$6
+        _blscd_data[type ${_blscd_dir_col_1_string}/${s2}]=$1
+        if [[ -L ${_blscd_dir_col_1_string}/${s2} ]]
         then
-            _blscd_data[type ${_blscd_dir_col_1_string}/${basename}]=l
-        elif [[ -f $basename && -x $basename ]]
+            _blscd_data[type ${_blscd_dir_col_1_string}/${s2}]=l
+        elif [[ -f ${_blscd_dir_col_1_string}/${s2} && -x ${_blscd_dir_col_1_string}/${s2} ]]
         then
-            _blscd_data[type ${_blscd_dir_col_1_string}/${basename}]=x
+            _blscd_data[type ${_blscd_dir_col_1_string}/${s2}]=x
         fi
     done < <(command paste -d ' ' \
             <(builtin printf '%s\n' "${_blscd_data[find ${_blscd_dir_col_1_string}]}") \
@@ -277,7 +275,7 @@ __blscd_p_build_array_update()
             --quoting-style=shell-always "$_blscd_dir_col_1_string")
     _blscd_data[ls ${_blscd_dir_col_1_string}]=${_blscd_data[ls ${_blscd_dir_col_1_string}]#*$'\n'}
     _blscd_data[find ${_blscd_dir_col_1_string}]=$(command find -L "$_blscd_dir_col_1_string" \
-            -mindepth 1 -maxdepth 1 -printf '%y %A@ %C@\n')
+            -mindepth 1 -maxdepth 1 -printf "'%P' %y %A@ %C@\n" | command sort)
     __blscd_p_build_array_mark_update
 }
 
