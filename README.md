@@ -1,12 +1,12 @@
-## blscd v0.1.2.14 [GNU GPLv3]
+## blscd v0.1.2.15 [GNU GPLv3]
 
-`blscd`(1) is a simple [ranger](http://ranger.nongnu.org/)-like file browser/navigator for the command line. Currently, you may browse your file system and search and open files without many features. `blscd`(1) is written in `GNU bash` and has been tested with `xterm`(1), `urxvt`(1) and the virtual console on `Debian GNU/Linux`.
+`blscd`(1) is a simple [ranger](http://ranger.nongnu.org/)-like file browser/navigator for the command line. Currently, you may only browse your file system and search and open files without many features. `blscd`(1) is written in `GNU bash` and has been tested with `xterm`(1), `urxvt`(1) and the virtual console on `Debian GNU/Linux`.
 
 ![](https://raw.githubusercontent.com/D630/blscd/master/doc/blscd.png)
 
 ### Install
 
-Explicitly required: `GNU bash`(1) >= 4.0, `file`(1), `find`(1), `grep`(1), `ls`(1), `paste`(1), `sort`(1), `stty`(1) and `tput`(1)
+Explicitly required: `GNU bash`(1) >= 4.0, `file`(1), `grep`(1), `ls`(1), `paste`(1), `stat(1)`, `sort`(1), `stty`(1) and `tput`(1)
 
 Optional: `less`(1) and its scripts under `lessopen`(1); `w3m`(1) and its patch `w3m-img`
 
@@ -64,14 +64,19 @@ usage: [source] blscd [-v | --version | -h | --help]
       vv                    Toggle the mark-status of all files
 
     File type indicators
-      b                     File is a block device
-      c                     File is a character device
-      D                     File is a door
-      f                     File is a regular file
-      l                     File is a symbolic link
-      p                     File is a named pipe
-      s                     File is a socket
-      x                     File is a regular file and is executable
+      -                     regular file
+      ?                     some other file type
+      C                     high performance ('contiguous data') file
+      D                     door (Solaris 2.5 and up)
+      M                     off-line ('migrated') file (Cray DMF)
+      P                     port (Solaris 10 and up)
+      b                     block special file
+      c                     character special file
+      d                     directory
+      l                     symbolic link
+      n                     network special file (HP-UX)
+      p                     FIFO (named pipe)
+      s                     socket
 
     Console commands
       During line editing in the console you may use your configured
@@ -87,7 +92,7 @@ usage: [source] blscd [-v | --version | -h | --help]
 ### Notes
 
 - To use different file handlers, have a look at the functions called `__blscd_p_open_file()` and `__blscd_p_declare_set()`. Currently, the last one is also the place, where you need to edit the color configuration.
-- In this version file names may not contain apostrophes resp. single quotes (').
+- In this version file names may not contain quotation marks/double quotes (\") and nongraphic characters like newlines etc.
 
 ### To do
 
