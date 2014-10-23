@@ -24,7 +24,7 @@
 
 # -- FUNCTIONS.
 
-__blscd_f_version() { echo "0.1.2.15" ; }
+__blscd_f_version() { echo "0.1.2.16" ; }
 
 __blscd_f_help()
 {
