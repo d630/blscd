@@ -467,6 +467,7 @@ __blscd_p_declare_unset()
         _blscd_files_col_1_a_array_total \
         _blscd_files_col_1_a_array_total \
         _blscd_files_col_1_array \
+        _blscd_files_col_1_array_cursor_index \
         _blscd_files_col_1_array_total \
         _blscd_files_col_2_a_array \
         _blscd_files_col_2_array \
@@ -528,6 +529,7 @@ __blscd_p_declare_unset()
         __blscd_f_list_file \
         __blscd_f_order_num_asc \
         __blscd_f_version \
+        __blscd_main \
         __blscd_p_build_array \
         __blscd_p_build_array_ini \
         __blscd_p_build_array_ini_do \
@@ -1310,190 +1312,194 @@ __blscd_p_set_resize()
 
 # -- MAIN.
 
-# Simple.
-if [[ $1 =~ (-h|--help) ]]
-then
-    __blscd_f_help
-    builtin return 1 2>/dev/null
-elif [[ $1 =~ (-v|--version) ]]
-then
-    __blscd_f_version
-    builtin return 1 2>/dev/null
-fi
-(($? == 1)) && builtin exit 0
+__blscd_main()
+{
+    # Simple.
+    if [[ $1 =~ (-h|--help) ]]
+    then
+        __blscd_f_help
+        builtin return 0
+    elif [[ $1 =~ (-v|--version) ]]
+    then
+        __blscd_f_version
+        builtin return 0
+    fi
 
-# Global Declaration.
-__blscd_p_declare_set
+    # Global Declaration.
+    __blscd_p_declare_set
 
-# Go to the alternate screen and change the terminal enviroment.
-builtin printf "$_blscd_tput_alt"
-command stty -echo
+    # Go to the alternate screen and change the terminal enviroment.
+    builtin printf "$_blscd_tput_alt"
+    command stty -echo
 
-#trap 'printf "$_blscd_tput_ealt"' EXIT
-builtin trap \
-        '__blscd_p_set_resize 1;builtin printf "${_blscd_tput_cup_99999_0}${_blscd_tput_eel}"' SIGWINCH
-builtin trap 'printf "$_blscd_tput_clear"' SIGINT
-builtin trap '' SIGALRM
+    #trap 'printf "$_blscd_tput_ealt"' EXIT
+    builtin trap \
+            '__blscd_p_set_resize 1;builtin printf "${_blscd_tput_cup_99999_0}${_blscd_tput_eel}"' SIGWINCH
+    builtin trap 'printf "$_blscd_tput_clear"' SIGINT
+    builtin trap '' SIGALRM
 
-while builtin :
-do
-    builtin printf "${_blscd_tput_hide}${_blscd_tput_am_off}"
-    ((_blscd_redraw_number == 0)) && \
-        __blscd_p_build_array_ini
-    __blscd_p_draw_screen_check
-    builtin read -s -n 1 _blscd_input
-    builtin read -s -N 1 -t 0.0001 _blscd_k1
-    builtin read -s -N 1 -t 0.0001 _blscd_k2
-    builtin read -s -N 1 -t 0.0001 _blscd_k3
-    _blscd_input=${_blscd_input}${_blscd_k1}${_blscd_k2}${_blscd_k3}
-    case $_blscd_input in
-        j|$'\e[B')
-            __blscd_p_move_col_2_line 1
-            ;;
-        k|$'\e[A')
-            __blscd_p_move_col_2_line -1
-            ;;
-        h|$'\e[D')
-            __blscd_p_move_dir ..
-            ;;
-        l|$'\e[C')
-            __blscd_p_open_file "$_blscd_screen_lines_current_string"
-            builtin printf "$_blscd_tput_alt"
-            __blscd_p_set_resize 1
-            ;;
-        $'\x06'|$'\e[6~') # Ctrl+F <PAGE-DOWN>
-            __blscd_p_move_col_2_line "${_blscd_screen_lines_browser}"
-            ;;
-        $'\x02'|$'\e[5~') # Ctrl+B <PAGE-UP>
-             __blscd_p_move_col_2_line "-${_blscd_screen_lines_browser}"
-            ;;
-        $'\e[H') # <HOME>
-            __blscd_p_move_col_2_line -9999999999
-            ;;
-        G|$'\e[F') # <END>
-            __blscd_p_move_col_2_line 9999999999
-            ;;
-        J)
-            __blscd_p_move_col_2_line "$((_blscd_screen_lines_browser / 2))"
-            ;;
-        K)
-            __blscd_p_move_col_2_line "-$((_blscd_screen_lines_browser / 2))"
-            ;;
-        d)
-            __blscd_p_move_col_2_line 5
-            ;;
-        D)
-            __blscd_p_move_col_2_line 10
-            ;;
-        u)
-            __blscd_p_move_col_2_line -5
-            ;;
-        U)
-            __blscd_p_move_col_2_line -10
-            ;;
-        g)
-            builtin read -n 1 _blscd_input
-            case $_blscd_input in
-                g)
-                    __blscd_p_move_col_2_line -9999999999 ;;
-                h)
-                    __blscd_p_move_dir ~ ;;
-                e)
-                    __blscd_p_move_dir "/etc" ;;
-                u)
-                    __blscd_p_move_dir "/usr" ;;
-                d)
-                    __blscd_p_move_dir "/dev" ;;
-                l)
-                    __blscd_p_move_dir "/usr/lib" ;;
-                L)
-                    __blscd_p_move_dir "/var/log" ;;
-                o)
-                    __blscd_p_move_dir "/opt" ;;
-                v)
-                    __blscd_p_move_dir "/var" ;;
-                m)
-                    __blscd_p_move_dir "/media" ;;
-                M)
-                    __blscd_p_move_dir "/mnt" ;;
-                s)
-                    __blscd_p_move_dir "/srv" ;;
-                r|/)
-                    __blscd_p_move_dir / ;;
-                \?)
-                    __blscd_f_help | \
-                        command "${PAGER:-less}"
-                    builtin printf "$_blscd_tput_alt"
-                    __blscd_p_set_action_last
-                    __blscd_p_set_resize 1
-                    ;;
-            esac
-            ;;
-        "")
-            __blscd_p_mark_screen_lines_current
-            __blscd_p_set_resize 1
-            __blscd_p_move_col_2_line 1
-            ;;
-        v)
-            builtin read -n 1 _blscd_input
-            case $_blscd_input in
-                n)
-                    __blscd_p_mark_screen_lines_all_unmark
-                    __blscd_p_search_marking_non
-                    ;;
-                v)
-                    __blscd_p_mark_screen_lines_all
-                    ;;
-            esac
-            __blscd_p_set_resize 1
-            ;;
-        n)
-            if ((${#_blscd_files_col_2_array_mark_indexes[@]} !=0))
-            then
-                __blscd_p_mark_go_down
-            else
-                __blscd_p_move_col_2_line_time_newest
-            fi
-            ;;
-        N)
-            if ((${#_blscd_files_col_2_array_mark_indexes[@]} !=0))
-            then
-                __blscd_p_mark_go_up
-            else
-                __blscd_p_move_col_2_line_time_oldest
-            fi
-            ;;
-        $'\x12') # CTRl+R
-            __blscd_p_reload
-            ;&
-        $'\x0c') # CTRL+L
-            __blscd_p_set_resize 1
-            builtin printf "${_blscd_tput_cup_99999_0}${_blscd_tput_eel}"
-            ;;
-        E)
-            __blscd_p_edit_file
-            builtin printf "$_blscd_tput_alt"
-            __blscd_p_set_resize 1
-            ;;
-        S)
-            builtin printf "${_blscd_tput_show}${_blscd_tput_am_on}"
-            __blscd_p_open_shell
-            builtin printf "$_blscd_tput_alt"
-            __blscd_p_set_resize 1
-            ;;
-        :)
-            builtin printf "${_blscd_tput_show}${_blscd_tput_am_on}"
-            __blscd_p_open_console
-            ;;
-        /)
-            builtin printf "${_blscd_tput_show}${_blscd_tput_am_on}"
-            _blscd_console_command_name=search
-            __blscd_p_open_console
-            ;;
-        q)
-            __blscd_p_reload
-            __blscd_p_on_exit
-            builtin break
-            ;;
-    esac
-done
+    while builtin :
+    do
+        builtin printf "${_blscd_tput_hide}${_blscd_tput_am_off}"
+        ((_blscd_redraw_number == 0)) && \
+            __blscd_p_build_array_ini
+        __blscd_p_draw_screen_check
+        builtin read -s -n 1 _blscd_input
+        builtin read -s -N 1 -t 0.0001 _blscd_k1
+        builtin read -s -N 1 -t 0.0001 _blscd_k2
+        builtin read -s -N 1 -t 0.0001 _blscd_k3
+        _blscd_input=${_blscd_input}${_blscd_k1}${_blscd_k2}${_blscd_k3}
+        case $_blscd_input in
+            j|$'\e[B')
+                __blscd_p_move_col_2_line 1
+                ;;
+            k|$'\e[A')
+                __blscd_p_move_col_2_line -1
+                ;;
+            h|$'\e[D')
+                __blscd_p_move_dir ..
+                ;;
+            l|$'\e[C')
+                __blscd_p_open_file "$_blscd_screen_lines_current_string"
+                builtin printf "$_blscd_tput_alt"
+                __blscd_p_set_resize 1
+                ;;
+            $'\x06'|$'\e[6~') # Ctrl+F <PAGE-DOWN>
+                __blscd_p_move_col_2_line "${_blscd_screen_lines_browser}"
+                ;;
+            $'\x02'|$'\e[5~') # Ctrl+B <PAGE-UP>
+                 __blscd_p_move_col_2_line "-${_blscd_screen_lines_browser}"
+                ;;
+            $'\e[H') # <HOME>
+                __blscd_p_move_col_2_line -9999999999
+                ;;
+            G|$'\e[F') # <END>
+                __blscd_p_move_col_2_line 9999999999
+                ;;
+            J)
+                __blscd_p_move_col_2_line "$((_blscd_screen_lines_browser / 2))"
+                ;;
+            K)
+                __blscd_p_move_col_2_line "-$((_blscd_screen_lines_browser / 2))"
+                ;;
+            d)
+                __blscd_p_move_col_2_line 5
+                ;;
+            D)
+                __blscd_p_move_col_2_line 10
+                ;;
+            u)
+                __blscd_p_move_col_2_line -5
+                ;;
+            U)
+                __blscd_p_move_col_2_line -10
+                ;;
+            g)
+                builtin read -n 1 _blscd_input
+                case $_blscd_input in
+                    g)
+                        __blscd_p_move_col_2_line -9999999999 ;;
+                    h)
+                        __blscd_p_move_dir ~ ;;
+                    e)
+                        __blscd_p_move_dir "/etc" ;;
+                    u)
+                        __blscd_p_move_dir "/usr" ;;
+                    d)
+                        __blscd_p_move_dir "/dev" ;;
+                    l)
+                        __blscd_p_move_dir "/usr/lib" ;;
+                    L)
+                        __blscd_p_move_dir "/var/log" ;;
+                    o)
+                        __blscd_p_move_dir "/opt" ;;
+                    v)
+                        __blscd_p_move_dir "/var" ;;
+                    m)
+                        __blscd_p_move_dir "/media" ;;
+                    M)
+                        __blscd_p_move_dir "/mnt" ;;
+                    s)
+                        __blscd_p_move_dir "/srv" ;;
+                    r|/)
+                        __blscd_p_move_dir / ;;
+                    \?)
+                        __blscd_f_help | \
+                            command "${PAGER:-less}"
+                        builtin printf "$_blscd_tput_alt"
+                        __blscd_p_set_action_last
+                        __blscd_p_set_resize 1
+                        ;;
+                esac
+                ;;
+            "")
+                __blscd_p_mark_screen_lines_current
+                __blscd_p_set_resize 1
+                __blscd_p_move_col_2_line 1
+                ;;
+            v)
+                builtin read -n 1 _blscd_input
+                case $_blscd_input in
+                    n)
+                        __blscd_p_mark_screen_lines_all_unmark
+                        __blscd_p_search_marking_non
+                        ;;
+                    v)
+                        __blscd_p_mark_screen_lines_all
+                        ;;
+                esac
+                __blscd_p_set_resize 1
+                ;;
+            n)
+                if ((${#_blscd_files_col_2_array_mark_indexes[@]} !=0))
+                then
+                    __blscd_p_mark_go_down
+                else
+                    __blscd_p_move_col_2_line_time_newest
+                fi
+                ;;
+            N)
+                if ((${#_blscd_files_col_2_array_mark_indexes[@]} !=0))
+                then
+                    __blscd_p_mark_go_up
+                else
+                    __blscd_p_move_col_2_line_time_oldest
+                fi
+                ;;
+            $'\x12') # CTRl+R
+                __blscd_p_reload
+                ;&
+            $'\x0c') # CTRL+L
+                __blscd_p_set_resize 1
+                builtin printf "${_blscd_tput_cup_99999_0}${_blscd_tput_eel}"
+                ;;
+            E)
+                __blscd_p_edit_file
+                builtin printf "$_blscd_tput_alt"
+                __blscd_p_set_resize 1
+                ;;
+            S)
+                builtin printf "${_blscd_tput_show}${_blscd_tput_am_on}"
+                __blscd_p_open_shell
+                builtin printf "$_blscd_tput_alt"
+                __blscd_p_set_resize 1
+                ;;
+            :)
+                builtin printf "${_blscd_tput_show}${_blscd_tput_am_on}"
+                __blscd_p_open_console
+                ;;
+            /)
+                builtin printf "${_blscd_tput_show}${_blscd_tput_am_on}"
+                _blscd_console_command_name=search
+                __blscd_p_open_console
+                ;;
+            q)
+                __blscd_p_reload
+                __blscd_p_on_exit
+                builtin break
+                ;;
+        esac
+    done
+}
+
+__blscd_main "$@"
