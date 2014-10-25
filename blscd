@@ -239,7 +239,7 @@ __blscd_f_help()
 "
 }
 
-__blscd_f_version() { echo "0.1.2.18" ; }
+__blscd_f_version() { echo "0.1.2.19" ; }
 
 __blscd_main()
 {
@@ -1044,9 +1044,11 @@ __blscd_p_mark_screen_lines_all_unmark()
     do
         [[ $i =~ ^mark..*$ ]] && \
             [[ ${_blscd_data[$i]} == marked ]] && \
-            _blscd_data[$i]=unmarked && \
-            builtin unset -v "_blscd_data[search ${i%% *}]"
+            _blscd_data[$i]=unmarked
     done
+
+    _blscd_marking=
+    _blscd_marking_number=
 }
 
 __blscd_p_mark_screen_lines_current()
@@ -1300,6 +1302,8 @@ __blscd_p_open_shell()
 __blscd_p_reload()
 {
     __blscd_p_set_search_non
+    _blscd_marking=
+    _blscd_marking_number=
     _blscd_files_col_2_array_time=()
     _blscd_redraw_number=0
     builtin unset -v _blscd_data
@@ -1372,7 +1376,12 @@ __blscd_p_set_marking_number()
             ((++_blscd_marking_number))
     done
 
-    ((_blscd_marking_number != 0)) && _blscd_marking=_blscd_marking
+    if ((_blscd_marking_number == 0))
+    then
+        _blscd_marking=
+    else
+        _blscd_marking=_blscd_marking
+    fi
 }
 
 __blscd_p_set_resize()
