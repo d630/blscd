@@ -150,7 +150,7 @@ __blscd_f_draw_screen()
         screen_lines_browser_col_3_color_1=
         screen_lines_browser_col_3_color_reset=
         __blscd_p_draw_screen_lines 2
-        builtin printf "${screen_lines_browser_col_1_color_1}%-${screen_col_1_length}.${screen_col_1_length}s${screen_lines_browser_col_1_color_reset} ${screen_lines_browser_col_2_color_mark}${screen_lines_browser_col_2_color_1}%-${screen_col_2_length}.${screen_col_2_length}s%${screen_col_2_1_length}s%${screen_col_2_2_length}s${screen_lines_browser_col_2_color_reset} ${screen_lines_browser_col_3_color_1}%-${screen_col_3_length}.${screen_col_3_length}s${screen_lines_browser_col_3_color_reset}\n" " ${_blscd_files_col_1_a_array[$i]} " " ${screen_lines_browser_col_2_color_mark:+ }${_blscd_files_col_2_a_array[$i]}" " ${_blscd_data[type ${_blscd_dir_col_1_string}/${_blscd_files_col_2_a_array[$i]}]} " "${_blscd_data[size ${_blscd_dir_col_1_string}/${_blscd_files_col_2_a_array[$i]}]} " " ${_blscd_files_col_3_a_array[$i]} "
+        builtin printf "${screen_lines_browser_col_1_color_1}%-${screen_col_1_length}.${screen_col_1_length}s${screen_lines_browser_col_1_color_reset} ${screen_lines_browser_col_2_color_mark}${screen_lines_browser_col_2_color_1}%-${screen_col_2_length}.${screen_col_2_length}s%${screen_col_2_1_length}s%${screen_col_2_2_length}s${screen_lines_browser_col_2_color_reset} ${screen_lines_browser_col_3_color_1}%-${screen_col_3_length}.${screen_col_3_length}s${screen_lines_browser_col_3_color_reset}\n" " ${_blscd_files_col_1_a_array[$i]} " " ${screen_lines_browser_col_2_color_mark:+ }${_blscd_files_col_2_a_array[$i]} " "${_blscd_data[type ${_blscd_dir_col_1_string}/${_blscd_files_col_2_a_array[$i]}]} " "${_blscd_data[size ${_blscd_dir_col_1_string}/${_blscd_files_col_2_a_array[$i]}]} " " ${_blscd_files_col_3_a_array[$i]} "
     done
 
     # Print the statusbar.
@@ -239,7 +239,7 @@ __blscd_f_help()
 "
 }
 
-__blscd_f_version() { echo "0.1.2.19" ; }
+__blscd_f_version() { echo "0.1.2.20" ; }
 
 __blscd_main()
 {
