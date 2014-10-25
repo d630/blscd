@@ -169,10 +169,12 @@ __blscd_f_help()
     printf "usage: [source] blscd [-v | --version | -h | --help]
 
     Key bindings
-      /                     Search for files in the current directory (like console command 'search')
+      /                     Search for files in the current directory
+                            (like console command 'search')
       :                     Open the console
       D                     Move ten lines down
-      E                     Edit the current file in '<EDITOR>' (fallback: 'vi')
+      E                     Edit the current file in '<EDITOR>'
+                            (fallback: 'vi')
       G     [ END ]         Move to bottom
       J                     Move half page down
       K                     Move half page up
@@ -185,7 +187,8 @@ __blscd_f_help()
       ^L                    Redraw the screen
       ^R                    Reload everything
       d                     Move five lines down
-      g?                    Open this help in '<PAGER>' (fallback: 'less')
+      g?                    Open this help in '<PAGER>'
+                            (fallback: 'less')
       gL                    Move to /var/log
       gM                    Move to /mnt
       gd                    Move to /dev
@@ -203,19 +206,24 @@ __blscd_f_help()
       j     [ DOWNARROW ]   Move down
       k     [ UPARROW ]     Move up
       l     [ RIGHTARROW ]  Move right
-      n                     Go to next file. By default, go to newest file; but after 'search' go to next match
+      n                     Go to next file. By default, go to newest
+                            file; but after 'search' go to next match
       oA                    Sort by access time, oldest first
-      oB                    Sort by basename (LC_COLLATE=C.UTF-8), descend
+      oB                    Sort by basename (LC_COLLATE=C.UTF-8),
+                            descend
       oC                    Sort by change time, oldest first
       oM                    Sort by modification time, oldest first
-      oN                    Sort basenames naturally (LC_COLLATE=$LANG), descend
+      oN                    Sort basenames naturally (LC_COLLATE=$LANG),
+                            descend
       oS                    Sort by file size, smallest first
       oT                    Sort by type, descend
       oa                    Sort by access time, newest first
-      ob                    Sort by basename (LC_COLLATE=C.UTF-8), ascend
+      ob                    Sort by basename (LC_COLLATE=C.UTF-8),
+                            ascend
       oc                    Sort by change time, newest first
       om                    Sort by modification time, newest first
-      on                    Sort basenames naturally (LC_COLLATE=$LANG), ascend
+      on                    Sort basenames naturally (LC_COLLATE=$LANG),
+                            ascend
       or                    Reverse whatever the sorting method is
       os                    Sort by file size, largest first
       ot                    Sort by type, ascend
@@ -251,7 +259,7 @@ __blscd_f_help()
 "
 }
 
-__blscd_f_version() { echo "0.1.2.30" ; }
+__blscd_f_version() { echo "0.1.2.31" ; }
 
 __blscd_main()
 {
