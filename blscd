@@ -239,7 +239,7 @@ __blscd_f_help()
 "
 }
 
-__blscd_f_version() { echo "0.1.2.17" ; }
+__blscd_f_version() { echo "0.1.2.18" ; }
 
 __blscd_main()
 {
@@ -935,12 +935,12 @@ __blscd_p_draw_screen_lines()
                 {
                     if [[ ${_blscd_data[mark ${_blscd_dir_col_1_string}/${_blscd_files_col_2_a_array[$i]}]} == marked ]]
                     then
-                        screen_lines_browser_col_2_color_1="${_blscd_tput_bold}${_blscd_tput_black_f}${_blscd_tput_yellow_b}"
+                        screen_lines_browser_col_2_color_1=${_blscd_tput_bold}${_blscd_tput_black_f}${_blscd_tput_yellow_b}
                     else
-                        if [[ -d $_blscd_screen_lines_current_string ]]
+                        if [[ ${_blscd_data[type ${_blscd_dir_col_1_string}/${_blscd_screen_lines_current_string}]} =~ d ]]
                         then
                             screen_lines_browser_col_2_color_1=${_blscd_tput_bold}${_blscd_tput_black_f}${_blscd_tput_green_b}
-                        elif [[ -f $_blscd_screen_lines_current_string ]]
+                        elif [[ ${_blscd_data[type ${_blscd_dir_col_1_string}/${_blscd_screen_lines_current_string}]} =~ - ]]
                         then
                             screen_lines_browser_col_2_color_1=${_blscd_tput_bold}${_blscd_tput_black_f}${_blscd_tput_white_b}
                         else
@@ -965,7 +965,7 @@ __blscd_p_draw_screen_lines()
                 [[ $_blscd_marking == _blscd_marking && \
                         ${_blscd_data[mark ${_blscd_dir_col_1_string}/${_blscd_files_col_2_a_array[$i]}]} == marked ]] &&
                 {
-                    screen_lines_browser_col_2_color_mark="${_blscd_tput_bold}${_blscd_tput_yellow_f}"
+                    screen_lines_browser_col_2_color_mark=${_blscd_tput_bold}${_blscd_tput_yellow_f}
                     screen_lines_browser_col_2_color_reset=$_blscd_tput_reset
                 }
                 ;;
