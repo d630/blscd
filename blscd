@@ -169,46 +169,58 @@ __blscd_f_help()
     printf "usage: [source] blscd [-v | --version | -h | --help]
 
     Key bindings
-      ^B    [ PAGE-UP ]     Move page up
-      d                     Move five lines down
+      /                     Search for files in the current directory (like console command 'search')
+      :                     Open the console
       D                     Move ten lines down
-      E                     Edit the current file in '<EDITOR>' (fallback:
-                            'vi')
+      E                     Edit the current file in '<EDITOR>' (fallback: 'vi')
+      G     [ END ]         Move to bottom
+      J                     Move half page down
+      K                     Move half page up
+      N                     Go to previous file
+      S                     Fork a shell in the current directory
+      SPACE                 Toggle the mark-status of a file
+      U                     Move ten lines up
+      ^B    [ PAGE-UP ]     Move page up
       ^F    [ PAGE-DOWN ]   Move page down
+      ^L                    Redraw the screen
+      ^R                    Reload everything
+      d                     Move five lines down
+      g?                    Open this help in '<PAGER>' (fallback: 'less')
+      gL                    Move to /var/log
+      gM                    Move to /mnt
       gd                    Move to /dev
       ge                    Move to /etc
-      G     [ END ]         Move to bottom
       gg    [ HOME ]        Move to top
       gh                    Move to <HOME>
       gl                    Move to /usr/lib
-      gL                    Move to /var/log
       gm                    Move to /media
-      gM                    Move to /mnt
       go                    Move to /opt
-      g?                    Open this help in '<PAGER>' (fallback: 'less')
       gr    [ g/ ]          Move to /
       gs                    Move to /srv
       gu                    Move to /usr
       gv                    Move to /var
       h     [ LEFTARROW ]   Move left
       j     [ DOWNARROW ]   Move down
-      J                     Move half page down
-      K                     Move half page up
       k     [ UPARROW ]     Move up
-      ^L                    Redraw the screen
       l     [ RIGHTARROW ]  Move right
-      n                     Go to next file. By default, go to newest
-                            file; but after 'search' go to next match
-      N                     Go to previous file
-      :                     Open the console
+      n                     Go to next file. By default, go to newest file; but after 'search' go to next match
+      oA                    Sort by access time, oldest first
+      oB                    Sort by basename (LC_COLLATE=C.UTF-8), descend
+      oC                    Sort by change time, oldest first
+      oM                    Sort by modification time, oldest first
+      oN                    Sort basenames naturally (LC_COLLATE=$LANG), descend
+      oS                    Sort by file size, smallest first
+      oT                    Sort by type, descend
+      oa                    Sort by access time, newest first
+      ob                    Sort by basename (LC_COLLATE=C.UTF-8), ascend
+      oc                    Sort by change time, newest first
+      om                    Sort by modification time, newest first
+      on                    Sort basenames naturally (LC_COLLATE=$LANG), ascend
+      or                    Reverse whatever the sorting method is
+      os                    Sort by file size, largest first
+      ot                    Sort by type, ascend
       q                     Quit
-      ^R                    Reload everything
-      /                     Search for files in the current directory
-                            (like console command 'search')
-      S                     Fork a shell in the current directory
-      SPACE                 Toggle the mark-status of a file
       u                     Move five lines up
-      U                     Move ten lines up
       vn                    Unmark all files
       vv                    Toggle the mark-status of all files
 
@@ -239,7 +251,7 @@ __blscd_f_help()
 "
 }
 
-__blscd_f_version() { echo "0.1.2.20" ; }
+__blscd_f_version() { echo "0.1.2.30" ; }
 
 __blscd_main()
 {
@@ -366,6 +378,80 @@ __blscd_main()
                 __blscd_p_set_resize 1
                 __blscd_p_move_col_2_line 1
                 ;;
+            o)
+                builtin read -n 1 _blscd_input
+                case $_blscd_input in
+                    a)
+                        _blscd_sort_method=_blscd_sort_method_atime
+                        _blscd_sort_reverse=_blscd_sort_reverse
+                        ;;
+                    A)
+                        _blscd_sort_method=_blscd_sort_method_atime
+                        _blscd_sort_reverse=
+                        ;;
+                    b)
+                        _blscd_sort_method=_blscd_sort_method_basename
+                        _blscd_sort_reverse=
+                        ;;
+                    B)
+                        _blscd_sort_method=_blscd_sort_method_basename
+                        _blscd_sort_reverse=_blscd_sort_reverse
+                        ;;
+                    c)
+                        _blscd_sort_method=_blscd_sort_method_ctime
+                        _blscd_sort_reverse=_blscd_sort_reverse
+                        ;;
+                    C)
+                        _blscd_sort_method=_blscd_sort_method_ctime
+                        _blscd_sort_reverse=
+                        ;;
+                    m)
+                        _blscd_sort_method=_blscd_sort_method_mtime
+                        _blscd_sort_reverse=_blscd_sort_reverse
+                        ;;
+                    M)
+                        _blscd_sort_method=_blscd_sort_method_mtime
+                        _blscd_sort_reverse=
+                        ;;
+                    n)
+                        _blscd_sort_method=_blscd_sort_method_natural
+                        _blscd_sort_reverse=
+                        ;;
+                    N)
+                        _blscd_sort_method=_blscd_sort_method_natural
+                        _blscd_sort_reverse=_blscd_sort_reverse
+                        ;;
+                    s)
+                        _blscd_sort_method=_blscd_sort_method_size
+                        _blscd_sort_reverse=_blscd_sort_reverse
+                        ;;
+                    S)
+                        _blscd_sort_method=_blscd_sort_method_size
+                        _blscd_sort_reverse=
+                        ;;
+                    t)
+                        _blscd_sort_method=_blscd_sort_method_type
+                        _blscd_sort_reverse=
+                        ;;
+                    T)
+                        _blscd_sort_method=_blscd_sort_method_type
+                        _blscd_sort_reverse=_blscd_sort_reverse
+                        ;;
+                    r)
+                        if [[ $_blscd_sort_reverse == _blscd_sort_reverse ]]
+                        then
+                            _blscd_sort_reverse=
+                        else
+                            _blscd_sort_reverse=_blscd_sort_reverse
+                        fi
+                        ;;
+                esac
+                console_command_arguments="^${_blscd_screen_lines_current_string}$" \
+                        __blscd_p_search
+                _blscd_search_pattern=
+                _blscd_search_block=
+                _blscd_files_col_2_array_search=()
+                ;;
             v)
                 builtin read -n 1 _blscd_input
                 case $_blscd_input in
@@ -432,8 +518,9 @@ __blscd_main()
 
 __blscd_p_build_array()
 {
-    builtin declare -i i=
-    builtin declare basename=
+    builtin declare -i \
+        i= \
+        j=
 
     for i
     do
@@ -445,11 +532,16 @@ __blscd_p_build_array()
                     _blscd_files_col_1_array_cursor_index=0
                 else
                     _blscd_files_col_1_array=()
-                    while IFS=\" builtin read -r _ basename
-                    do
-                        _blscd_files_col_1_array+=("$basename")
-                    done < <(builtin printf '%s\n' \
-                        "${_blscd_data[ls ${dir_col_0_string}]}")
+                    __blscd_p_build_array_sort "$dir_col_0_string" 1
+                    [[ $_blscd_sort_method == _blscd_sort_method_basename && \
+                            $_blscd_sort_reverse == _blscd_sort_reverse ]] &&
+                    {
+                        builtin mapfile -t _blscd_files_col_1_array \
+                            < <(for ((j=${#_blscd_files_col_1_array[@]}-1 ; j >= 0 ; --j))
+                                do
+                                    builtin printf '%s\n' "${_blscd_files_col_1_array[$j]}"
+                                done)
+                    }
                 fi
                 _blscd_files_col_1_array_total=${#_blscd_files_col_1_array[@]}
                 ;;
@@ -457,11 +549,16 @@ __blscd_p_build_array()
                 [[ ! ${_blscd_data[ls ${_blscd_dir_col_1_string}]} ]] && \
                     __blscd_p_build_array_update
                 _blscd_files_col_2_array=()
-                while IFS=\" builtin read -r _ basename
-                do
-                    _blscd_files_col_2_array+=("$basename")
-                done < <(builtin printf '%s\n' \
-                    "${_blscd_data[ls ${_blscd_dir_col_1_string}]}")
+                __blscd_p_build_array_sort "$_blscd_dir_col_1_string" 2
+                [[ $_blscd_sort_method == _blscd_sort_method_basename && \
+                        $_blscd_sort_reverse == _blscd_sort_reverse ]] &&
+                {
+                    builtin mapfile -t _blscd_files_col_2_array \
+                        < <(for ((j=${#_blscd_files_col_2_array[@]}-1 ; j >= 0 ; --j))
+                            do
+                                builtin printf '%s\n' "${_blscd_files_col_2_array[$j]}"
+                            done)
+                }
                 _blscd_files_col_2_array_total=${#_blscd_files_col_2_array[@]}
                 ((_blscd_files_col_2_array_total == 0)) && \
                     _blscd_files_col_2_array_total=1
@@ -469,17 +566,105 @@ __blscd_p_build_array()
                     __blscd_p_build_array_mark_update
                 ;;
             3)
+                _blscd_files_col_3_array=()
                 if [[ ${_blscd_data[ls ${_blscd_dir_col_1_string}/${_blscd_screen_lines_current_string}]} ]]
                 then
-                    _blscd_files_col_3_array=()
-                    while IFS=\" builtin read -r _ basename
-                    do
-                        _blscd_files_col_3_array+=("$basename")
-                    done < <(builtin printf '%s\n' \
-                        "${_blscd_data[ls ${_blscd_dir_col_1_string}/${_blscd_screen_lines_current_string}]}")
+                    __blscd_p_build_array_sort "${_blscd_dir_col_1_string}/${_blscd_screen_lines_current_string}" 3
+                    [[ $_blscd_sort_method == _blscd_sort_method_basename && \
+                            $_blscd_sort_reverse == _blscd_sort_reverse ]] &&
+                    {
+                        builtin mapfile -t _blscd_files_col_3_array \
+                            < <(for ((j=${#_blscd_files_col_3_array[@]}-1 ; j >= 0 ; --j))
+                                do
+                                    builtin printf '%s\n' "${_blscd_files_col_3_array[$j]}"
+                                done)
+                    }
                 else
-                    builtin mapfile -t _blscd_files_col_3_array \
-                        < <(command ls -1 -A --color=never "$_blscd_screen_lines_current_string")
+                    if [[ $_blscd_sort_reverse == _blscd_sort_reverse ]]
+                    then
+                        declare _blscd_sort_reverse_ls=
+                    else
+                        declare _blscd_sort_reverse_ls=-r
+                    fi
+                    case ${_blscd_sort_method##*_} in
+                        atime)
+                            builtin mapfile -t _blscd_files_col_3_array \
+                                < <(command ls \
+                                        --format=single-column \
+                                        -A \
+                                        --color=none \
+                                        --indicator-style=none \
+                                        --time=atime \
+                                        --sort=time $_blscd_sort_reverse_ls \
+                                        "$_blscd_screen_lines_current_string")
+                            ;;
+                        basename)
+                            builtin mapfile -t _blscd_files_col_3_array \
+                                < <(command ls \
+                                        --format=single-column \
+                                        -A \
+                                        --color=none \
+                                        --indicator-style=none ${_blscd_sort_reverse:+-r} \
+                                        "$_blscd_screen_lines_current_string")
+                            ;;
+                        ctime)
+                            builtin mapfile -t _blscd_files_col_3_array \
+                                < <(command ls \
+                                        --format=single-column \
+                                        -A \
+                                        --color=none \
+                                        --indicator-style=none \
+                                        --time=ctime \
+                                        --sort=time $_blscd_sort_reverse_ls \
+                                        "$_blscd_screen_lines_current_string")
+                            ;;
+                        mtime)
+                            builtin mapfile -t _blscd_files_col_3_array \
+                                < <(command ls \
+                                        --format=single-column \
+                                        -A \
+                                        --color=none \
+                                        --indicator-style=none \
+                                        --sort=time $_blscd_sort_reverse_ls \
+                                        "$_blscd_screen_lines_current_string")
+                            ;;
+                        natural)
+                            builtin mapfile -t _blscd_files_col_3_array \
+                                < <(LC_COLLATE=$LANG \
+                                        command ls \
+                                        --format=single-column \
+                                        -A \
+                                        --color=none \
+                                        --indicator-style=none ${_blscd_sort_reverse:+-r} \
+                                        "$_blscd_screen_lines_current_string")
+                            ;;
+                        size)
+                            builtin mapfile -t _blscd_files_col_3_array \
+                                < <(command ls \
+                                        --format=single-column \
+                                        -A \
+                                        --color=none \
+                                        --indicator-style=none \
+                                        --sort=size $_blscd_sort_reverse_ls \
+                                        "$_blscd_screen_lines_current_string")
+                            ;;
+                        type)
+                            builtin declare basename=
+                            while IFS=\" builtin read -r _ basename
+                            do
+                                _blscd_files_col_3_array+=("$basename")
+                            done < <(command ls --format=long \
+                                    -AL --time-style=+%s -gGo \
+                                    --color=none --indicator-style=none \
+                                    --quoting-style=c \
+                                    "$_blscd_screen_lines_current_string" | \
+                                command sort --stable \
+                                        -k 1${_blscd_sort_reverse:+r} \
+                                        -k 5${_blscd_sort_reverse:+r} \
+                                        -k 4n${_blscd_sort_reverse:+r} \
+                                        -k 3h${_blscd_sort_reverse:+r})
+                            ;;
+                    esac
                 fi
                 _blscd_files_col_3_array_total=${#_blscd_files_col_3_array[@]}
                 ((_blscd_files_col_3_array_total == 0)) &&
@@ -492,6 +677,95 @@ __blscd_p_build_array()
                 ;;
         esac
     done
+}
+
+__blscd_p_build_array_sort()
+{
+    builtin declare basename=
+
+    case ${_blscd_sort_method##*_} in
+        atime)
+            while IFS=\" builtin read -r _ basename
+            do
+                builtin eval _blscd_files_col_${2}_array+=\(\"\${basename}\"\)
+            done < <(command paste -d ' ' \
+                    <(builtin printf '%s\n' "${_blscd_data[stat ${1}]}") \
+                    <(builtin printf '%s\n' "${_blscd_data[ls ${1}]}") | \
+                command sort --stable \
+                        -k 1n${_blscd_sort_reverse:+r} \
+                        -k 7${_blscd_sort_reverse:+r} \
+                        -k 6n${_blscd_sort_reverse:+r} \
+                        -k 2n${_blscd_sort_reverse:+r} \
+                        -k 3${_blscd_sort_reverse:+r} \
+                        -k 5h${_blscd_sort_reverse:+r})
+            ;;
+        basename)
+            while IFS=\" builtin read -r _ basename
+            do
+                builtin eval _blscd_files_col_${2}_array+=\(\"\${basename}\"\)
+            done < <(builtin printf '%s\n' "${_blscd_data[ls ${1}]}")
+            ;;
+        ctime)
+            while IFS=\" builtin read -r _ basename
+            do
+                builtin eval _blscd_files_col_${2}_array+=\(\"\${basename}\"\)
+            done < <(command paste -d ' ' \
+                    <(builtin printf '%s\n' "${_blscd_data[stat ${1}]}") \
+                    <(builtin printf '%s\n' "${_blscd_data[ls ${1}]}") | \
+                command sort --stable \
+                        -k 2n${_blscd_sort_reverse:+r} \
+                        -k 7${_blscd_sort_reverse:+r} \
+                        -k 6n${_blscd_sort_reverse:+r} \
+                        -k 1n${_blscd_sort_reverse:+r} \
+                        -k 3${_blscd_sort_reverse:+r} \
+                        -k 5h${_blscd_sort_reverse:+r})
+            ;;
+        mtime)
+            while IFS=\" builtin read -r _ basename
+            do
+                builtin eval _blscd_files_col_${2}_array+=\(\"\${basename}\"\)
+            done < <(builtin printf '%s\n' "${_blscd_data[ls ${1}]}" | \
+                command sort --stable \
+                        -k 4n${_blscd_sort_reverse:+r} \
+                        -k 5${_blscd_sort_reverse:+r} \
+                        -k 1${_blscd_sort_reverse:+r} \
+                        -k 3h${_blscd_sort_reverse:+r})
+            ;;
+        natural)
+            while IFS=\" builtin read -r _ basename
+            do
+                builtin eval _blscd_files_col_${2}_array+=\(\"\${basename}\"\)
+            done < <(builtin printf '%s\n' "${_blscd_data[ls ${1}]}" | \
+                LC_COLLATE=$LANG \
+                command sort --stable \
+                        -k 5${_blscd_sort_reverse:+r} \
+                        -k 4n${_blscd_sort_reverse:+r} \
+                        -k 1${_blscd_sort_reverse:+r} \
+                        -k 3h${_blscd_sort_reverse:+r})
+            ;;
+        size)
+            while IFS=\" builtin read -r _ basename
+            do
+                builtin eval _blscd_files_col_${2}_array+=\(\"\${basename}\"\)
+            done < <(builtin printf '%s\n' "${_blscd_data[ls ${1}]}" | \
+                command sort --stable \
+                        -k 3h${_blscd_sort_reverse:+r} \
+                        -k 5${_blscd_sort_reverse:+r} \
+                        -k 4n${_blscd_sort_reverse:+r} \
+                        -k 1${_blscd_sort_reverse:+r})
+            ;;
+        type)
+            while IFS=\" builtin read -r _ basename
+            do
+                builtin eval _blscd_files_col_${2}_array+=\(\"\${basename}\"\)
+            done < <(builtin printf '%s\n' "${_blscd_data[ls ${1}]}" | \
+                command sort --stable \
+                        -k 1${_blscd_sort_reverse:+r} \
+                        -k 5${_blscd_sort_reverse:+r} \
+                        -k 4n${_blscd_sort_reverse:+r} \
+                        -k 3h${_blscd_sort_reverse:+r})
+            ;;
+    esac
 }
 
 __blscd_p_build_array_ini()
@@ -719,7 +993,9 @@ __blscd_p_declare_set()
     # Initialize settings.
     builtin declare -g \
         _blscd_opener='builtin export LESSOPEN='"| /usr/bin/lesspipe %s"';command less -R "$1"' \
-        _blscd_search_pattern=
+        _blscd_search_pattern= \
+        _blscd_sort_method=_blscd_sort_method_basename \
+        _blscd_sort_reverse=
 
     builtin declare -gi _blscd_INT_step=6
 
@@ -762,8 +1038,8 @@ __blscd_p_declare_set()
         "_blscd_saved_traps=$(builtin trap)"
 
     builtin declare -gx \
-        _blscd_LC_ALL_old=$LC_ALL \
-        LC_ALL=C.UTF-8
+        _blscd_LC_COLLATE_old=$LC_COLLATE \
+        LC_COLLATE=C.UTF-8
 }
 
 __blscd_p_declare_unset()
@@ -803,7 +1079,6 @@ __blscd_p_declare_unset()
         _blscd_redraw \
         _blscd_redraw_number \
         _blscd_reprint \
-        _blscd_search_block \
         _blscd_saved_stty \
         _blscd_saved_traps \
         _blscd_screen_lines_browser \
@@ -811,7 +1086,10 @@ __blscd_p_declare_unset()
         _blscd_screen_lines_current_string \
         _blscd_screen_lines_offset \
         _blscd_screen_lines_titlebar_string \
+        _blscd_search_block \
         _blscd_search_pattern \
+        _blscd_sort_method \
+        _blscd_sort_reverse \
         _blscd_tput_alt \
         _blscd_tput_am_off \
         _blscd_tput_am_on \
@@ -846,6 +1124,7 @@ __blscd_p_declare_unset()
         __blscd_p_build_array_ini_do \
         __blscd_p_build_array_mark_update \
         __blscd_p_build_array_search \
+        __blscd_p_build_array_sort \
         __blscd_p_build_array_time \
         __blscd_p_build_array_update \
         __blscd_p_build_col \
@@ -876,9 +1155,9 @@ __blscd_p_declare_unset()
         __blscd_p_set_resize \
         __blscd_p_set_search_non
 
-    builtin declare -xg LC_ALL=$_blscd_LC_ALL_old
+    builtin declare -xg LC_COLLATE=$_blscd_LC_COLLATE_old
 
-    builtin unset -v _blscd_LC_ALL_old
+    builtin unset -v _blscd_LC_COLLATE_old
 }
 
 __blscd_p_draw_screen_check()
@@ -1304,6 +1583,8 @@ __blscd_p_reload()
     __blscd_p_set_search_non
     _blscd_marking=
     _blscd_marking_number=
+    _blscd_sort_method=_blscd_sort_method_natural
+    _blscd_sort_reverse=
     _blscd_files_col_2_array_time=()
     _blscd_redraw_number=0
     builtin unset -v _blscd_data

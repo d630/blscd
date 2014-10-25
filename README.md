@@ -1,4 +1,4 @@
-## blscd v0.1.2.20 [GNU GPLv3]
+## blscd v0.1.2.30 [GNU GPLv3]
 
 `blscd`(1) is a simple [ranger](http://ranger.nongnu.org/)-like file browser/navigator for the command line. Currently, you may only browse your file system and search and open files without many features. `blscd`(1) is written in `GNU bash` and has been tested with `xterm`(1), `urxvt`(1) and the virtual console on `Debian GNU/Linux`.
 
@@ -20,46 +20,58 @@ Optional: `less`(1) and its scripts under `lessopen`(1); `w3m`(1) and its patch 
 usage: [source] blscd [-v | --version | -h | --help]
 
     Key bindings
-      ^B    [ PAGE-UP ]     Move page up
-      d                     Move five lines down
+      /                     Search for files in the current directory (like console command 'search')
+      :                     Open the console
       D                     Move ten lines down
-      E                     Edit the current file in '<EDITOR>' (fallback:
-                            'vi')
+      E                     Edit the current file in '<EDITOR>' (fallback: 'vi')
+      G     [ END ]         Move to bottom
+      J                     Move half page down
+      K                     Move half page up
+      N                     Go to previous file
+      S                     Fork a shell in the current directory
+      SPACE                 Toggle the mark-status of a file
+      U                     Move ten lines up
+      ^B    [ PAGE-UP ]     Move page up
       ^F    [ PAGE-DOWN ]   Move page down
+      ^L                    Redraw the screen
+      ^R                    Reload everything
+      d                     Move five lines down
+      g?                    Open this help in '<PAGER>' (fallback: 'less')
+      gL                    Move to /var/log
+      gM                    Move to /mnt
       gd                    Move to /dev
       ge                    Move to /etc
-      G     [ END ]         Move to bottom
       gg    [ HOME ]        Move to top
       gh                    Move to <HOME>
       gl                    Move to /usr/lib
-      gL                    Move to /var/log
       gm                    Move to /media
-      gM                    Move to /mnt
       go                    Move to /opt
-      g?                    Open this help in '<PAGER>' (fallback: 'less')
       gr    [ g/ ]          Move to /
       gs                    Move to /srv
       gu                    Move to /usr
       gv                    Move to /var
       h     [ LEFTARROW ]   Move left
       j     [ DOWNARROW ]   Move down
-      J                     Move half page down
-      K                     Move half page up
       k     [ UPARROW ]     Move up
-      ^L                    Redraw the screen
       l     [ RIGHTARROW ]  Move right
-      n                     Go to next file. By default, go to newest
-                            file; but after 'search' go to next match
-      N                     Go to previous file
-      :                     Open the console
+      n                     Go to next file. By default, go to newest file; but after 'search' go to next match
+      oA                    Sort by access time, oldest first
+      oB                    Sort by basename (LC_COLLATE=C.UTF-8), descend
+      oC                    Sort by change time, oldest first
+      oM                    Sort by modification time, oldest first
+      oN                    Sort basenames naturally (LC_COLLATE=$LANG), descend
+      oS                    Sort by file size, smallest first
+      oT                    Sort by type, descend
+      oa                    Sort by access time, newest first
+      ob                    Sort by basename (LC_COLLATE=C.UTF-8), ascend
+      oc                    Sort by change time, newest first
+      om                    Sort by modification time, newest first
+      on                    Sort basenames naturally (LC_COLLATE=$LANG), ascend
+      or                    Reverse whatever the sorting method is
+      os                    Sort by file size, largest first
+      ot                    Sort by type, ascend
       q                     Quit
-      ^R                    Reload everything
-      S                     Fork a shell in the current directory
-      /                     Search for files in the current directory
-                            (like console command 'search')
-      SPACE                 Toggle the mark-status of a file
       u                     Move five lines up
-      U                     Move ten lines up
       vn                    Unmark all files
       vv                    Toggle the mark-status of all files
 
