@@ -39,7 +39,6 @@ __blscd_f_draw_screen()
         screen_dimension_lines=
 
     builtin declare \
-        dir_col_0_string= \
         screen_lines_browser_col_1_color_1= \
         screen_lines_browser_col_1_color_reset= \
         screen_lines_browser_col_2_color_1= \
@@ -74,8 +73,8 @@ __blscd_f_draw_screen()
 
     # Save directories.
     _blscd_dir_col_1_string=$PWD
-    dir_col_0_string=${_blscd_dir_col_1_string%/*}
-    dir_col_0_string=${dir_col_0_string:-/}
+    _blscd_dir_col_0_string=${_blscd_dir_col_1_string%/*}
+    _blscd_dir_col_0_string=${_blscd_dir_col_0_string:-/}
 
     if [[ ($_blscd_reprint == _blscd_reprint && $_blscd_action_last != __blscd_p_move_col_2_line) || \
             ($_blscd_search_pattern && ! $_blscd_search_block == _blscd_search_block) ]]
@@ -122,8 +121,8 @@ __blscd_f_draw_screen()
     __blscd_p_build_col 3a
 
     # Save current _blscd_cursor postion, and _blscd_index.
-    _blscd_data[cursor ${_blscd_dir_col_1_string}]=$_blscd_cursor
-    _blscd_data[cindex ${_blscd_dir_col_1_string}]=$_blscd_index
+    _blscd_data[cursor ${_blscd_dir_col_1_string} ${_blscd_sort_method} ${_blscd_sort_reverse}]=$_blscd_cursor
+    _blscd_data[cindex ${_blscd_dir_col_1_string} ${_blscd_sort_method} ${_blscd_sort_reverse}]=$_blscd_index
 
     # Preparing for __blscd_p_move_col_2_line(): Determine the number of visible files.
     if ((_blscd_files_col_2_array_total > _blscd_screen_lines_browser))
@@ -538,9 +537,13 @@ __blscd_p_build_array()
                 then
                     _blscd_files_col_1_array=(\~)
                     _blscd_files_col_1_array_cursor_index=0
+                elif [[ ${_blscd_data[array _blscd_files_col_1_array ${_blscd_dir_col_0_string} ${_blscd_sort_method} ${_blscd_sort_reverse}]} ]]
+                then
+                    builtin mapfile -t _blscd_files_col_1_array \
+                        < <(builtin printf '%s\n' "${_blscd_data[array _blscd_files_col_1_array ${_blscd_dir_col_0_string} ${_blscd_sort_method} ${_blscd_sort_reverse}]}")
                 else
                     _blscd_files_col_1_array=()
-                    __blscd_p_build_array_sort "$dir_col_0_string" 1
+                    __blscd_p_build_array_sort "$_blscd_dir_col_0_string" 1
                     [[ $_blscd_sort_method == _blscd_sort_method_basename && \
                             $_blscd_sort_reverse == _blscd_sort_reverse ]] &&
                     {
@@ -550,23 +553,31 @@ __blscd_p_build_array()
                                     builtin printf '%s\n' "${_blscd_files_col_1_array[$j]}"
                                 done)
                     }
+                    _blscd_data[array _blscd_files_col_1_array ${_blscd_dir_col_0_string} ${_blscd_sort_method} ${_blscd_sort_reverse}]=$(builtin printf '%s\n' "${_blscd_files_col_1_array[@]}")
                 fi
                 _blscd_files_col_1_array_total=${#_blscd_files_col_1_array[@]}
                 ;;
             2)
-                [[ ! ${_blscd_data[ls ${_blscd_dir_col_1_string}]} ]] && \
-                    __blscd_p_build_array_update
-                _blscd_files_col_2_array=()
-                __blscd_p_build_array_sort "$_blscd_dir_col_1_string" 2
-                [[ $_blscd_sort_method == _blscd_sort_method_basename && \
-                        $_blscd_sort_reverse == _blscd_sort_reverse ]] &&
-                {
+                if [[ ${_blscd_data[array _blscd_files_col_2_array ${_blscd_dir_col_1_string} ${_blscd_sort_method} ${_blscd_sort_reverse}]} ]]
+                then
                     builtin mapfile -t _blscd_files_col_2_array \
-                        < <(for ((j=${#_blscd_files_col_2_array[@]}-1 ; j >= 0 ; --j))
-                            do
-                                builtin printf '%s\n' "${_blscd_files_col_2_array[$j]}"
-                            done)
-                }
+                        < <(builtin printf '%s\n' "${_blscd_data[array _blscd_files_col_2_array ${_blscd_dir_col_1_string} ${_blscd_sort_method} ${_blscd_sort_reverse}]}")
+                else
+                    [[ ! ${_blscd_data[ls ${_blscd_dir_col_1_string}]} ]] && \
+                        __blscd_p_build_array_update
+                    _blscd_files_col_2_array=()
+                    __blscd_p_build_array_sort "$_blscd_dir_col_1_string" 2
+                    [[ $_blscd_sort_method == _blscd_sort_method_basename && \
+                            $_blscd_sort_reverse == _blscd_sort_reverse ]] &&
+                    {
+                        builtin mapfile -t _blscd_files_col_2_array \
+                            < <(for ((j=${#_blscd_files_col_2_array[@]}-1 ; j >= 0 ; --j))
+                                do
+                                    builtin printf '%s\n' "${_blscd_files_col_2_array[$j]}"
+                                done)
+                    }
+                    _blscd_data[array _blscd_files_col_2_array ${_blscd_dir_col_1_string} ${_blscd_sort_method} ${_blscd_sort_reverse}]=$(builtin printf '%s\n' "${_blscd_files_col_2_array[@]}")
+                fi
                 _blscd_files_col_2_array_total=${#_blscd_files_col_2_array[@]}
                 ((_blscd_files_col_2_array_total == 0)) && \
                     _blscd_files_col_2_array_total=1
@@ -575,7 +586,11 @@ __blscd_p_build_array()
                 ;;
             3)
                 _blscd_files_col_3_array=()
-                if [[ ${_blscd_data[ls ${_blscd_dir_col_1_string}/${_blscd_screen_lines_current_string}]} ]]
+                if [[ ${_blscd_data[array _blscd_files_col_3_array ${_blscd_dir_col_1_string}/${_blscd_screen_lines_current_string} ${_blscd_sort_method} ${_blscd_sort_reverse}]} ]]
+                then
+                    builtin mapfile -t _blscd_files_col_3_array \
+                        < <(builtin printf '%s\n' "${_blscd_data[array _blscd_files_col_3_array ${_blscd_dir_col_1_string}/${_blscd_screen_lines_current_string} ${_blscd_sort_method} ${_blscd_sort_reverse}]}")
+                elif [[ ${_blscd_data[ls ${_blscd_dir_col_1_string}/${_blscd_screen_lines_current_string}]} ]]
                 then
                     __blscd_p_build_array_sort "${_blscd_dir_col_1_string}/${_blscd_screen_lines_current_string}" 3
                     [[ $_blscd_sort_method == _blscd_sort_method_basename && \
@@ -587,6 +602,7 @@ __blscd_p_build_array()
                                     builtin printf '%s\n' "${_blscd_files_col_3_array[$j]}"
                                 done)
                     }
+                    _blscd_data[array _blscd_files_col_3_array ${_blscd_dir_col_1_string}/${_blscd_screen_lines_current_string} ${_blscd_sort_method} ${_blscd_sort_reverse}]=$(builtin printf '%s\n' "${_blscd_files_col_3_array[@]}")
                 else
                     if [[ $_blscd_sort_reverse == _blscd_sort_reverse ]]
                     then
@@ -894,12 +910,12 @@ __blscd_p_build_col()
                 then
                     _blscd_files_col_1_a_array=(\~)
                     _blscd_highlight_line_col_1_index=0
-                elif [[ ${_blscd_data[cursor ${dir_col_0_string}]} ]]
+                elif [[ ${_blscd_data[cursor ${_blscd_dir_col_0_string} ${_blscd_sort_method} ${_blscd_sort_reverse}]} ]]
                 then
                     builtin mapfile -t _blscd_files_col_1_a_array \
                         < <(builtin printf '%s\n' \
-                                "${_blscd_files_col_1_array[@]:$((${_blscd_data[cindex ${dir_col_0_string}]} - 1)):${_blscd_screen_lines_browser}}")
-                    _blscd_highlight_line_col_1_index=${_blscd_data[cursor ${dir_col_0_string}]}
+                                "${_blscd_files_col_1_array[@]:$((${_blscd_data[cindex ${_blscd_dir_col_0_string} ${_blscd_sort_method} ${_blscd_sort_reverse}]} - 1)):${_blscd_screen_lines_browser}}")
+                    _blscd_highlight_line_col_1_index=${_blscd_data[cursor ${_blscd_dir_col_0_string} ${_blscd_sort_method} ${_blscd_sort_reverse}]}
                 else
                     IFS=: builtin read -r _blscd_files_col_1_array_cursor_index _ \
                         < <(builtin printf '%s\n' "${_blscd_files_col_1_array[@]}" | \
@@ -919,30 +935,30 @@ __blscd_p_build_col()
             2a)
                 [[ $_blscd_search_pattern && ! $_blscd_search_block == _blscd_search_block ]] && \
                     __blscd_p_build_array_search
-                if [[ ${_blscd_data[cursor ${_blscd_dir_col_1_string}]} && \
+                if [[ ${_blscd_data[cursor ${_blscd_dir_col_1_string} ${_blscd_sort_method} ${_blscd_sort_reverse}]} && \
                         $_blscd_action_last != __blscd_p_move_col_2_line ]]
                 then
                      builtin mapfile -t _blscd_files_col_2_a_array \
                         < <(builtin printf '%s\n' \
-                            "${_blscd_files_col_2_array[@]:$((${_blscd_data[cindex ${_blscd_dir_col_1_string}]} - 1)):${_blscd_screen_lines_browser}}")
-                     _blscd_cursor=${_blscd_data[cursor ${_blscd_dir_col_1_string}]}
-                     _blscd_index=${_blscd_data[cindex ${_blscd_dir_col_1_string}]}
+                            "${_blscd_files_col_2_array[@]:$((${_blscd_data[cindex ${_blscd_dir_col_1_string} ${_blscd_sort_method} ${_blscd_sort_reverse}]} - 1)):${_blscd_screen_lines_browser}}")
+                     _blscd_cursor=${_blscd_data[cursor ${_blscd_dir_col_1_string} ${_blscd_sort_method} ${_blscd_sort_reverse}]}
+                     _blscd_index=${_blscd_data[cindex ${_blscd_dir_col_1_string} ${_blscd_sort_method} ${_blscd_sort_reverse}]}
                 elif [[ $_blscd_dir_col_1_string == / && $_blscd_dir_last ]]
                 then
                      builtin mapfile -t _blscd_files_col_2_a_array \
                         < <(builtin printf '%s\n' \
-                                "${_blscd_files_col_2_array[@]:$((${_blscd_data[cindex ${_blscd_dir_last}]} - 1)):${_blscd_screen_lines_browser}}")
+                                "${_blscd_files_col_2_array[@]:$((${_blscd_data[cindex ${_blscd_dir_last} ${_blscd_sort_method} ${_blscd_sort_reverse}]} - 1)):${_blscd_screen_lines_browser}}")
                 else
                     _blscd_files_col_2_a_array=("${_blscd_files_col_2_array[@]:$((_blscd_index - 1)):${_blscd_screen_lines_browser}}")
                 fi
                 ;;
             3a)
-                if [[ ${_blscd_data[cursor ${_blscd_dir_col_1_string}/${_blscd_screen_lines_current_string}]} ]]
+                if [[ ${_blscd_data[cursor ${_blscd_dir_col_1_string}/${_blscd_screen_lines_current_string} ${_blscd_sort_method} ${_blscd_sort_reverse}]} ]]
                 then
                     builtin mapfile -t _blscd_files_col_3_a_array \
                         < <(builtin printf '%s\n' \
-                                "${_blscd_files_col_3_array[@]:$((${_blscd_data[cindex ${_blscd_dir_col_1_string}/${_blscd_screen_lines_current_string}]} - 1)):${_blscd_screen_lines_browser}}")
-                    _blscd_highlight_line_col_3_index=${_blscd_data[cursor ${_blscd_dir_col_1_string}/${_blscd_screen_lines_current_string}]}
+                                "${_blscd_files_col_3_array[@]:$((${_blscd_data[cindex ${_blscd_dir_col_1_string}/${_blscd_screen_lines_current_string} ${_blscd_sort_method} ${_blscd_sort_reverse}]} - 1)):${_blscd_screen_lines_browser}}")
+                    _blscd_highlight_line_col_3_index=${_blscd_data[cursor ${_blscd_dir_col_1_string}/${_blscd_screen_lines_current_string} ${_blscd_sort_method} ${_blscd_sort_reverse}]}
                 else
                     _blscd_files_col_3_a_array=("${_blscd_files_col_3_array[@]}")
                     _blscd_highlight_line_col_3_index=0
@@ -974,6 +990,7 @@ __blscd_p_declare_set()
     builtin declare -g \
         _blscd_action_last= \
         _blscd_console_command_name= \
+        _blscd_dir_col_0_string= \
         _blscd_dir_col_1_string=$PWD \
         _blscd_dir_last= \
         _blscd_input= \
@@ -1058,6 +1075,7 @@ __blscd_p_declare_unset()
         _blscd_console_command_name \
         _blscd_cursor \
         _blscd_data \
+        _blscd_dir_col_0_string \
         _blscd_dir_col_1_string \
         _blscd_dir_last \
         _blscd_files_col_1_a_array \
@@ -1608,6 +1626,8 @@ __blscd_p_search()
     __blscd_p_move_col_2_line -9999999999
     __blscd_p_draw_screen_check
     __blscd_p_move_col_2_line "$((${_blscd_files_col_2_array_search[0]} - 1))"
+    #__blscd_p_draw_screen_check
+    #__blscd_p_set_action_last
 }
 
 __blscd_p_search_go_down()
