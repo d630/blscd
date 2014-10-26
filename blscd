@@ -1626,8 +1626,6 @@ __blscd_p_search()
     __blscd_p_move_col_2_line -9999999999
     __blscd_p_draw_screen_check
     __blscd_p_move_col_2_line "$((${_blscd_files_col_2_array_search[0]} - 1))"
-    #__blscd_p_draw_screen_check
-    #__blscd_p_set_action_last
 }
 
 __blscd_p_search_go_down()
