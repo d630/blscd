@@ -1,14 +1,28 @@
-## blscd v0.1.2.31 [GNU GPLv3]
+## blscd v0.1.3.0 [GNU GPLv3]
 
-`blscd`(1) is a simple [ranger](http://ranger.nongnu.org/)-like file browser/navigator for the command line. Currently, you may only browse your file system and search and open files without many features. `blscd`(1) is written in `GNU bash` and has been tested with `xterm`(1), `urxvt`(1) and the virtual console on `Debian GNU/Linux`.
+`blscd`(1) is a simple [ranger](http://ranger.nongnu.org/)-like file browser/navigator for the command line using `stty`(1) and `tput`(1). At the moment, you may merely browse your file system with some basic actions like sorting, searching and opening files. `blscd`(1) is written in `GNU bash`(1)(!) and has mainly been tested with `xterm`(1) on `Debian GNU/Linux`.
 
 ![](https://raw.githubusercontent.com/D630/blscd/master/doc/blscd.png)
 
 ### Install
 
-Explicitly required: `GNU bash`(1) >= 4.0, `file`(1), `grep`(1), `ls`(1), `paste`(1), `stat(1)`, `sort`(1), `stty`(1) and `tput`(1)
+Explicitly required:
+- `GNU bash`(1) >= 4.0
+- `file`(1)
+- `find`(1)
+- `grep`(1)
+- `ls`(1)
+- `md5sum`(1)
+- `numfmt`(1)
+- `sort`(1)
+- `stty`(1)
+- `tput`(1)
+- `tr`(1)
 
-Optional: `less`(1) and its scripts under `lessopen`(1); `w3m`(1) and its patch `w3m-img`
+Optional:
+- `vi`(1)
+- `less`(1) and its scripts under `lessopen`(1)
+- `w3m`(1) and its patch `w3m-img`
 
 * Get the newest version of `blscd`(1) with `$ git clone https://github.com/D630/blscd.git` or
   download its last release on https://github.com/D630/blscd/tags
@@ -18,33 +32,41 @@ Optional: `less`(1) and its scripts under `lessopen`(1); `w3m`(1) and its patch 
 
 ```
 usage: [source] blscd [-v | --version | -h | --help]
-
-    Key bindings
-      /                     Search for files in the current directory
-                            (like console command 'search')
+    Key bindings (basics)
       :                     Open the console
-      D                     Move ten lines down
       E                     Edit the current file in '<EDITOR>'
                             (fallback: 'vi')
-      G     [ END ]         Move to bottom
-      J                     Move half page down
-      K                     Move half page up
-      N                     Go to previous file
       S                     Fork a shell in the current directory
-      SPACE                 Toggle the mark-status of a file
+      ^L                    Redraw the screen
+      ^R                    Reload everything
+      g?                    Open this help in '<PAGER>'
+                            (fallback: 'less')
+      q                     Quit
+
+    Key bindings (settings)
+      ^H                    Toggle '_blscd_show_hidden'
+
+    Key bindings (moving)
+      D                     Move ten lines down
+      G     [ END ]         Move to bottom
+      J                     Move half page down C-D
+      K                     Move half page up C-U
       U                     Move ten lines up
       ^B    [ PAGE-UP ]     Move page up
       ^F    [ PAGE-DOWN ]   Move page down
-      ^L                    Redraw the screen
-      ^R                    Reload everything
       d                     Move five lines down
-      g?                    Open this help in '<PAGER>'
-                            (fallback: 'less')
+      gg    [ HOME ]        Move to top
+      h     [ LEFTARROW ]   Move left
+      j     [ DOWNARROW ]   Move down
+      k     [ UPARROW ]     Move up
+      l     [ RIGHTARROW ]  Move right
+      u                     Move five lines up
+
+    Key bindings (jumping)
       gL                    Move to /var/log
       gM                    Move to /mnt
       gd                    Move to /dev
       ge                    Move to /etc
-      gg    [ HOME ]        Move to top
       gh                    Move to <HOME>
       gl                    Move to /usr/lib
       gm                    Move to /media
@@ -53,12 +75,15 @@ usage: [source] blscd [-v | --version | -h | --help]
       gs                    Move to /srv
       gu                    Move to /usr
       gv                    Move to /var
-      h     [ LEFTARROW ]   Move left
-      j     [ DOWNARROW ]   Move down
-      k     [ UPARROW ]     Move up
-      l     [ RIGHTARROW ]  Move right
+
+    Key bindings (searching)
+      /                     Search for files in the current directory
+                            (console command 'search')
+      N                     Go to previous file
       n                     Go to next file. By default, go to newest
                             file; but after 'search' go to next match
+
+    Key bindings (sorting)
       oA                    Sort by access time, oldest first
       oB                    Sort by basename (LC_COLLATE=C.UTF-8),
                             descend
@@ -78,12 +103,19 @@ usage: [source] blscd [-v | --version | -h | --help]
       or                    Reverse whatever the sorting method is
       os                    Sort by file size, largest first
       ot                    Sort by type, ascend
-      q                     Quit
-      u                     Move five lines up
-      vn                    Unmark all files
-      vv                    Toggle the mark-status of all files
 
-    File type indicators
+    File type indicators (browser; via 'find')
+      D                     door (Solaris)
+      b                     block (buffered) special
+      c                     character (unbuffered) special
+      d                     directory
+      f                     regular file
+      l                     symbolic link
+      p                     named pipe (FIFO)
+      r                     non-link
+      s                     socket
+
+    File type indicators (statusbar; via 'ls')
       -                     regular file
       ?                     some other file type
       C                     high performance ('contiguous data') file
@@ -111,12 +143,12 @@ usage: [source] blscd [-v | --version | -h | --help]
 
 ### Notes
 
-- To use different file handlers, have a look at the functions called `__blscd_p_open_file()` and `__blscd_p_declare_set()`. Currently, the last one is also the place, where you need to edit the color configuration.
-- In this version file names may not contain quotation marks/double quotes (\") and nongraphic characters like newlines etc.
+- There is no configuration file at present, but to use different file handlers and some settings (hidden filter, colors), have a look at the functions called `__blscd_open_line()` and `__blscd_set_declare()`.
+- In this version file names may not contain nongraphic characters like newlines etc. Try it out, if you like.
 
 ### To do
 
-A lot.
+A lot, and step-by-step.
 
 ### Bugs & Requests
 
@@ -128,4 +160,4 @@ Report it on https://github.com/D630/blscd/issues
 
 ### See also
 
-Similar to this project and independent from `lscd` is [deer](https://github.com/vifon/deer), which is written in `zsh`.
+Similar to this project and independent from `lscd` is [deer](https://github.com/vifon/deer), which is written in `zsh` by [Vifon](https://github.com/vifon).
