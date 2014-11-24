@@ -1490,10 +1490,10 @@ __blscd_main()
             $'\x02'|$'\e[5~') # Ctrl+B | <PAGE-UP>
                  __blscd_move_line 2 "-${_blscd_screen_lines_browser}"
                 ;;
-            $'\e[H') # <HOME>
+            $'\e[H'|$'\eOH') # <HOME>
                 __blscd_move_line 2 -9999999999
                 ;;
-            G|$'\e[F') # <END>
+            G|$'\e[F'|$'\eOF') # <END>
                 __blscd_move_line 2 9999999999
                 ;;
             J)
