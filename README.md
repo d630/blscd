@@ -1,10 +1,14 @@
-## blscd v0.1.3.0 [GNU GPLv3]
+## blscd v0.1.4.0 [GNU GPLv3]
 
-`blscd`(1) is a simple [ranger](http://ranger.nongnu.org/)-like file browser/navigator for the command line using `stty`(1) and `tput`(1). At the moment, you may merely browse your file system with some basic actions like sorting, searching and opening files. `blscd`(1) is written in `GNU bash`(1)(!) and has mainly been tested with `xterm`(1) on `Debian GNU/Linux`.
+`blscd`(1) is a stupid [ranger](http://ranger.nongnu.org/)-like file browser/navigator (not manager) for the command line using `stty`(1), `tput`(1) and other Unix commands. At the moment, you may merely browse your file system with some basic actions like sorting, searching and opening files. `blscd`(1) is written in `GNU bash`(1) and has mainly been tested with `xterm`(1) on `Debian GNU/Linux`.
 
 ![](https://raw.githubusercontent.com/D630/blscd/master/doc/blscd.png)
 
 ### Install
+
+* Get the newest version of `blscd`(1) with `$ git clone https://github.com/D630/blscd.git` or
+  download its last release on https://github.com/D630/blscd/tags
+* Copy the script `blscd` elsewhere into `<PATH>` and make it executable.
 
 Explicitly required:
 - `GNU bash`(1) >= 4.0
@@ -14,6 +18,7 @@ Explicitly required:
 - `ls`(1)
 - `md5sum`(1)
 - `numfmt`(1)
+- `paste`(1)
 - `sort`(1)
 - `stty`(1)
 - `tput`(1)
@@ -24,14 +29,11 @@ Optional:
 - `less`(1) and its scripts under `lessopen`(1)
 - `w3m`(1) and its patch `w3m-img`
 
-* Get the newest version of `blscd`(1) with `$ git clone https://github.com/D630/blscd.git` or
-  download its last release on https://github.com/D630/blscd/tags
-* Copy the script `blscd` elsewhere into `<PATH>` and make it executable.
-
 ### Help
 
 ```
 usage: [source] blscd [-v | --version | -h | --help]
+
     Key bindings (basics)
       :                     Open the console
       E                     Edit the current file in '<EDITOR>'
@@ -143,8 +145,13 @@ usage: [source] blscd [-v | --version | -h | --help]
 
 ### Notes
 
-- There is no configuration file at present, but to use different file handlers and some settings (hidden filter, colors), have a look at the functions called `__blscd_open_line()` and `__blscd_set_declare()`.
-- In this version file names may not contain nongraphic characters like newlines etc. Try it out, if you like.
+- There is no configuration file at present, but to use different file handlers and some settings (hidden filter, colors in the bars, cursor), have a look at the functions called `__blscd_open_line()` and `__blscd_set_declare()`.
+- The coloration in the browser pane works via `ls`(1) and the `<LS_COLORS>` environment variable; you may write your own specific database and source it with `dircolors`(1) into the environment before executing `blscd`(1):
+```
+eval $(dircolors -b "DATABASE")
+
+```
+- In this version file names may not contain nongraphic characters like newlines etc. Try it out.
 
 ### To do
 
@@ -160,4 +167,4 @@ Report it on https://github.com/D630/blscd/issues
 
 ### See also
 
-Similar to this project and independent from `lscd` is [deer](https://github.com/vifon/deer), which is written in `zsh` by [Vifon](https://github.com/vifon).
+Similar to this project and independent from `lscd` is [deer](https://github.com/vifon/deer) (2014, GNU GPLv3), which is written in `zsh` by Wojciech Siewierski aka. [Vifon](https://github.com/vifon).
