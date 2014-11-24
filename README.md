@@ -1,4 +1,4 @@
-## blscd v0.1.4.0 [GNU GPLv3]
+## blscd v0.1.4.2 [GNU GPLv3]
 
 `blscd`(1) is a stupid [ranger](http://ranger.nongnu.org/)-like file browser/navigator (not manager) for the command line using `stty`(1), `tput`(1) and other Unix commands. At the moment, you may merely browse your file system with some basic actions like sorting, searching and opening files. `blscd`(1) is written in `GNU bash`(1) and has mainly been tested with `xterm`(1) on `Debian GNU/Linux`.
 
@@ -160,6 +160,8 @@ A lot, and step-by-step.
 ### Bugs & Requests
 
 Report it on https://github.com/D630/blscd/issues
+
+See also [info file](../master/doc/INFO.md)
 
 ### Credits
 
