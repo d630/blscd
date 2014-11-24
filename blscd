@@ -30,9 +30,9 @@
 
 # -- FUNCTIONS.
 
-__blscd_version() { echo "0.1.4.0" ; }
+__blscd_version () { echo "0.1.4.2" ; }
 
-__blscd_build_col_list()
+__blscd_build_col_list ()
 {
     builtin declare -i i=
 
@@ -93,7 +93,7 @@ __blscd_build_col_list()
     done
 }
 
-__blscd_build_col_view()
+__blscd_build_col_view ()
 {
     builtin declare -i i=
 
@@ -206,7 +206,7 @@ __blscd_build_col_view()
     done
 }
 
-__blscd_build_data()
+__blscd_build_data ()
 {
     if [[ $1 == -c ]]
     then
@@ -216,7 +216,7 @@ __blscd_build_data()
         builtin declare current_only=
     fi
 
-    __blscd_build_data_do_stat()
+    __blscd_build_data_do_stat ()
     {
         [[ ! ${_blscd_data[stat ${@:-/}]} ]] && \
             _blscd_data[stat ${@:-/}]=$(\
@@ -234,7 +234,7 @@ __blscd_build_data()
             command tr '\n' '\0'
     }
 
-    __blscd_build_data_do_1()
+    __blscd_build_data_do_1 ()
     {
         builtin declare dir=
 
@@ -255,7 +255,7 @@ __blscd_build_data()
         done
     }
 
-    __blscd_build_data_do_2()
+    __blscd_build_data_do_2 ()
     {
         builtin declare \
             atime= \
@@ -294,7 +294,7 @@ __blscd_build_data()
         _blscd_data[list ${dir:-/} ${_blscd_hidden_filter_md5sum} ${_blscd_sort_mechanism} ${_blscd_sort_reverse}]=$(builtin printf '%s\n' "${array[@]}")
     }
 
-    __blscd_build_data_do_3()
+    __blscd_build_data_do_3 ()
     {
         builtin declare dir="$@"
 
@@ -349,7 +349,7 @@ __blscd_build_data()
     __blscd_build_data_do_1 "$@"
 }
 
-__blscd_build_mtime()
+__blscd_build_mtime ()
 {
     builtin declare i=
 
@@ -361,7 +361,7 @@ __blscd_build_mtime()
             done | command sort -n)
 }
 
-__blscd_build_search()
+__blscd_build_search ()
 {
     _blscd_col_2_search=()
 
@@ -377,7 +377,7 @@ __blscd_build_search()
         _blscd_search_block=_blscd_search_block
 }
 
-__blscd_draw_screen()
+__blscd_draw_screen ()
 {
     builtin declare -i \
         i= \
@@ -517,7 +517,7 @@ __blscd_draw_screen()
     builtin printf "${_blscd_tput_reset}\033[$((_blscd_screen_lines_browser_col_2_cursor + 2));$((screen_col_1_width + 2))H"
 }
 
-__blscd_draw_screen_check()
+__blscd_draw_screen_check ()
 {
     [[ $_blscd_redraw == _blscd_redraw ]] &&
     {
@@ -527,7 +527,7 @@ __blscd_draw_screen_check()
     }
 }
 
-__blscd_draw_screen_lines()
+__blscd_draw_screen_lines ()
 {
     builtin declare -i j=
     builtin declare \
@@ -614,13 +614,13 @@ __blscd_draw_screen_lines()
     done
 }
 
-__blscd_edit_line()
+__blscd_edit_line ()
 {
     __blscd_set_action_last
     command "${EDITOR:-vi}" "$_blscd_screen_lines_browser_col_2_cursor_string"
 }
 
-__blscd_help()
+__blscd_help ()
 {
     printf "usage: [source] blscd [-v | --version | -h | --help]
 
@@ -734,19 +734,19 @@ __blscd_help()
 "
 }
 
-__blscd_move_col()
+__blscd_move_col ()
 {
     __blscd_set_resize 2
     __blscd_set_search_non
 
-    __blscd_move_col_up()
+    __blscd_move_col_up ()
     {
         __blscd_set_action_last
         _blscd_col_2_view_offset=1
         _blscd_screen_lines_browser_col_2_cursor=0
     }
 
-    __blscd_move_col_down()
+    __blscd_move_col_down ()
     {
         __blscd_set_action_last
         _blscd_col_2_view_offset=1
@@ -763,7 +763,7 @@ __blscd_move_col()
     builtin cd -- "$1"
 }
 
-__blscd_move_line()
+__blscd_move_line ()
 {
     __blscd_set_action_last
     _blscd_redraw=_blscd_redraw
@@ -772,7 +772,7 @@ __blscd_move_line()
         arg=$2 \
 
 
-    __blscd_move_line_do()
+    __blscd_move_line_do ()
     {
         builtin declare -i \
             col=$1 \
@@ -873,7 +873,7 @@ __blscd_move_line()
     esac
 }
 
-__blscd_mtime()
+__blscd_mtime ()
 {
     builtin declare -i j=
 
@@ -900,7 +900,7 @@ __blscd_mtime()
 
 }
 
-__blscd_mtime_go_newest()
+__blscd_mtime_go_newest ()
 {
     builtin declare -i i=
 
@@ -915,7 +915,7 @@ __blscd_mtime_go_newest()
             done)
 }
 
-__blscd_mtime_go_oldest()
+__blscd_mtime_go_oldest ()
 {
     builtin declare -i i=
 
@@ -932,7 +932,7 @@ __blscd_mtime_go_oldest()
     fi
 }
 
-__blscd_open_console()
+__blscd_open_console ()
 {
     builtin declare console_command_arguments=
 
@@ -963,7 +963,7 @@ __blscd_open_console()
     _blscd_console_command_name=
 }
 
-__blscd_open_line()
+__blscd_open_line ()
 {
     if [[ -d $1 && ${_blscd_col_3_view_total} -ne 0 ]]
     then
@@ -983,7 +983,7 @@ __blscd_open_line()
     fi
 }
 
-__blscd_open_shell()
+__blscd_open_shell ()
 {
     __blscd_set_action_last
     command stty $_blscd_saved_stty
@@ -992,7 +992,7 @@ __blscd_open_shell()
     command stty -echo
 }
 
-__blscd_search()
+__blscd_search ()
 {
     __blscd_set_action_last
     _blscd_search_block=
@@ -1003,7 +1003,7 @@ __blscd_search()
     __blscd_move_line 2 "$((${_blscd_col_2_search[0]} -1 ))"
 }
 
-__blscd_search_go_down()
+__blscd_search_go_down ()
 {
     builtin declare -i i=
 
@@ -1023,7 +1023,7 @@ __blscd_search_go_down()
     fi
 }
 
-__blscd_search_go_up()
+__blscd_search_go_up ()
 {
     declare -i i=
 
@@ -1043,9 +1043,9 @@ __blscd_search_go_up()
     fi
 }
 
-__blscd_set_action_last() { _blscd_action_last=${FUNCNAME[1]} ; }
+__blscd_set_action_last () { _blscd_action_last=${FUNCNAME[1]} ; }
 
-__blscd_set_declare()
+__blscd_set_declare ()
 {
     builtin declare -gA _blscd_data
 
@@ -1148,7 +1148,7 @@ __blscd_set_declare()
         LC_COLLATE=C
 }
 
-__blscd_set_delete()
+__blscd_set_delete ()
 {
     builtin unset -v \
         _blscd_action_last \
@@ -1251,8 +1251,6 @@ __blscd_set_delete()
         __blscd_move_col_up \
         __blscd_move_line \
         __blscd_move_line_do \
-        __blscd_move_line_time_newest \
-        __blscd_move_line_time_oldest \
         __blscd_mtime \
         __blscd_mtime_go_newest \
         __blscd_mtime_go_oldest \
@@ -1280,7 +1278,7 @@ __blscd_set_delete()
     builtin unset -v _blscd_LC_COLLATE_old
 }
 
-__blscd_set_environment()
+__blscd_set_environment ()
 {
     builtin printf "$_blscd_tput_alt"
     command stty -echo
@@ -1291,7 +1289,7 @@ __blscd_set_environment()
     builtin trap '' SIGALRM
 }
 
-__blscd_set_exit()
+__blscd_set_exit ()
 {
     command stty $_blscd_saved_stty
     builtin trap - SIGWINCH SIGINT SIGALRM
@@ -1300,7 +1298,7 @@ __blscd_set_exit()
     __blscd_set_delete
 }
 
-__blscd_set_hide()
+__blscd_set_hide ()
 {
     __blscd_set_action_last
     __blscd_set_resize 2
@@ -1315,14 +1313,14 @@ __blscd_set_hide()
     __blscd_set_hide_filter_md5sum
 }
 
-__blscd_set_hide_filter_md5sum()
+__blscd_set_hide_filter_md5sum ()
 {
     builtin read _blscd_hidden_filter_md5sum _ \
         < <(builtin printf '%s' "${_blscd_show_hidden}:${_blscd_hidden_filter}:${_blscd_hidden_filter_ls}" | \
             command md5sum)
 }
 
-__blscd_set_reload()
+__blscd_set_reload ()
 {
     builtin trap - SIGWINCH SIGINT SIGALRM
     command stty $_blscd_saved_stty
@@ -1333,7 +1331,7 @@ __blscd_set_reload()
     __blscd_set_environment
 }
 
-__blscd_set_resize()
+__blscd_set_resize ()
 {
     case $1 in
         1)
@@ -1351,7 +1349,7 @@ __blscd_set_resize()
     esac
 }
 
-__blscd_set_search_non()
+__blscd_set_search_non ()
 {
     __blscd_set_action_last
     _blscd_search_pattern=
@@ -1359,7 +1357,7 @@ __blscd_set_search_non()
     _blscd_col_2_search=()
 }
 
-__blscd_set_sort()
+__blscd_set_sort ()
 {
     __blscd_set_action_last
     __blscd_set_resize 2
@@ -1434,7 +1432,7 @@ __blscd_set_sort()
 
 # -- MAIN.
 
-__blscd_main()
+__blscd_main ()
 {
     # Simple.
     if [[ $1 =~ (-h|--help) ]]
