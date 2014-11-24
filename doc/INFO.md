@@ -12,7 +12,7 @@ __blscd_many_lines ()
     LIST
 }
 
-__blscd_maby_lines ()
+__blscd_many_lines ()
 for i
 do
     LIST
@@ -33,26 +33,26 @@ builtin declare -g string=
 builtin declare -gx string=
 builtin declare -i int=
 builtin declare -a "iarray=()"
-builtin declare -A aarray=
+builtin declare -A aarray
 ```
 
 ### Functions
 
 | **Name**  | **Arguments** | **Description** |
 | --------- | ------------- | --------------- |
-| `__blscd_build_col_list` | `<INT>` | Build `_blscd_col_<INT>_list`; call `__blscd_build_search` |
-| `__blscd_build_col_view` | `<INT>` | Build `_blscd_col_<INT>_view`, `_blscd_col_<INT>_view_offset`, `_blscd_col_<INT>_view_total`, `_blscd_screen_lines_browser_col_<INT>_cursor`, `_blscd_screen_lines_browser_col_<INT>_cursor_string`, `_blscd_data='(["view <KEY>"]= ["view offset <KEY>"]= ["view cursor <KEY>"]= )'` |
+| `__blscd_build_col_list` | `(1|2|3)` | Build `_blscd_col_<INT>_list`; call `__blscd_build_search` |
+| `__blscd_build_col_view` | `(1|2|3)` | Build `_blscd_col_<INT>_view`, `_blscd_col_<INT>_view_offset`, `_blscd_col_<INT>_view_total`, `_blscd_screen_lines_browser_col_<INT>_cursor`, `_blscd_screen_lines_browser_col_<INT>_cursor_string`, `_blscd_data='(["view <KEY>"]= ["view offset <KEY>"]= ["view cursor <KEY>"]= )'` |
 | `__blscd_build_data` | `<DIR>` ... | Nested; call `__blscd_build_data_do_stat` and `__blscd_build_data_do_<INT>`; build `_blscd_data='(["stat <KEY>"]= ["atime <KEY>"]= ["basename <KEY>"]= ["color <KEY>"]= ["color prae <KEY>"]= ["color post <KEY>"]= ["ctime <KEY>"]= ["index <KEY>"]= ["mtime <KEY>"]= ["size <KEY>"]= ["type <KEY>"]= ["list <KEY>"]= )'` |
 | `__blscd_build_mtime` | | Build `_blscd_col_2_mtime` |
 | `__blscd_build_search` | | Build `_blscd_col_2_search` |
 | `__blscd_draw_screen` | |Determine screen dimension, print screen (titlebar, browser with three columns, statusbar) and set cursor position; call `__blscd_build_col_list`, `__blscd_build_col_view`, `__blscd_draw_screen_lines` |
 | `__blscd_draw_screen_check` | | Check, whether the screen needs to be redrawn |
-| `__blscd_draw_screen_lines` | `<INT>` | Build `_blscd_screen_lines_titlebar_string`, `screen_lines_statusbar_string`; color `_blscd_screen_lines_browser_col_<INT>_cursor` |
+| `__blscd_draw_screen_lines` | `(1|2|3)` | Build `_blscd_screen_lines_titlebar_string`, `screen_lines_statusbar_string`; color `_blscd_screen_lines_browser_col_<INT>_cursor` |
 | `__blscd_edit_line` | | Execute `<EDITOR>` and open `_blscd_screen_lines_browser_col_2_cursor_string` |
 | `__blscd_help` | | Print usage and help |
 | `__blscd_main` | | Initiate `blscd`(1); decide, what to do based on command line arguments and pressed keys |
 | `__blscd_move_col` | `<DIR>` | Nested; call `__blscd_move_col_up` and `__blscd_move_col_down`; change diretories |
-| `__blscd_move_line` | `<INT>` `<INT>` | Nested; call `__blscd_move_line_do`; move lines in the browser |
+| `__blscd_move_line` | `(1|2|3)` `<INT>` | Nested; call `__blscd_move_line_do`; move lines in the browser |
 | `__blscd_mtime` | `(newest|oldest)` | Call `__blscd_mtime_go_newest` and `__blscd_mtime_go_oldest` and move lines |
 | `__blscd_mtime_go_newest` | | Change order in `_blscd_col_2_mtime` |
 | `__blscd_mtime_go_oldest` | | Change order in `_blscd_col_2_mtime` |
@@ -70,9 +70,9 @@ builtin declare -A aarray=
 | `__blscd_set_hide` | | Set `_blscd_show_hidden` and call `__blscd_set_hide_filter_md5sum` |
 | `__blscd_set_hide_filter_md5sum` | | Build `_blscd_hidden_filter_md5sum` |
 | `__blscd_set_reload` | | Reset terminal environment and global variables |
-| `__blscd_set_resize` | `<INT>` | Build `_blscd_redraw` and `_blscd_reprint` |
+| `__blscd_set_resize` | `(1|2|[^12])` | Build `_blscd_redraw` and `_blscd_reprint` |
 | `__blscd_set_search_non` | | Delete environment for the console command `search` |
-| `__blscd_set_sort` | `<KEY>` | Change `_blscd_sort_mechanism` and `_blscd_sort_reverse` |
+| `__blscd_set_sort` | `(A|a|B|b|C|c|M|m|N|n|S|s|T|t|r)` | Change `_blscd_sort_mechanism` and `_blscd_sort_reverse` |
 | `__blscd_version` | | Print version number |
 
 ### Variables
