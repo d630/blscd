@@ -149,7 +149,6 @@ usage: [source] blscd [-v | --version | -h | --help]
 - The coloration in the browser pane works via `ls`(1) and the `<LS_COLORS>` environment variable; you may write your own specific database and source it with `dircolors`(1) into the environment before executing `blscd`(1):
 ```
 eval $(dircolors -b "DATABASE")
-
 ```
 - In this version file names may not contain nongraphic characters like newlines etc. Try it out.
 
@@ -161,7 +160,7 @@ A lot, and step-by-step.
 
 Report it on https://github.com/D630/blscd/issues
 
-See also [info file](../master/doc/INFO.md)
+See also the [info file](../master/doc/INFO.md) in the docs
 
 ### Credits
 

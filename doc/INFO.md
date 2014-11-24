@@ -2,7 +2,7 @@
 
 - (Nested) shell functions (procedures and functions in the stricter sense) are declared without the reserved word `function`; their names are prefixed with `__blscd_`. The bodies may have every compound command, but the group command is prefered:
 
-```
+```sh
 __blscd_one_line () { LIST ; }
 
 __blscd_one_line () [[ $@ ]]
@@ -17,18 +17,17 @@ for i
 do
     LIST
 done
-
 ```
 
 - Variables, which are not restricted to local scope in a function, are prefixed with `_blscd_`.
 
-```
+```sh
     _blscd_var_global=
 ```
 - Shell builtins have to be executed with `builtin`; foreign commands with `command`.
 - Every variable is to be declared/initiated with the builtin command `declare` like:
 
-```
+```sh
 builtin declare string=
 builtin declare -g string=
 builtin declare -gx string=
@@ -65,11 +64,11 @@ builtin declare -A aarray=
 | `__blscd_search_go_up` | Move line to previous match |
 | `__blscd_set_action_last` | Build `_blscd_action_last` |
 | `__blscd_set_declare` | Declare/Initiate all global variables and save terminal environment |
-| `__blscd_set_delete` | Unset all global variable and all functions |
+| `__blscd_set_delete` | Unset all global variables and all functions |
 | `__blscd_set_environment` | Go to the alternate screen; then change terminal environment and trap signals |
 | `__blscd_set_exit` | Restore terminal environment and call `__blscd_set_delete` |
 | `__blscd_set_hide` | Set `_blscd_show_hidden` and call `__blscd_set_hide_filter_md5sum` |
-| `__blscd_set_hide_filter_md5sum` | Build `builtin read _blscd_hidden_filter_md5sum` |
+| `__blscd_set_hide_filter_md5sum` | Build `_blscd_hidden_filter_md5sum` |
 | `__blscd_set_reload` | Reset terminal environment and global variables |
 | `__blscd_set_resize` | Build `_blscd_redraw` and `_blscd_reprint` |
 | `__blscd_set_search_non` | Delete environment for the console command `search` |
