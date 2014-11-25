@@ -36,89 +36,99 @@ builtin declare -a "iarray=()"
 builtin declare -A aarray
 ```
 
+### Environments
+
+| **Name** | **Fallback** |
+| -------- | ------------ |
+| `EDITOR` | `vi` |
+| `PAGER` | `less` |
+| `LANG` | |
+| `SHELL` | |
+| `LS_COLORS` | |
+
 ### Variables
 
 | **Name** | **Type** |**Default** | **Description** |
 | -------- | -------- |------------| --------------- |
-| _blscd_action_last | v | | |
-| _blscd_col_1_list | ia | | |
-| _blscd_col_1_list_total | iv | `0` | |
-| _blscd_col_1_view | ia | | |
-| _blscd_col_1_view_offset | iv | `1` | |
-| _blscd_col_1_view_total | iv | `0` | |
-| _blscd_col_2_list | ia | | |
-| _blscd_col_2_list_total | iv | `0` | |
-| _blscd_col_2_mtime | ia | | |
-| _blscd_col_2_search | ia | | |
-| _blscd_col_2_view | ia | | |
-| _blscd_col_2_view_offset | iv | `1` | |
-| _blscd_col_2_view_total | iv | `0` | |
-| _blscd_col_3_list | ia | | |
-| _blscd_col_3_list_total | iv | `0` | |
-| _blscd_col_3_view | ia | | |
-| _blscd_col_3_view_offset | iv | `1` | |
-| _blscd_col_3_view_total | iv | `0` | |
-| _blscd_console_command_name | v | | |
-| _blscd_data | aa | | |
-| _blscd_dir_col_0_string | v | | |
-| _blscd_dir_col_1_string | v | `<PWD>` | |
-| _blscd_dir_last | v | | |
-| _blscd_hidden_filter | v | `^\.|~$'` | |
-| _blscd_hidden_filter_ls | v | `--ignore=.* --ignore=*~` | |
-| _blscd_hidden_filter_md5sum | v | | |
-| _blscd_input | v | | |
-| _blscd_k1 | v | | |
-| _blscd_k2 | v | | |
-| _blscd_k3 | v | | |
-| _blscd_LC_COLLATE_old | v | `<LC_COLLATE>` | |
-| _blscd_line_last | v | | |
-| _blscd_opener | v | `builtin export LESSOPEN='"| /usr/bin/lesspipe %s"';command less -R "$1"` | |
-| _blscd_redraw | v | `_blscd_redraw` | |
-| _blscd_redraw_number | iv | `0` | |
-| _blscd_reprint | v | `_blscd_reprint` | |
-| _blscd_saved_stty | v | | |
-| _blscd_saved_traps | v | | |
-| _blscd_screen_lines_browser | iv | `0` | |
-| _blscd_screen_lines_browser_col_1_cursor | iv | `0` | |
-| _blscd_screen_lines_browser_col_1_cursor_string | v | | |
-| _blscd_screen_lines_browser_col_1_visible | iv | `0` | |
-| _blscd_screen_lines_browser_col_2_cursor | iv | `0` | |
-| _blscd_screen_lines_browser_col_2_cursor_string | v | | |
-| _blscd_screen_lines_browser_col_2_visible | iv | `0` | |
-| _blscd_screen_lines_browser_col_3_cursor | iv | `0` | |
-| _blscd_screen_lines_browser_col_3_cursor_string | v | | |
-| _blscd_screen_lines_browser_col_3_visible | iv | `0` | |
-| _blscd_screen_lines_offset | iv | `4` | |
-| _blscd_screen_lines_titlebar_string | v | | |
-| _blscd_search_block | v | | |
-| _blscd_search_pattern | v | | |
-| _blscd_show_hidden | v | | |
-| _blscd_sort_mechanism | v | `_blscd_sort_mechanism_basename` | |
-| _blscd_sort_reverse | v | | |
-| _blscd_step | iv | `6` | |
-| _blscd_tput_alt | v | | |
-| _blscd_tput_am_off | v | | |
-| _blscd_tput_am_on | v | | |
-| _blscd_tput_black_f | v | | |
-| _blscd_tput_blue_f | v | | |
-| _blscd_tput_bold | v | | |
-| _blscd_tput_clear | v | | |
-| _blscd_tput_cup_1_0 | v | | |
-| _blscd_tput_cup_2_0 | v | | |
-| _blscd_tput_cup_99999_0 | v | | |
-| _blscd_tput_ealt | v | | |
-| _blscd_tput_eel | v | | |
-| _blscd_tput_green_b | v | | |
-| _blscd_tput_green_f | v | | |
-| _blscd_tput_hide | v | | |
-| _blscd_tput_home | v | | |
-| _blscd_tput_red_b | v | | |
-| _blscd_tput_reset | v | | |
-| _blscd_tput_show | v | | |
-| _blscd_tput_white_b | v | | |
-| _blscd_tput_white_f | v | | |
-| _blscd_tput_yellow_b | v | | |
-| _blscd_tput_yellow_f | v | | |
+| `_blscd_action_last` | v | | |
+| `_blscd_col_1_list` | ia | | |
+| `_blscd_col_1_list_total` | iv | `0` | |
+| `_blscd_col_1_view` | ia | | |
+| `_blscd_col_1_view_offset` | iv | `1` | |
+| `_blscd_col_1_view_total` | iv | `0` | |
+| `_blscd_col_2_list` | ia | | |
+| `_blscd_col_2_list_total` | iv | `0` | |
+| `_blscd_col_2_mtime` | ia | | |
+| `_blscd_col_2_search` | ia | | |
+| `_blscd_col_2_view` | ia | | |
+| `_blscd_col_2_view_offset` | iv | `1` | |
+| `_blscd_col_2_view_total` | iv | `0` | |
+| `_blscd_col_3_list` | ia | | |
+| `_blscd_col_3_list_total` | iv | `0` | |
+| `_blscd_col_3_view` | ia | | |
+| `_blscd_col_3_view_offset` | iv | `1` | |
+| `_blscd_col_3_view_total` | iv | `0` | |
+| `_blscd_console_command_name` | v | | |
+| `_blscd_data` | aa | | |
+| `_blscd_dir_col_0_string` | v | | |
+| `_blscd_dir_col_1_string` | v | `<PWD>` | |
+| `_blscd_dir_last` | v | | |
+| `_blscd_hidden_filter` | v | `^\.|~$'` | |
+| `_blscd_hidden_filter_ls` | v | `--ignore=.* --ignore=*~` | |
+| `_blscd_hidden_filter_md5sum` | v | | |
+| `_blscd_input` | v | | |
+| `_blscd_k1` | v | | |
+| `_blscd_k2` | v | | |
+| `_blscd_k3` | v | | |
+| `_blscd_LC_COLLATE_old` | v | `<LC_COLLATE>` | |
+| `_blscd_line_last` | v | | |
+| `_blscd_opener` | v | `builtin export LESSOPEN='"| /usr/bin/lesspipe %s"';command less -R "$1"` | |
+| `_blscd_redraw` | v | `_blscd_redraw` | |
+| `_blscd_redraw_number` | iv | `0` | |
+| `_blscd_reprint` | v | `_blscd_reprint` | |
+| `_blscd_saved_stty` | v | | |
+| `_blscd_saved_traps` | v | | |
+| `_blscd_screen_lines_browser` | iv | `0` | |
+| `_blscd_screen_lines_browser_col_1_cursor` | iv | `0` | |
+| `_blscd_screen_lines_browser_col_1_cursor_string` | v | | |
+| `_blscd_screen_lines_browser_col_1_visible` | iv | `0` | |
+| `_blscd_screen_lines_browser_col_2_cursor` | iv | `0` | |
+| `_blscd_screen_lines_browser_col_2_cursor_string` | v | | |
+| `_blscd_screen_lines_browser_col_2_visible` | iv | `0` | |
+| `_blscd_screen_lines_browser_col_3_cursor` | iv | `0` | |
+| `_blscd_screen_lines_browser_col_3_cursor_string` | v | | |
+| `_blscd_screen_lines_browser_col_3_visible` | iv | `0` | |
+| `_blscd_screen_lines_offset` | iv | `4` | |
+| `_blscd_screen_lines_titlebar_string` | v | | |
+| `_blscd_search_block` | v | | |
+| `_blscd_search_pattern` | v | | |
+| `_blscd_show_hidden` | v | | |
+| `_blscd_sort_mechanism` | v | `_blscd_sort_mechanism_basename` | |
+| `_blscd_sort_reverse` | v | | |
+| `_blscd_step` | iv | `6` | |
+| `_blscd_tput_alt` | v | | |
+| `_blscd_tput_am_off` | v | | |
+| `_blscd_tput_am_on` | v | | |
+| `_blscd_tput_black_f` | v | | |
+| `_blscd_tput_blue_f` | v | | |
+| `_blscd_tput_bold` | v | | |
+| `_blscd_tput_clear` | v | | |
+| `_blscd_tput_cup_1_0` | v | | |
+| `_blscd_tput_cup_2_0` | v | | |
+| `_blscd_tput_cup_99999_0` | v | | |
+| `_blscd_tput_ealt` | v | | |
+| `_blscd_tput_eel` | v | | |
+| `_blscd_tput_green_b` | v | | |
+| `_blscd_tput_green_f` | v | | |
+| `_blscd_tput_hide` | v | | |
+| `_blscd_tput_home` | v | | |
+| `_blscd_tput_red_b` | v | | |
+| `_blscd_tput_reset` | v | | |
+| `_blscd_tput_show` | v | | |
+| `_blscd_tput_white_b` | v | | |
+| `_blscd_tput_white_f` | v | | |
+| `_blscd_tput_yellow_b` | v | | |
+| `_blscd_tput_yellow_f` | v | | |
 
 ### Functions
 
