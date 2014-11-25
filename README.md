@@ -162,13 +162,11 @@ eval $(dircolors -b "DATABASE")
 
 ### To do
 
-A lot, and step-by-step.
+[A lot](../master/doc/TODO.md), and step-by-step.
 
 ### Bugs & Requests
 
-Report it on https://github.com/D630/blscd/issues
-
-See also the [info file](../master/doc/INFO.md) in the docs
+Report it on https://github.com/D630/blscd/issues and see the [info file](../master/doc/INFO.md) in the docs.
 
 ### Credits
 
