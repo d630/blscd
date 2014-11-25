@@ -43,7 +43,7 @@ builtin declare -A aarray
 | `EDITOR` | `vi` |
 | `PAGER` | `less` |
 | `LANG` | |
-| `SHELL` | |
+| `SHELL` | `bash` |
 | `LS_COLORS` | |
 
 ### Variables
