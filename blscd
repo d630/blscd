@@ -1057,9 +1057,10 @@ __blscd_set_declare ()
         _blscd_col_2_view_offset=1 \
         _blscd_col_2_view_total= \
         _blscd_col_3_list_total= \
-        _blscd_col_3_view_offset= \
+        _blscd_col_3_view_offset=1 \
         _blscd_col_3_view_total= \
         _blscd_redraw_number= \
+        _blscd_screen_lines_browser= \
         _blscd_screen_lines_browser_col_1_cursor= \
         _blscd_screen_lines_browser_col_1_visible= \
         _blscd_screen_lines_browser_col_2_cursor= \
@@ -1086,7 +1087,6 @@ __blscd_set_declare ()
         _blscd_opener='builtin export LESSOPEN='"| /usr/bin/lesspipe %s"';command less -R "$1"' \
         _blscd_redraw=_blscd_redraw \
         _blscd_reprint=_blscd_reprint \
-        _blscd_screen_lines_browser= \
         _blscd_screen_lines_browser_col_1_cursor_string= \
         _blscd_screen_lines_browser_col_2_cursor_string= \
         _blscd_screen_lines_browser_col_3_cursor_string= \
@@ -1101,7 +1101,7 @@ __blscd_set_declare ()
         "_blscd_col_1_list=()" \
         "_blscd_col_1_view=()" \
         "_blscd_col_2_list=()" \
-        "_blscd_col_2_list_time=()" \
+        "_blscd_col_2_mtime=()" \
         "_blscd_col_2_search=()" \
         "_blscd_col_2_view=()" \
         "_blscd_col_3_list=()" \
@@ -1158,8 +1158,8 @@ __blscd_set_delete ()
         _blscd_col_1_view_offset \
         _blscd_col_1_view_total \
         _blscd_col_2_list \
-        _blscd_col_2_list_time \
         _blscd_col_2_list_total \
+        _blscd_col_2_mtime \
         _blscd_col_2_search \
         _blscd_col_2_view \
         _blscd_col_2_view_offset \
