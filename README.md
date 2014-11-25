@@ -1,4 +1,4 @@
-## blscd v0.1.4.2 [GNU GPLv3]
+## blscd v0.1.4.3 [GNU GPLv3]
 
 `blscd`(1) is a stupid [ranger](http://ranger.nongnu.org/)-like file browser/navigator (not manager) for the command line using `stty`(1), `tput`(1) and other Unix commands. At the moment, you may merely browse your file system with some basic actions like sorting, searching and opening files. `blscd`(1) is written in `GNU bash`(1) and has mainly been tested with `xterm`(1) on `Debian GNU/Linux`.
 
@@ -38,7 +38,8 @@ usage: [source] blscd [-v | --version | -h | --help]
       :                     Open the console
       E                     Edit the current file in '<EDITOR>'
                             (fallback: 'vi')
-      S                     Fork a shell in the current directory
+      S                     Fork '<SHELL>' in the current directory
+                            (fallback: 'bash')
       ^L                    Redraw the screen
       ^R                    Reload everything
       g?                    Open this help in '<PAGER>'
@@ -51,8 +52,8 @@ usage: [source] blscd [-v | --version | -h | --help]
     Key bindings (moving)
       D                     Move ten lines down
       G     [ END ]         Move to bottom
-      J                     Move half page down C-D
-      K                     Move half page up C-U
+      J                     Move half page down
+      K                     Move half page up
       U                     Move ten lines up
       ^B    [ PAGE-UP ]     Move page up
       ^F    [ PAGE-DOWN ]   Move page down
@@ -87,7 +88,7 @@ usage: [source] blscd [-v | --version | -h | --help]
 
     Key bindings (sorting)
       oA                    Sort by access time, oldest first
-      oB                    Sort by basename (LC_COLLATE=C.UTF-8),
+      oB                    Sort by basename (LC_COLLATE=C),
                             descend
       oC                    Sort by change time, oldest first
       oM                    Sort by modification time, oldest first
@@ -96,7 +97,7 @@ usage: [source] blscd [-v | --version | -h | --help]
       oS                    Sort by file size, smallest first
       oT                    Sort by type, descend
       oa                    Sort by access time, newest first
-      ob                    Sort by basename (LC_COLLATE=C.UTF-8),
+      ob                    Sort by basename (LC_COLLATE=C),
                             ascend
       oc                    Sort by change time, newest first
       om                    Sort by modification time, newest first

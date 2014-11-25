@@ -628,7 +628,8 @@ __blscd_help ()
       :                     Open the console
       E                     Edit the current file in '<EDITOR>'
                             (fallback: 'vi')
-      S                     Fork a shell in the current directory
+      S                     Fork '<SHELL>' in the current directory
+                            (fallback: 'bash')
       ^L                    Redraw the screen
       ^R                    Reload everything
       g?                    Open this help in '<PAGER>'
@@ -641,8 +642,8 @@ __blscd_help ()
     Key bindings (moving)
       D                     Move ten lines down
       G     [ END ]         Move to bottom
-      J                     Move half page down C-D
-      K                     Move half page up C-U
+      J                     Move half page down
+      K                     Move half page up
       U                     Move ten lines up
       ^B    [ PAGE-UP ]     Move page up
       ^F    [ PAGE-DOWN ]   Move page down
@@ -677,7 +678,7 @@ __blscd_help ()
 
     Key bindings (sorting)
       oA                    Sort by access time, oldest first
-      oB                    Sort by basename (LC_COLLATE=C.UTF-8),
+      oB                    Sort by basename (LC_COLLATE=C),
                             descend
       oC                    Sort by change time, oldest first
       oM                    Sort by modification time, oldest first
@@ -686,7 +687,7 @@ __blscd_help ()
       oS                    Sort by file size, smallest first
       oT                    Sort by type, descend
       oa                    Sort by access time, newest first
-      ob                    Sort by basename (LC_COLLATE=C.UTF-8),
+      ob                    Sort by basename (LC_COLLATE=C),
                             ascend
       oc                    Sort by change time, newest first
       om                    Sort by modification time, newest first
