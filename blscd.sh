@@ -30,7 +30,7 @@
 
 # -- FUNCTIONS.
 
-__blscd_version () { echo "0.1.4.5" ; }
+__blscd_version () { echo "0.1.4.6" ; }
 
 __blscd_build_col_list ()
 {
@@ -44,7 +44,7 @@ __blscd_build_col_list ()
                 then
                     _blscd_col_1_list=()
                 else
-                    [[ ! ${_blscd_data[list ${_blscd_dir_col_0_string} ${_blscd_hidden_filter_md5sum} ${_blscd_sort_mechanism} ${_blscd_sort_reverse}]} ]] && \
+                    [[ -z ${_blscd_data[list ${_blscd_dir_col_0_string} ${_blscd_hidden_filter_md5sum} ${_blscd_sort_mechanism} ${_blscd_sort_reverse}]} ]] && \
                         __blscd_build_data -c "$_blscd_dir_col_0_string"
                     builtin mapfile -t _blscd_col_1_list \
                         < <(builtin printf '%s\n' "${_blscd_data[list ${_blscd_dir_col_0_string} ${_blscd_hidden_filter_md5sum} ${_blscd_sort_mechanism} ${_blscd_sort_reverse}]}")
@@ -58,7 +58,7 @@ __blscd_build_col_list ()
                 fi
                 ;;
             2)
-                [[ ! ${_blscd_data[list ${_blscd_dir_col_1_string} ${_blscd_hidden_filter_md5sum} ${_blscd_sort_mechanism} ${_blscd_sort_reverse}]} ]] && \
+                [[ -z ${_blscd_data[list ${_blscd_dir_col_1_string} ${_blscd_hidden_filter_md5sum} ${_blscd_sort_mechanism} ${_blscd_sort_reverse}]} ]] && \
                     __blscd_build_data -c "$_blscd_dir_col_1_string"
                 builtin mapfile -t _blscd_col_2_list \
                     < <(builtin printf '%s\n' "${_blscd_data[list ${_blscd_dir_col_1_string} ${_blscd_hidden_filter_md5sum} ${_blscd_sort_mechanism} ${_blscd_sort_reverse}]}")
@@ -69,9 +69,9 @@ __blscd_build_col_list ()
             3)
                 declare dir_col_2_string=${_blscd_dir_col_1_string}/${_blscd_screen_lines_browser_col_2_cursor_string}
                 dir_col_2_string=${dir_col_2_string//\/\//\/}
-                [[ ! ${_blscd_data[list ${dir_col_2_string} ${_blscd_hidden_filter_md5sum} ${_blscd_sort_mechanism} ${_blscd_sort_reverse}]} ]] && \
+                [[ -z ${_blscd_data[list ${dir_col_2_string} ${_blscd_hidden_filter_md5sum} ${_blscd_sort_mechanism} ${_blscd_sort_reverse}]} ]] && \
                     __blscd_build_data -c "$dir_col_2_string"
-                if [[ ! ${_blscd_data[list ${dir_col_2_string} ${_blscd_hidden_filter_md5sum} ${_blscd_sort_mechanism} ${_blscd_sort_reverse}]} ]]
+                if [[ -z ${_blscd_data[list ${dir_col_2_string} ${_blscd_hidden_filter_md5sum} ${_blscd_sort_mechanism} ${_blscd_sort_reverse}]} ]]
                 then
                     _blscd_col_3_list=()
                 else
@@ -132,7 +132,7 @@ __blscd_build_col_view ()
                 _blscd_col_1_view_total=${#_blscd_col_1_view[@]}
                 ;;
             2)
-                [[ $_blscd_search_pattern && ! $_blscd_search_block == _blscd_search_block ]] && \
+                [[ $_blscd_search_pattern && $_blscd_search_block != _blscd_search_block ]] && \
                     __blscd_build_search
                 if [[ $_blscd_action_last == __blscd_set_sort || $_blscd_action_last == __blscd_set_hide ]]
                 then
@@ -218,7 +218,7 @@ __blscd_build_data ()
 
     function __blscd_build_data_do_stat ()
     {
-        [[ ! ${_blscd_data[stat ${@:-/}]} ]] && \
+        [[ -z ${_blscd_data[stat ${@:-/}]} ]] && \
             _blscd_data[stat ${@:-/}]=$(\
                 command paste -d '|'\
                     <(command find -L "${@:-/}" -mindepth 1 -maxdepth 1 \
@@ -245,7 +245,7 @@ __blscd_build_data ()
                 __blscd_build_data_do_2
             else
                 __blscd_build_data_do_2 "$dir"
-                if [[ ! $current_only == current_only && ${dir%/*} ]]
+                if [[ $current_only != current_only && ${dir%/*} ]]
                 then
                     __blscd_build_data_do_1 "${dir%/*}"
                 else
@@ -426,7 +426,7 @@ __blscd_draw_screen ()
     _blscd_dir_col_0_string=${_blscd_dir_col_0_string:-/}
 
     if [[ ($_blscd_reprint == _blscd_reprint && $_blscd_action_last != __blscd_move_line) || \
-            ($_blscd_search_pattern && ! $_blscd_search_block == _blscd_search_block) ]]
+            ($_blscd_search_pattern && $_blscd_search_block != _blscd_search_block) ]]
     then
         builtin printf "$_blscd_tput_clear"
         # Build column 1 and 2.
