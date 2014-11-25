@@ -10,7 +10,7 @@
 # -- DEBUGGING.
 
 #printf '%s (%s)\n' "$BASH_VERSION" "${BASH_VERSINFO[5]}" && exit 0
-#set -o xtrace #;exec 2>> ~/blscd.log
+#set -o xtrace #exec 2>> ~/blscd.log
 #set -o verbose
 #set -o noexec
 #set -o errexit
@@ -30,7 +30,7 @@
 
 # -- FUNCTIONS.
 
-__blscd_version () { echo "0.1.4.4" ; }
+__blscd_version () { echo "0.1.4.5" ; }
 
 __blscd_build_col_list ()
 {
@@ -216,7 +216,7 @@ __blscd_build_data ()
         builtin declare current_only=
     fi
 
-    __blscd_build_data_do_stat ()
+    function __blscd_build_data_do_stat ()
     {
         [[ ! ${_blscd_data[stat ${@:-/}]} ]] && \
             _blscd_data[stat ${@:-/}]=$(\
@@ -234,7 +234,7 @@ __blscd_build_data ()
             command tr '\n' '\0'
     }
 
-    __blscd_build_data_do_1 ()
+    function __blscd_build_data_do_1 ()
     {
         builtin declare dir=
 
@@ -255,7 +255,7 @@ __blscd_build_data ()
         done
     }
 
-    __blscd_build_data_do_2 ()
+    function __blscd_build_data_do_2 ()
     {
         builtin declare \
             atime= \
@@ -294,7 +294,7 @@ __blscd_build_data ()
         _blscd_data[list ${dir:-/} ${_blscd_hidden_filter_md5sum} ${_blscd_sort_mechanism} ${_blscd_sort_reverse}]=$(builtin printf '%s\n' "${array[@]}")
     }
 
-    __blscd_build_data_do_3 ()
+    function __blscd_build_data_do_3 ()
     {
         builtin declare dir="$@"
 
@@ -740,14 +740,14 @@ __blscd_move_col ()
     __blscd_set_resize 2
     __blscd_set_search_non
 
-    __blscd_move_col_up ()
+    function __blscd_move_col_up ()
     {
         __blscd_set_action_last
         _blscd_col_2_view_offset=1
         _blscd_screen_lines_browser_col_2_cursor=0
     }
 
-    __blscd_move_col_down ()
+    function __blscd_move_col_down ()
     {
         __blscd_set_action_last
         _blscd_col_2_view_offset=1
@@ -773,7 +773,7 @@ __blscd_move_line ()
         arg=$2 \
 
 
-    __blscd_move_line_do ()
+    function __blscd_move_line_do ()
     {
         builtin declare -i \
             col=$1 \
