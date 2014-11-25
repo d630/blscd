@@ -1,4 +1,4 @@
-## blscd v0.1.4.3 [GNU GPLv3]
+## blscd v0.1.4.4 [GNU GPLv3]
 
 `blscd`(1) is a stupid [ranger](http://ranger.nongnu.org/)-like file browser/navigator (not manager) for the command line using `stty`(1), `tput`(1) and other Unix commands. At the moment, you may merely browse your file system with some basic actions like sorting, searching and opening files. `blscd`(1) is written in `GNU bash`(1) and has mainly been tested with `xterm`(1) on `Debian GNU/Linux`.
 
@@ -8,7 +8,14 @@
 
 * Get the newest version of `blscd`(1) with `$ git clone https://github.com/D630/blscd.git` or
   download its last release on https://github.com/D630/blscd/tags
-* Copy the script `blscd` elsewhere into `<PATH>` and make it executable.
+* If you like, reduce the code with:
+```sh
+$ cd ./blscd
+$ chmod 755 blscd.sh
+$ blscd.sh --dump
+$ chmod 755 blscd
+```
+* Copy one of the executables `blscd.sh` and `blscd` elsewhere into `<PATH>`
 
 Explicitly required:
 - `GNU bash`(1) >= 4.0
@@ -32,7 +39,7 @@ Optional:
 ### Help
 
 ```
-usage: [source] blscd [-v | --version | -h | --help]
+usage: [source] blscd [-h | --help | -d | --dump | -v | --version]
 
     Key bindings (basics)
       :                     Open the console

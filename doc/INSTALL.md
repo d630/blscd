@@ -2,7 +2,14 @@
 
 * Get the newest version of `blscd`(1) with `$ git clone https://github.com/D630/blscd.git` or
   download its last release on https://github.com/D630/blscd/tags
-* Copy the script `blscd` elsewhere into `<PATH>` and make it executable.
+* If you like, reduce the code with:
+```sh
+$ cd ./blscd
+$ chmod 755 blscd.sh
+$ blscd.sh --dump
+$ chmod 755 blscd
+```
+* Copy one of the executables `blscd.sh` and `blscd` elsewhere into `<PATH>`
 
 Explicitly required:
 - `GNU bash`(1) >= 4.0

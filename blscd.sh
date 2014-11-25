@@ -30,7 +30,7 @@
 
 # -- FUNCTIONS.
 
-__blscd_version () { echo "0.1.4.2" ; }
+__blscd_version () { echo "0.1.4.4" ; }
 
 __blscd_build_col_list ()
 {
@@ -622,7 +622,7 @@ __blscd_edit_line ()
 
 __blscd_help ()
 {
-    printf "usage: [source] blscd [-v | --version | -h | --help]
+    printf "usage: [source] blscd [-h | --help | -d | --dump | -v | --version]
 
     Key bindings (basics)
       :                     Open the console
@@ -1436,15 +1436,23 @@ __blscd_set_sort ()
 __blscd_main ()
 {
     # Simple.
-    if [[ $1 =~ (-h|--help) ]]
-    then
-        __blscd_help
-        builtin return 0
-    elif [[ $1 =~ (-v|--version) ]]
-    then
-        __blscd_version
-        builtin return 0
-    fi
+    case $1 in
+        -h|--help)
+            __blscd_help
+            builtin return $?
+            ;;
+        -v|--version)
+            __blscd_version
+            builtin return $?
+            ;;
+        -d|--dump)
+            {
+                builtin eval "$(builtin declare -F | command grep '^declare -f __blscd_')" > ./blscd
+                builtin printf '%s\n' '__blscd_main "$@"' >> ./blscd
+            }
+            builtin return $?
+            ;;
+    esac
 
     __blscd_set_declare
     __blscd_set_hide_filter_md5sum
