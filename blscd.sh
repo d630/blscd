@@ -32,7 +32,7 @@
 
 __blscd_version ()
 {
-    echo "0.1.4.8"
+    echo "0.1.4.9"
 }
 
 __blscd_build_col_list ()
@@ -548,16 +548,14 @@ __blscd_draw_screen_lines ()
                 builtin declare \
                     basename= \
                     s=
-                IFS=\" builtin read -r s basename \
+                IFS='‘’' builtin read -r s basename \
                     <<<$(command ls --format=long -Ad --time-style=long-iso -h \
-                        --color=none --indicator-style=none --quoting-style=c \
+                        --color=none --indicator-style=none --quoting-style=clocale \
                         "${_blscd_dir_col_1_string}/${_blscd_screen_lines_browser_col_2_cursor_string}")
                 builtin read -r statusbar1_string statusbar2_string statusbar3_string statusbar4_string \
-                        statusbar5_string statusbar6_string statusbar7_string \
-                    <<< "$s"
+                        statusbar5_string statusbar6_string statusbar7_string <<< "$s"
                 [[ $basename =~ -\> ]] && \
-                    IFS=\" builtin read -r _ _ statusbar8_string \
-                    <<<"$basename"
+                    IFS='‘’' builtin read -r _ _ statusbar8_string <<<"$basename"
                 builtin read -r statusbar9_string statusbar10_string statusbar11_string \
                     <<<"$((_blscd_col_2_view_offset + _blscd_screen_lines_browser_col_2_cursor)) ${_blscd_col_2_list_total} \
                     $(((100 * (_blscd_col_2_view_offset + _blscd_screen_lines_browser_col_2_cursor)) / _blscd_col_2_list_total))"
