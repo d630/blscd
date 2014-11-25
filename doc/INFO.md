@@ -1,6 +1,6 @@
 ### Conventions
 
-- (Nested) shell functions (procedures and functions in the stricter sense) are declared without the reserved word `function`; their names are prefixed with `__blscd_`. The bodies may have every compound command, but the group command is prefered:
+- Shell functions (procedures and functions in the stricter sense) are declared without the reserved word `function`, only when they are not nested. Their names are prefixed with `__blscd_`. The bodies may contain every compound command, but the group command is prefered, when we need to declare variables first.
 
 ```sh
 __blscd_one_line () { LIST ; }
@@ -13,10 +13,25 @@ __blscd_many_lines ()
 }
 
 __blscd_many_lines ()
-for i
-do
+{
+    function __blscd_one_lines_nested () { echo $@ ; }
+    __blscd_one_lines_nested "$@"
+}
+
+__blscd_many_lines ()
+if [[ $1 ]]
+then
     LIST
-done
+fi
+
+__blscd_many_lines ()
+{
+    builtin declare -i int=
+    for i in {0..9}
+    do
+        ((i == 4)) && break
+    done
+}
 ```
 
 - Variables, which are not restricted to local scope in a function, are prefixed with `_blscd_`.
@@ -42,7 +57,7 @@ builtin declare -A aarray
 | -------- | ------------ |
 | `EDITOR` | `vi` |
 | `PAGER` | `less` |
-| `LANG` | |
+| `LANG` | `<LANG>`|
 | `SHELL` | `bash` |
 | `LS_COLORS` | |
 
@@ -147,13 +162,14 @@ builtin declare -A aarray
 | `__blscd_main` | | Initiate `blscd`(1); decide, what to do based on command line arguments and pressed keys |
 | `__blscd_move_col` | `<DIR>` | Nested; call `__blscd_move_col_up` and `__blscd_move_col_down`; change diretories |
 | `__blscd_move_line` | `(1|2|3)` `<INT>` | Nested; call `__blscd_move_line_do`; move lines in the browser |
-| `__blscd_mtime` | `(newest|oldest)` | Call `__blscd_mtime_go_newest` and `__blscd_mtime_go_oldest` and move lines |
-| `__blscd_mtime_go_newest` | | Change order in `_blscd_col_2_mtime` |
-| `__blscd_mtime_go_oldest` | | Change order in `_blscd_col_2_mtime` |
+| `__blscd_mtime` | `(newest|oldest)` | Nested; call `__blscd_mtime_go_newest` and `__blscd_mtime_go_oldest` and move lines |
+| `__blscd_mtime_go_newest` | | Nested; change order in `_blscd_col_2_mtime` |
+| `__blscd_mtime_go_oldest` | | Nested; change order in `_blscd_col_2_mtime` |
 | `__blscd_open_console` | | Build `_blscd_console_command_name` and `console_command_arguments`; call console commands like `search` |
 | `__blscd_open_line` | `<PATH>` | Decide, what to do with `_blscd_screen_lines_browser_col_2_cursor_string` based on the file type |
 | `__blscd_open_shell` | | Execute and fork `<SHELL>` in the current directory |
-| `__blscd_search` | | Declare `_blscd_search_pattern` and initiate redraw of the screen; then move line to first match |
+| `__blscd_print_data` | `(list|view)` `<PATH>` `[<_blscd_screen_lines_browser>]` | Print elements from `_blscd_data='(["list <KEY>"]= ["view <KEY>"]= )'` |
+| `__blscd_search` | | Nested; declare `_blscd_search_pattern` and initiate redraw of the screen; then move line to first match |
 | `__blscd_search_go_down` | | Move line to next match  |
 | `__blscd_search_go_up` | | Move line to previous match |
 | `__blscd_set_action_last` | | Build `_blscd_action_last` |
@@ -167,4 +183,6 @@ builtin declare -A aarray
 | `__blscd_set_resize` | `(1|2|[^12])` | Build `_blscd_redraw` and `_blscd_reprint` |
 | `__blscd_set_search_non` | | Delete environment for the console command `search` |
 | `__blscd_set_sort` | `(A|a|B|b|C|c|M|m|N|n|S|s|T|t|r)` | Change `_blscd_sort_mechanism` and `_blscd_sort_reverse` |
+| `__blscd_test_data` | `(list|view)` `<PATH>` `[<_blscd_screen_lines_browser>]` | Test elements in `_blscd_data='(["list <KEY>"]= ["view <KEY>"]= )'` |
+| `__blscd_test_data_index` | `<PATH>` `<_blscd_screen_lines_browser>`| Test elements in `_blscd_data='(["index <KEY>"]= '` |
 | `__blscd_version` | | Print version number |

@@ -1,4 +1,4 @@
-## blscd v0.1.4.4 [GNU GPLv3]
+## blscd v0.1.4.10 [GNU GPLv3]
 
 `blscd`(1) is a stupid [ranger](http://ranger.nongnu.org/)-like file browser/navigator (not manager) for the command line using `stty`(1), `tput`(1) and other Unix commands. At the moment, you may merely browse your file system with some basic actions like sorting, searching and opening files. `blscd`(1) is written in `GNU bash`(1) and has mainly been tested with `xterm`(1) on `Debian GNU/Linux`.
 
@@ -153,7 +153,7 @@ usage: [source] blscd [-h | --help | -d | --dump | -v | --version]
 
 ### Notes
 
-- There is no configuration file at present, but to use different file handlers and some settings (hidden filter, colors in the bars, cursor), have a look at the functions called `__blscd_open_line()` and `__blscd_set_declare()`.
+- There is no configuration file at present, but to use different file handlers and some settings (hidden filter, colors in the bars, cursor), have a look at the functions called `__blscd_open_line`, `__blscd_draw_screen_lines` and `__blscd_set_declare`.
 - The coloration in the browser pane works via `ls`(1) and the `<LS_COLORS>` environment variable; you may write your own specific database and source it with `dircolors`(1) into the environment before executing `blscd`(1):
 ```
 eval $(dircolors -b "DATABASE")
