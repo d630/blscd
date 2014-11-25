@@ -32,7 +32,7 @@
 
 __blscd_version ()
 {
-    echo "0.1.4.9"
+    echo "0.1.4.10"
 }
 
 __blscd_build_col_list ()
@@ -65,9 +65,9 @@ __blscd_build_col_list ()
                 ((_blscd_col_2_list_total == 0)) && _blscd_col_2_list_total=1
                 ;;
             3)
-                declare dir_col_2_string=${_blscd_dir_col_1_string}/${_blscd_screen_lines_browser_col_2_cursor_string}
+                builtin declare dir_col_2_string=${_blscd_dir_col_1_string}/${_blscd_screen_lines_browser_col_2_cursor_string}
                 dir_col_2_string=${dir_col_2_string//\/\//\/}
-                __blscd_test_data list "$dir_col_2_string" || __blscd_build_data -c "$dir_col_2_string"
+                __blscd_test_data list "$dir_col_2_string" || [[ -f $dir_col_2_string ]] || __blscd_build_data -c "$dir_col_2_string"
                 if __blscd_test_data "list" "$dir_col_2_string"
                 then
                     builtin mapfile -t _blscd_col_3_list < <(__blscd_print_data list "$dir_col_2_string")
