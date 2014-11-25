@@ -30,7 +30,7 @@
 
 # -- FUNCTIONS.
 
-__blscd_version () { echo "0.1.4.6" ; }
+__blscd_version () { echo "0.1.4.7" ; }
 
 __blscd_build_col_list ()
 {
@@ -44,10 +44,8 @@ __blscd_build_col_list ()
                 then
                     _blscd_col_1_list=()
                 else
-                    [[ -z ${_blscd_data[list ${_blscd_dir_col_0_string} ${_blscd_hidden_filter_md5sum} ${_blscd_sort_mechanism} ${_blscd_sort_reverse}]} ]] && \
-                        __blscd_build_data -c "$_blscd_dir_col_0_string"
-                    builtin mapfile -t _blscd_col_1_list \
-                        < <(builtin printf '%s\n' "${_blscd_data[list ${_blscd_dir_col_0_string} ${_blscd_hidden_filter_md5sum} ${_blscd_sort_mechanism} ${_blscd_sort_reverse}]}")
+                    __blscd_test_data list "$_blscd_dir_col_0_string" || __blscd_build_data -c "$_blscd_dir_col_0_string"
+                    builtin mapfile -t _blscd_col_1_list < <(__blscd_print_data list "$_blscd_dir_col_0_string")
                 fi
                 _blscd_col_1_list_total=${#_blscd_col_1_list[@]}
                 if ((_blscd_col_1_list_total > _blscd_screen_lines_browser))
@@ -58,36 +56,25 @@ __blscd_build_col_list ()
                 fi
                 ;;
             2)
-                [[ -z ${_blscd_data[list ${_blscd_dir_col_1_string} ${_blscd_hidden_filter_md5sum} ${_blscd_sort_mechanism} ${_blscd_sort_reverse}]} ]] && \
-                    __blscd_build_data -c "$_blscd_dir_col_1_string"
-                builtin mapfile -t _blscd_col_2_list \
-                    < <(builtin printf '%s\n' "${_blscd_data[list ${_blscd_dir_col_1_string} ${_blscd_hidden_filter_md5sum} ${_blscd_sort_mechanism} ${_blscd_sort_reverse}]}")
+                __blscd_test_data list "$_blscd_dir_col_1_string" || __blscd_build_data -c "$_blscd_dir_col_1_string"
+                builtin mapfile -t _blscd_col_2_list < <(__blscd_print_data list "$_blscd_dir_col_1_string")
                 _blscd_col_2_list_total=${#_blscd_col_2_list[@]}
-                ((_blscd_col_2_list_total == 0)) && \
-                    _blscd_col_2_list_total=1
+                ((_blscd_col_2_list_total == 0)) && _blscd_col_2_list_total=1
                 ;;
             3)
                 declare dir_col_2_string=${_blscd_dir_col_1_string}/${_blscd_screen_lines_browser_col_2_cursor_string}
                 dir_col_2_string=${dir_col_2_string//\/\//\/}
-                [[ -z ${_blscd_data[list ${dir_col_2_string} ${_blscd_hidden_filter_md5sum} ${_blscd_sort_mechanism} ${_blscd_sort_reverse}]} ]] && \
-                    __blscd_build_data -c "$dir_col_2_string"
-                if [[ -z ${_blscd_data[list ${dir_col_2_string} ${_blscd_hidden_filter_md5sum} ${_blscd_sort_mechanism} ${_blscd_sort_reverse}]} ]]
+                __blscd_test_data list "$dir_col_2_string" || __blscd_build_data -c "$dir_col_2_string"
+                if __blscd_test_data "list" "$dir_col_2_string"
                 then
-                    _blscd_col_3_list=()
+                    builtin mapfile -t _blscd_col_3_list < <(__blscd_print_data list "$dir_col_2_string")
                 else
-                    builtin mapfile -t _blscd_col_3_list \
-                        < <(builtin printf '%s\n' "${_blscd_data[list ${dir_col_2_string} ${_blscd_hidden_filter_md5sum} ${_blscd_sort_mechanism} ${_blscd_sort_reverse}]}")
+                    _blscd_col_3_list=()
                 fi
                 _blscd_col_3_list_total=${#_blscd_col_3_list[@]}
                 ((_blscd_col_3_list_total == 0)) && \
                         [[ -f $_blscd_screen_lines_browser_col_2_cursor_string ]] && \
                         screen_col_2_width=$((screen_col_2_width * 2))
-                #{
-                #    _blscd_col_3_list=("$(command file --mime-type \
-                #        -bL "$_blscd_screen_lines_browser_col_2_cursor_string")")
-                #    _blscd_col_3_list=("${_blscd_col_3_list[@]//\//-}")
-                #    _blscd_col_3_list_total=${#_blscd_col_3_list[@]}
-                #}
                 ;;
         esac
     done
@@ -106,15 +93,13 @@ __blscd_build_col_view ()
                     _blscd_col_1_view_offset=1
                     _blscd_col_1_view=()
                     _blscd_screen_lines_browser_col_1_cursor=0
-                elif [[ ${_blscd_data[view ${_blscd_dir_col_0_string} ${_blscd_hidden_filter_md5sum} ${_blscd_sort_mechanism} ${_blscd_sort_reverse} ${_blscd_screen_lines_browser}]} ]]
+                elif __blscd_test_data view "$_blscd_dir_col_0_string" $_blscd_screen_lines_browser
                 then
                     _blscd_col_1_view_offset=${_blscd_data[view offset ${_blscd_dir_col_0_string} ${_blscd_hidden_filter_md5sum} ${_blscd_sort_mechanism} ${_blscd_sort_reverse} ${_blscd_screen_lines_browser}]}
-                    builtin mapfile -t _blscd_col_1_view \
-                        < <(builtin printf '%s\n' \
-                                "${_blscd_data[view ${_blscd_dir_col_0_string} ${_blscd_hidden_filter_md5sum} ${_blscd_sort_mechanism} ${_blscd_sort_reverse} ${_blscd_screen_lines_browser}]}")
+                    builtin mapfile -t _blscd_col_1_view < <(__blscd_print_data view "$_blscd_dir_col_0_string" $_blscd_screen_lines_browser)
                     _blscd_screen_lines_browser_col_1_cursor=${_blscd_data[view cursor ${_blscd_dir_col_0_string} ${_blscd_hidden_filter_md5sum} ${_blscd_sort_mechanism} ${_blscd_sort_reverse} ${_blscd_screen_lines_browser}]}
                 else
-                    if [[ ${_blscd_data[index ${_blscd_dir_col_1_string} ${_blscd_hidden_filter_md5sum} ${_blscd_sort_mechanism} ${_blscd_sort_reverse}]} -ge $_blscd_screen_lines_browser ]]
+                    if __blscd_test_data_index "$_blscd_dir_col_1_string" $_blscd_screen_lines_browser
                     then
                         _blscd_col_1_view_offset=$((${_blscd_data[index ${_blscd_dir_col_1_string} ${_blscd_hidden_filter_md5sum} ${_blscd_sort_mechanism} ${_blscd_sort_reverse}]} - _blscd_screen_lines_browser + 2))
                         _blscd_col_1_view=("${_blscd_col_1_list[@]:$((${_blscd_col_1_view_offset} - 1)):${_blscd_data[index ${_blscd_dir_col_1_string} ${_blscd_hidden_filter_md5sum} ${_blscd_sort_mechanism} ${_blscd_sort_reverse}]}}")
@@ -136,7 +121,7 @@ __blscd_build_col_view ()
                     __blscd_build_search
                 if [[ $_blscd_action_last == __blscd_set_sort || $_blscd_action_last == __blscd_set_hide ]]
                 then
-                    if [[ ${_blscd_data[index ${_blscd_dir_col_1_string}/${_blscd_screen_lines_browser_col_2_cursor_string} ${_blscd_hidden_filter_md5sum} ${_blscd_sort_mechanism} ${_blscd_sort_reverse}]} -ge $_blscd_screen_lines_browser ]]
+                    if __blscd_test_data_index "${_blscd_dir_col_1_string}/${_blscd_screen_lines_browser_col_2_cursor_string}" $_blscd_screen_lines_browser
                     then
                         _blscd_col_2_view_offset=$((${_blscd_data[index ${_blscd_dir_col_1_string}/${_blscd_screen_lines_browser_col_2_cursor_string} ${_blscd_hidden_filter_md5sum} ${_blscd_sort_mechanism} ${_blscd_sort_reverse}]} - _blscd_screen_lines_browser + 2))
                         _blscd_col_2_view=("${_blscd_col_2_list[@]:$((${_blscd_col_2_view_offset} - 1)):${_blscd_data[index ${_blscd_dir_col_1_string}/${_blscd_screen_lines_browser_col_2_cursor_string} ${_blscd_hidden_filter_md5sum} ${_blscd_sort_mechanism} ${_blscd_sort_reverse}]}}")
@@ -149,12 +134,10 @@ __blscd_build_col_view ()
                     _blscd_data[view ${_blscd_dir_col_1_string} ${_blscd_hidden_filter_md5sum} ${_blscd_sort_mechanism} ${_blscd_sort_reverse} ${_blscd_screen_lines_browser}]=$(builtin printf '%s\n' "${_blscd_col_2_view[@]}")
                     _blscd_data[view offset ${_blscd_dir_col_1_string} ${_blscd_hidden_filter_md5sum} ${_blscd_sort_mechanism} ${_blscd_sort_reverse} ${_blscd_screen_lines_browser}]=$_blscd_col_2_view_offset
                     _blscd_data[view cursor ${_blscd_dir_col_1_string} ${_blscd_hidden_filter_md5sum} ${_blscd_sort_mechanism} ${_blscd_sort_reverse} ${_blscd_screen_lines_browser}]=$_blscd_screen_lines_browser_col_2_cursor
-                elif [[ $_blscd_action_last != __blscd_move_line && ${_blscd_data[view ${_blscd_dir_col_1_string} ${_blscd_hidden_filter_md5sum} ${_blscd_sort_mechanism} ${_blscd_sort_reverse} ${_blscd_screen_lines_browser}]} ]]
+                elif [[ $_blscd_action_last != __blscd_move_line ]] && __blscd_test_data view "$_blscd_dir_col_1_string" $_blscd_screen_lines_browser
                 then
                     _blscd_col_2_view_offset=${_blscd_data[view offset ${_blscd_dir_col_1_string} ${_blscd_hidden_filter_md5sum} ${_blscd_sort_mechanism} ${_blscd_sort_reverse} ${_blscd_screen_lines_browser}]}
-                     builtin mapfile -t _blscd_col_2_view \
-                        < <(builtin printf '%s\n' \
-                            "${_blscd_data[view ${_blscd_dir_col_1_string} ${_blscd_hidden_filter_md5sum} ${_blscd_sort_mechanism} ${_blscd_sort_reverse} ${_blscd_screen_lines_browser}]}")
+                     builtin mapfile -t _blscd_col_2_view < <(__blscd_print_data view "$_blscd_dir_col_1_string" $_blscd_screen_lines_browser)
                      _blscd_screen_lines_browser_col_2_cursor=${_blscd_data[view cursor ${_blscd_dir_col_1_string} ${_blscd_hidden_filter_md5sum} ${_blscd_sort_mechanism} ${_blscd_sort_reverse} ${_blscd_screen_lines_browser}]}
                 else
                     _blscd_col_2_view=("${_blscd_col_2_list[@]:$((_blscd_col_2_view_offset - 1)):${_blscd_screen_lines_browser}}")
@@ -171,7 +154,7 @@ __blscd_build_col_view ()
                 if [[ $_blscd_action_last == __blscd_set_sort || $_blscd_action_last == __blscd_set_hide ]]
                 then
                     dir_col_2_string=${dir_col_2_string}/${_blscd_screen_lines_browser_col_3_cursor_string}
-                    if [[ ${_blscd_data[index ${dir_col_2_string} ${_blscd_hidden_filter_md5sum} ${_blscd_sort_mechanism} ${_blscd_sort_reverse}]} -ge $_blscd_screen_lines_browser ]]
+                    if __blscd_test_data_index "$dir_col_2_string" $_blscd_screen_lines_browser
                     then
                         _blscd_col_3_view_offset=$((${_blscd_data[index ${dir_col_2_string} ${_blscd_hidden_filter_md5sum} ${_blscd_sort_mechanism} ${_blscd_sort_reverse}]} - _blscd_screen_lines_browser + 2))
                         _blscd_col_3_view=("${_blscd_col_3_list[@]:$((${_blscd_col_3_view_offset} - 1)):${_blscd_data[index ${dir_col_2_string} ${_blscd_hidden_filter_md5sum} ${_blscd_sort_mechanism} ${_blscd_sort_reverse}]}}")
@@ -184,12 +167,10 @@ __blscd_build_col_view ()
                     _blscd_data[view ${_blscd_dir_col_1_string}/${_blscd_screen_lines_browser_col_2_cursor_string} ${_blscd_hidden_filter_md5sum} ${_blscd_sort_mechanism} ${_blscd_sort_reverse} ${_blscd_screen_lines_browser}]=$(builtin printf '%s\n' "${_blscd_col_3_view[@]}")
                     _blscd_data[view offset ${_blscd_dir_col_1_string}/${_blscd_screen_lines_browser_col_2_cursor_string} ${_blscd_hidden_filter_md5sum} ${_blscd_sort_mechanism} ${_blscd_sort_reverse} ${_blscd_screen_lines_browser}]=$_blscd_col_3_view_offset
                     _blscd_data[view cursor ${_blscd_dir_col_1_string}/${_blscd_screen_lines_browser_col_2_cursor_string} ${_blscd_hidden_filter_md5sum} ${_blscd_sort_mechanism} ${_blscd_sort_reverse} ${_blscd_screen_lines_browser}]=$_blscd_screen_lines_browser_col_3_cursor
-                elif [[ ${_blscd_data[view ${dir_col_2_string} ${_blscd_hidden_filter_md5sum} ${_blscd_sort_mechanism} ${_blscd_sort_reverse} ${_blscd_screen_lines_browser}]} ]]
+                elif __blscd_test_data view "$dir_col_2_string" $_blscd_screen_lines_browser
                 then
                     _blscd_col_3_view_offset=${_blscd_data[view offset ${dir_col_2_string} ${_blscd_hidden_filter_md5sum} ${_blscd_sort_mechanism} ${_blscd_sort_reverse} ${_blscd_screen_lines_browser}]}
-                     builtin mapfile -t _blscd_col_3_view \
-                        < <(builtin printf '%s\n' \
-                            "${_blscd_data[view ${dir_col_2_string} ${_blscd_hidden_filter_md5sum} ${_blscd_sort_mechanism} ${_blscd_sort_reverse} ${_blscd_screen_lines_browser}]}")
+                     builtin mapfile -t _blscd_col_3_view < <(__blscd_print_data view "$dir_col_2_string" $_blscd_screen_lines_browser)
                      _blscd_screen_lines_browser_col_3_cursor=${_blscd_data[view cursor ${dir_col_2_string} ${_blscd_hidden_filter_md5sum} ${_blscd_sort_mechanism} ${_blscd_sort_reverse} ${_blscd_screen_lines_browser}]}
                 else
                     _blscd_col_3_view_offset=1
@@ -993,6 +974,11 @@ __blscd_open_shell ()
     command stty -echo
 }
 
+__blscd_print_data ()
+{
+    builtin printf '%s\n' "${_blscd_data[${1} ${2} ${_blscd_hidden_filter_md5sum} ${_blscd_sort_mechanism} ${_blscd_sort_reverse}${3:+ $3}]}"
+}
+
 __blscd_search ()
 {
     __blscd_set_action_last
@@ -1258,6 +1244,7 @@ __blscd_set_delete ()
         __blscd_open_console \
         __blscd_open_line \
         __blscd_open_shell \
+        __blscd_print_data \
         __blscd_search \
         __blscd_search_go_down \
         __blscd_search_go_up \
@@ -1272,6 +1259,8 @@ __blscd_set_delete ()
         __blscd_set_resize \
         __blscd_set_search_non \
         __blscd_set_sort \
+        __blscd_test_data \
+        __blscd_test_data_index \
         __blscd_version
 
     builtin declare -xg LC_COLLATE=$_blscd_LC_COLLATE_old
@@ -1430,6 +1419,12 @@ __blscd_set_sort ()
             ;;
     esac
 }
+
+__blscd_test_data ()
+[[ ${_blscd_data[${1} ${2} ${_blscd_hidden_filter_md5sum} ${_blscd_sort_mechanism} ${_blscd_sort_reverse}${3:+ $3}]} ]]
+
+__blscd_test_data_index ()
+[[ ${_blscd_data[index ${1} ${_blscd_hidden_filter_md5sum} ${_blscd_sort_mechanism} ${_blscd_sort_reverse}]} -ge $2 ]]
 
 # -- MAIN.
 
