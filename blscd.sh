@@ -32,7 +32,7 @@
 
 __blscd_version ()
 {
-    echo "0.1.4.10"
+    echo "0.1.4.11"
 }
 
 __blscd_build_col_list ()
@@ -1450,7 +1450,7 @@ __blscd_main ()
             then
                 __blscd_build_data "$_blscd_dir_col_1_string"
             else
-                __blscd_build_data "/" "$_blscd_dir_col_1_string"
+                __blscd_build_data -c "$_blscd_dir_col_1_string"
             fi
         }
         __blscd_draw_screen_check
