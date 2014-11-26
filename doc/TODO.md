@@ -11,6 +11,7 @@
 - simulate default colorschemes of ranger via dircolors
 - method to optionally use file preview
 - test things in other ttys (urxvt, console)
+- notice starting mode of blscd (if sourced or not) and then decide things
 
 ### After
 - other good stuff like...
