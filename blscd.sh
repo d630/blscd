@@ -32,7 +32,7 @@
 
 __blscd_version ()
 {
-    echo "0.1.4.11"
+    echo "0.1.4.12"
 }
 
 __blscd_build_col_list ()
@@ -198,7 +198,7 @@ __blscd_build_data ()
         builtin declare current_only=
     fi
 
-    function __blscd_build_data_do_stat ()
+    function __blscd_build_data_do_stat
     {
         [[ -z ${_blscd_data[stat ${@:-/}]} ]] && \
             _blscd_data[stat ${@:-/}]=$(\
@@ -216,7 +216,7 @@ __blscd_build_data ()
             command tr '\n' '\0'
     }
 
-    function __blscd_build_data_do_1 ()
+    function __blscd_build_data_do_1
     for dir
     do
         if [[ $dir == / ]]
@@ -233,7 +233,7 @@ __blscd_build_data ()
         fi
     done
 
-    function __blscd_build_data_do_2 ()
+    function __blscd_build_data_do_2
     {
         builtin declare \
             atime= \
@@ -272,7 +272,7 @@ __blscd_build_data ()
         _blscd_data[list ${dir:-/} ${_blscd_hidden_filter_md5sum} ${_blscd_sort_mechanism} ${_blscd_sort_reverse}]=$(builtin printf '%s\n' "${array[@]}")
     }
 
-    function __blscd_build_data_do_3 ()
+    function __blscd_build_data_do_3
     case ${_blscd_sort_mechanism##*_} in
         atime)
             __blscd_build_data_do_stat "$@" | \
@@ -325,7 +325,7 @@ __blscd_build_data ()
 
 __blscd_build_mtime ()
 {
-    function __blscd_build_mtime_do ()
+    function __blscd_build_mtime_do
     {
         builtin declare i=
 
@@ -343,7 +343,7 @@ __blscd_build_search ()
 {
     _blscd_col_2_search=()
 
-    function __blscd_build_search_do ()
+    function __blscd_build_search_do
     {
         builtin printf '%s\n' "${_blscd_col_2_list[@]}" | \
         command egrep -i -n -C "${#_blscd_col_2_list[@]}" -e "$_blscd_search_pattern"
@@ -713,14 +713,14 @@ __blscd_move_col ()
     __blscd_set_resize 2
     __blscd_set_search_non
 
-    function __blscd_move_col_up ()
+    function __blscd_move_col_up
     {
         __blscd_set_action_last
         _blscd_col_2_view_offset=1
         _blscd_screen_lines_browser_col_2_cursor=0
     }
 
-    function __blscd_move_col_down ()
+    function __blscd_move_col_down
     {
         __blscd_set_action_last
         _blscd_col_2_view_offset=1
@@ -744,7 +744,7 @@ __blscd_move_line ()
 
     builtin declare -i arg=$2
 
-    function __blscd_move_line_do ()
+    function __blscd_move_line_do
     {
         builtin declare -i \
             col=$1 \
@@ -874,7 +874,7 @@ __blscd_mtime ()
 
 __blscd_mtime_go_newest ()
 {
-    function __blscd_mtime_go_newest_do ()
+    function __blscd_mtime_go_newest_do
     {
         builtin declare -i i=
         builtin printf '%s\n' "${_blscd_col_2_mtime[-1]}"
@@ -892,7 +892,7 @@ __blscd_mtime_go_newest ()
 
 __blscd_mtime_go_oldest ()
 {
-    function __blscd_mtime_go_oldest_do ()
+    function __blscd_mtime_go_oldest_do
     {
         builtin declare -i i=
         for ((i=1 ; i <= ${#_blscd_col_2_mtime[@]}-1 ; i++))
