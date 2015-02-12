@@ -10,7 +10,8 @@
 # -- DEBUGGING.
 
 #printf '%s (%s)\n' "$BASH_VERSION" "${BASH_VERSINFO[5]}" && exit 0
-#set -o xtrace #exec 2>> ~/blscd.log
+#set -o xtrace
+#exec 2>> ~/blscd.log
 #set -o verbose
 #set -o noexec
 #set -o errexit
@@ -32,7 +33,7 @@
 
 __blscd_version ()
 {
-    echo "0.1.4.12"
+    echo "0.1.4.13"
 }
 
 __blscd_build_col_list ()
@@ -205,8 +206,9 @@ __blscd_build_data ()
                 command paste -d '|'\
                     <(command find -L "${@:-/}" -mindepth 1 -maxdepth 1 \
                         \( -xtype l -a -printf "l%y %s %A@ %T@ %C@ |%P\n" \) -prune \
-                        -o -printf "r%y %s %A@ %T@ %C@ |%P\n" 2>/dev/null | \
-                    command sort --stable -k 6 | \
+                        -o -printf "r%y %s %A@ %T@ %C@ |%P\n" 2>/dev/null |& \
+                    command sed "s|^find: .\(.*\)/\([^/]*\)': Permission denied$|ll 0 0  0 0 \|\2|" | \
+                    command sort --stable -u -k 6 | \
                     command numfmt --delimiter=' ' --field=2  --format='%4f' \
                         --from=none --from-unit=1 --invalid=warn \
                         --padding=4 --round=from-zero --to=iec --to-unit=1) \
