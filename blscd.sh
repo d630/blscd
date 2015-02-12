@@ -206,7 +206,7 @@ __blscd_build_data ()
                 command paste -d '|'\
                     <(command find -L "${@:-/}" -mindepth 1 -maxdepth 1 \
                         \( -xtype l -a -printf "l%y %s %A@ %T@ %C@ |%P\n" \) -prune \
-                        -o -printf "r%y %s %A@ %T@ %C@ |%P\n" 2>/dev/null |& \
+                        -o -printf "r%y %s %A@ %T@ %C@ |%P\n" |& \
                     command sed "s|^find: .\(.*\)/\([^/]*\)': Permission denied$|ll 0 0  0 0 \|\2|" | \
                     command sort --stable -u -k 6 | \
                     command numfmt --delimiter=' ' --field=2  --format='%4f' \
