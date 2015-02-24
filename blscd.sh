@@ -211,7 +211,7 @@ __blscd_build_data ()
                     command sort --stable -u -k 6 | \
                     command numfmt --delimiter=' ' --field=2  --format='%4f' \
                         --from=none --from-unit=1 --invalid=warn \
-                        --padding=4 --round=from-zero --to=iec --to-unit=1) \
+                        --round=from-zero --to=iec --to-unit=1) \
                     <(command ls --format=single-column -A --color=always --indicator-style=none --quoting-style=clocale "${@:-/}" 2>/dev/null))
 
         builtin printf '%s\n' "${_blscd_data[stat ${@:-/}]}" | \
