@@ -18,7 +18,8 @@ Key bindings (basics)
         q                     Quit
 
 Key bindings (settings)
-        ^H                    Toggle filtering of dotfiles
+        za                    Toggle filtering of dotfiles
+        zo                    Toggle drawing of Column 3
 
 Key bindings (moving)
         D                     Move ten lines down

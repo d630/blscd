@@ -53,7 +53,7 @@ Blscd ()
                         ))
                 then
                         Blscd__Exit
-                        builtin printf '%s\n' "Error: Bad dimension: ${dim_cols},${dim_lines}" 1>&2
+                        builtin printf '%s\n' "${0}:Error: Bad dimension: ${dim_cols},${dim_lines}" 1>&2
                         builtin return 1
                 fi
 
@@ -180,6 +180,7 @@ Blscd ()
                         [[
                                 ! -d ${S[file_str]} ||
                                 -z ${S[file_str]} ||
+                                ${I[show_c3]} == 0 ||
                                 ${I[c2_total]} -eq 0
                         ]]
                 then
@@ -403,7 +404,7 @@ IN
                                 END {
                                         printf("D['$FILE_NAME','${I[hidden]}',di]=%s;D[%s,'${I[hidden]}',cnt]=%d", "'$FILE_INODE'", "'$FILE_INODE'", idx)
                                 }
-                        ' 2>>/tmp/blscd.log
+                        ' 2>/dev/null
                 }
 
                 Blscd__GetBlscdDataByBash()
@@ -423,7 +424,7 @@ IN
                                 D[${di},str]=${n##*/}
                                 (( idx++ ))
                         done < <(
-                                command stat --printf="%A|%d:%i|%n\0" "$FILE_NAME"/* 2>>/tmp/blscd.log
+                                command stat --printf="%A|%d:%i|%n\0" "$FILE_NAME"/* 2>/dev/null
                         )
 
                         D[${FILE_NAME},${I[hidden]},di]=$FILE_INODE
@@ -443,7 +444,7 @@ IN
                                 (( $# > 799 ))
                         then
                                 builtin source <(
-                                        2>>/tmp/blscd.log \
+                                        2>/dev/null \
                                         command stat \
                                                 --printf="%A|%d:%i|%n\0" "$FILE_NAME"/* \
                                         | Blscd__GetBlscdDataByAwk
@@ -458,7 +459,7 @@ IN
 
         function Blscd__GetDi
         {
-                builtin eval "${1}=\$(command stat --format="%d:%i" "$2" 2>>/tmp/blscd.log)"
+                builtin eval "${1}=\$(command stat --format="%d:%i" "$2" 2>/dev/null)"
         }
 
         function Blscd__GetInputKeyboard
@@ -580,15 +581,23 @@ IN
                 #~ \])
                         #~ Blscd__MoveParent -1
                 #~ ;;
+                z)
+                        builtin read -n 1 input
+                        case $input in
+                                a)
+                                        Blscd__ToggleHidden
+                                ;;
+                                o)
+                                        Blscd__ToggleCol3
+                                ;;
+                        esac
+                ;;
                 $'\x12') # CTRl+R
                          Blscd__Reload
                 ;;
                 $'\x0c') # CTRL+L
                         Blscd__SetResize 2
                         builtin printf "${S[tput_cup_99999_0]}${S[tput_eel]}"
-                ;;
-                $'\x08') # CTRL+H
-                        Blscd__ToggleHidden
                 ;;
                 E)
                         Blscd__EditFile
@@ -720,6 +729,7 @@ builtin typeset -gAi "BlscdSettingsInt=(
         [redraw]=1
         [redraw_cnt]=
         [reprint]=1
+        [show_c3]=1
         [step]=6
 )"
 
@@ -732,7 +742,7 @@ builtin typeset -gn \
 INIT
 
                 builtin printf '%s\n' "$i"
-        } 2>>/tmp/blscd.log
+        } 2>/dev/null
 
         function Blscd__Main
         {
@@ -932,7 +942,7 @@ INIT
         else
                 Blscd__SetAction
                 [[ -e $1 ]] && \
-                        builtin eval "${BlscdSettingsStr[opener]}" 2>>/tmp/blscd.log
+                        builtin eval "${BlscdSettingsStr[opener]}" 2>/dev/null
         fi
 
         function Blscd__OpenShell
@@ -963,7 +973,8 @@ Key bindings (basics)
         q                     Quit
 
 Key bindings (settings)
-        ^H                    Toggle filtering of dotfiles
+        za                    Toggle filtering of dotfiles
+        zo                    Toggle drawing of Column 3
 
 Key bindings (moving)
         D                     Move ten lines down
@@ -1077,6 +1088,19 @@ HELP
                 S[cwd_str]=${S[cwd_str]//\/\//\/}
                 S[pwd_str]=${S[cwd_str]%/*}
                 S[pwd_str]=${S[pwd_str]:-/}
+        }
+
+        function Blscd__ToggleCol3
+        {
+                Blscd__SetAction
+                Blscd__SetResize 2
+
+                ((
+                        I[show_c3] =
+                        ${I[show_c3]}
+                        ? 0
+                        : 1
+                ))
         }
 
         function Blscd__ToggleHidden
