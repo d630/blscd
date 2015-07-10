@@ -1,4 +1,4 @@
-"blscd" "1" "Fri Jul 10 16:36:08 UTC 2015" "0.2.0" "README"
+"blscd" "1" "Fri Jul 10 18:04:34 UTC 2015" "0.2.0" "README"
 
 ##### README
 
@@ -10,14 +10,14 @@
 
 ##### BUGS & REQUESTS
 
-Get in touch with blscd by reading the [USAGE](../master/doc/USAGE.md) text file. Please feel free to open an issue or put in a pull request on https://github.com/D630/blscd
+Please feel free to open an issue or put in a pull request on https://github.com/D630/blscd
 
 ##### GIT
 
 To download the very latest source code:
 
 ```
-git clone https://github.com/D630/blscd
+git clone --recursive https://github.com/D630/blscd
 ```
 
 If you want to use the latest tagged version, do also something like this:
@@ -26,6 +26,14 @@ If you want to use the latest tagged version, do also something like this:
 cd ./blscd
 git checkout $(git describe --abbrev=0 --tags)
 ```
+
+##### INSTALL
+
+Just put `./blscd.sh` and `./modules/spath.sh/spath.sh` on your PATH. blscd will execute spath.sh via `source`.
+
+##### USAGE
+
+Get in touch with blscd by reading the [USAGE](../master/doc/USAGE.md) text file.
 
 ##### NOTICE
 
