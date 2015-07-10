@@ -1,12 +1,38 @@
-"blscd" "1" "Fri Jul 10 18:04:34 UTC 2015" "USAGE"
+"blscd" "1" "Fri Jul 10 19:39:41 UTC 2015" "USAGE"
 
-##### HELP
+#### INOVOCATION
+
+blscd has been written as pseudo-module. In an interactive bash session do:
+
+```sh
+source blscd
+Blscd Blscd::Main [ -h | --help | -v | --version ]
+```
+
+Otherwise put it in a wrapper script like this:
+
+```sh
+cat >> "${HOME}/"bin/blscd.sh <<'CODE'
+#!/usr/bin/env bash
+
+source blscd
+Blscd Blscd::Main "$@"
+CODE
+
+chmod 755 "${HOME}/"bin/blscd.sh
+```
+
+##### ENVIRONMENT VARIABLES
 
 ```
-Usage
-        [ . ] blscd [ -h | --help | -v | --version ]
+        BLSCD_HIDDEN          Default: 1
+        BLSCD_SHOW_COL3       Default: 1
+```
 
-Key bindings (basics)
+##### KEYBINDINGS
+
+```
+Basics
         E                     Edit the current file in EDITOR
                               (fallback: vi)
         S                     Fork SHELL in the current directory
@@ -17,11 +43,11 @@ Key bindings (basics)
                               (fallback: less)
         q                     Quit
 
-Key bindings (settings)
+Settings
         za                    Toggle filtering of dotfiles
         zo                    Toggle drawing of Column 3
 
-Key bindings (moving)
+Moving
         D                     Move ten lines down
         G     [ END ]         Move to bottom
         J                     Move half page down
@@ -37,7 +63,7 @@ Key bindings (moving)
         l     [ RIGHTARROW ]  Move right
         u                     Move five lines up
 
-Key bindings (jumping)
+Jumping
         g-                    Move to OLDPWD
         gL                    Move to /var/log
         gM                    Move to /mnt
@@ -55,29 +81,24 @@ Key bindings (jumping)
 
 ##### CONFIGURATION
 
-There is no configuration file at present.
+There is no configuration file at present; you can use some environment variables instead.
 
-To use another opener and different colors see the functions `Blscd::Init` and `Blscd::DrawScreenTbar`.
-
-For other keybindings see function `Blscd::GetInputKeyboard`.
-
-Awk will only be used, if a directory contains 800 or more files. You may modify this value in function `Blscd::GetBlscdData`.
-
-blscd is going to exit, if your terminal does not match the allowed height and width. See the head of `Blscd::DrawScreen` for this.
-
-Filtering of dotfiles works via GLOBIGNORE in `Blscd::GetBlscdData`. You can extend it easily; `man 1 bash` says:
+- To use another opener and different colors see the functions `Blscd::Init` and `Blscd::DrawScreenTbar`.
+- Modify keybindings in function `Blscd::GetInputKeyboard`.
+- Awk will only be used, if a directory contains 800 or more files. You may edit this value in function `Blscd::GetBlscdData`.
+- blscd is going to exit, if your terminal does not match the allowed height and width. See the head of `Blscd::DrawScreen` for this.
+- Filtering of dotfiles works via GLOBIGNORE in `Blscd::GetBlscdData`. You can extend it easily; `man 1 bash` says:
 
 ```
-       GLOBIGNORE
-              A  colon-separated  list of patterns defining the set of
-              filenames to be ignored by  pathname  expansion.   If  a
-              filename  matched  by  a pathname expansion pattern also
-              matches one of the patterns in GLOBIGNORE, it is removed
-              from the list of matches.
+        GLOBIGNORE
+                A  colon-separated  list of patterns defining the set of
+                filenames to be ignored by  pathname  expansion.   If  a
+                filename  matched  by  a pathname expansion pattern also
+                matches one of the patterns in GLOBIGNORE, it is removed
+                from the list of matches.
 ```
 
 ##### TIPS
 
-You can reduce the start up time of blscd by replacing the tput commands in `Blscd::Init` with ASCII codes for your terminal. In this way, you may avoid a lot of subshells.
-
-blscd stores directory stats in associative arrays just for once; any filesystem events after that will be ignored. If you want to see all current files in a directory, quit blscd or reload everything via ^R.
+- You can reduce the start up time of blscd by replacing all tput commands in `Blscd::Init` with ASCII codes for your terminal. In this way, you may avoid a lot of subshells.
+- blscd stores directory stats in associative arrays just for once; any filesystem events after that will be ignored. If you want to see all current files in a directory, quit blscd or reload everything via ^R.

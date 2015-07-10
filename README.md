@@ -1,4 +1,4 @@
-"blscd" "1" "Fri Jul 10 18:04:34 UTC 2015" "0.2.0" "README"
+"blscd" "1" "Fri Jul 10 19:39:41 UTC 2015" "0.2.0" "README"
 
 ##### README
 
@@ -29,7 +29,7 @@ git checkout $(git describe --abbrev=0 --tags)
 
 ##### INSTALL
 
-Just put `./blscd.sh` and `./modules/spath.sh/spath.sh` on your PATH. blscd will execute spath.sh via `source`.
+Just put `./blscd` and `./modules/spath.sh/spath.sh` on your PATH. blscd will execute spath.sh via `source`.
 
 ##### USAGE
 

@@ -356,8 +356,12 @@ IN
                 command stty ${S[saved_stty]}
                 builtin trap - SIGWINCH SIGINT SIGALRM
                 builtin eval "${S[saved_traps]}"
+                builtin eval "${S[saved_bopts]}"
                 builtin printf "${S[tput_clear]}${S[tput_ealt]}${S[tput_show]}${S[tput_am_on]}"
-                builtin typeset -xg LC_COLLATE=${S[saved_LC_COLLATE]}
+                builtin typeset -x LC_COLLATE=${S[saved_LC_COLLATE]}
+                [[ ${S[saved_GLOBIGNORE]} == saved_GLOBIGNORE ]] || {
+                        builtin typeset -g GLOBIGNORE=${S[saved_GLOBIGNORE]}
+                }
                 builtin unset -v \
                         BlscdData \
                         BlscdSettingsInt \
@@ -638,6 +642,7 @@ builtin typeset -gA "BlscdSettingsStr=(
         [pwd_str]=
         [saved_LC_COLLATE]=$LC_COLLATE
         [saved_stty]='$(command stty -g)'
+        [saved_bopts]='$(builtin shopt -p)'
         [saved_traps]='$(builtin trap)'
         [tput_alt]='$(command tput smcup || command tput ti)'
         [tput_am_off]='$(command tput rmam)'
@@ -724,21 +729,29 @@ builtin typeset -gAi "BlscdSettingsInt=(
         [c3_ofs]=1
         [c3_total]=
         [c3_vis]=
-        [hidden]=1
+        [hidden]=${BLSCD_HIDDEN:-1}
         [ofs]=4
         [redraw]=1
         [redraw_cnt]=
         [reprint]=1
-        [show_c3]=1
+        [show_c3]=${BLSCD_SHOW_COL3:-1}
         [step]=6
 )"
+
+if
+        [[ ${GLOBIGNORE+x} == x ]]
+then
+        BlscdSettingsStr[saved_GLOBIGNORE]=$GLOBIGNORE
+else
+        BlscdSettingsStr[saved_GLOBIGNORE]=saved_GLOBIGNORE
+fi
 
 builtin typeset -x LC_COLLATE=C
 
 builtin typeset -gn \
         D=BlscdData \
         I=BlscdSettingsInt \
-        S=BlscdSettingsStr;
+        S=BlscdSettingsStr ;
 INIT
 
                 builtin printf '%s\n' "$i"
@@ -746,6 +759,11 @@ INIT
 
         function Blscd__Main
         {
+                builtin source spath.sh || {
+                        builtin printf '%s\n' "${0}:Error: Could not source module: spath.sh" 1>&2
+                        builtin return 1
+                }
+
                 Blscd__GetArgs "$@" || {
                         builtin source <(Blscd__Init)
                         Blscd__SetEnv
@@ -959,7 +977,8 @@ INIT
                         builtin typeset help="$(</dev/fd/0)"
                 }  <<-'HELP'
 Usage
-        [ . ] blscd [ -h | --help | -v | --version ]
+        . blscd
+        Blscd Blscd::Main [ -h | --help | -v | --version ]
 
 Key bindings (basics)
         E                     Edit the current file in EDITOR
@@ -1006,6 +1025,10 @@ Key bindings (jumping)
         gs                    Move to /srv
         gu                    Move to /usr
         gv                    Move to /var
+
+Environment variables
+        BLSCD_HIDDEN          Default: 1
+        BLSCD_SHOW_COL3       Default: 1
 HELP
 
                 builtin printf '%s\n' "$help"
@@ -1022,7 +1045,11 @@ HELP
         {
                 builtin trap - SIGWINCH SIGINT SIGALRM
                 command stty ${S[saved_stty]}
+                builtin eval "${S[saved_bopts]}"
                 builtin typeset LC_COLLATE=${S[saved_LC_COLLATE]}
+                [[ ${S[saved_GLOBIGNORE]} == saved_GLOBIGNORE ]] || {
+                        builtin typeset -g GLOBIGNORE=${S[saved_GLOBIGNORE]}
+                }
                 builtin unset -v \
                         BlscdData \
                         BlscdSettingsInt \
@@ -1051,6 +1078,16 @@ HELP
                 ' SIGWINCH
                 builtin trap 'printf "${S[tput_clear]}"' SIGINT
                 builtin trap '' SIGALRM
+                builtin unset -v GLOBIGNORE
+                builtin shopt -s checkhash
+                builtin shopt -s checkwinsize
+                builtin shopt -s extquote
+                builtin shopt -u dotglob
+                builtin shopt -u failglob
+                builtin shopt -u globstar
+                builtin shopt -u nocaseglob
+                builtin shopt -u nocasematch
+                builtin shopt -u nullglob
         }
 
         function Blscd__SetResize
@@ -1173,14 +1210,11 @@ HELP
                 Blscd__SetResize \
                 Blscd__SetScreen \
                 Blscd__SetWd \
-                Blscd__ToggleHidden ;
+                Blscd__ToggleCol3 \
+                Blscd__ToggleHidden \
+                __spath_do \
+                __spath_get_cols ;
 
 
         builtin return "$ret"
 }
-
-source $HOME/var/code/projects/spath.sh/spath.sh
-
-Blscd "$@"
-
-unset -f __spath_do __spath_get_cols
