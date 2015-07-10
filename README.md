@@ -4,7 +4,7 @@
 
 [blscd](https://github.com/D630/blscd) is a stupid [ranger](http://ranger.nongnu.org/)-like file browser/navigator (not manager) for the command line using `stty`(1), `tput`(1) and other Unix utilities.
 
-![](https://raw.githubusercontent.com/D630/blscd/master/doc/blscd.png)
+![](https://raw.githubusercontent.com/D630/blscd/develop/doc/blscd.gif)
 
 (XTerm, Terminus 12, Zenburn)
 
