@@ -1,12 +1,12 @@
-"blscd" "1" "Fri Jul 10 19:39:41 UTC 2015" "0.2.0" "README"
+"blscd" "1" "Fri Jul 10 22:34:37 UTC 2015" "0.2.0" "README"
 
 ##### README
 
 [blscd](https://github.com/D630/blscd) is a stupid [ranger](http://ranger.nongnu.org/)-like file browser/navigator (not manager) for the command line using `stty`(1), `tput`(1) and other Unix utilities.
 
-![](https://raw.githubusercontent.com/D630/blscd/develop/doc/blscd.gif)
+![](https://raw.githubusercontent.com/D630/blscd/master/doc/blscd.gif)
 
-(XTerm, Terminus 12, Zenburn)
+(suckless terminal, Droid Sans Mono 11, Solarized Dark)
 
 ##### BUGS & REQUESTS
 
