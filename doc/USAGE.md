@@ -1,4 +1,4 @@
-"blscd" "1" "Fri Jul 10 12:33:43 UTC 2015" "USAGE"
+"blscd" "1" "Fri Jul 10 13:43:10 UTC 2015" "USAGE"
 
 ##### HELP
 
@@ -34,11 +34,12 @@ Key bindings (moving)
         u                     Move five lines up
 
 Key bindings (jumping)
+        g-                    Move to OLDPWD
         gL                    Move to /var/log
         gM                    Move to /mnt
         gd                    Move to /dev
         ge                    Move to /etc
-        gh                    Move to HOME
+        gh    [ g~ ]          Move to HOME
         gl                    Move to /usr/lib
         gm                    Move to /media
         go                    Move to /opt
@@ -50,8 +51,18 @@ Key bindings (jumping)
 
 ##### CONFIGURATION
 
-There is no configuration file at present. To use another opener and different colors see the functions `Blscd::Init` and `Blscd::DrawScreenTbar`.
+There is no configuration file at present.
 
-##### TIP
+To use another opener and different colors see the functions `Blscd::Init` and `Blscd::DrawScreenTbar`.
+
+For other keybindings see function `Blscd::GetInputKeyboard`.
+
+Awk will only be used, if a directory contains 800 or more files. You may modify this value in function `Blscd::GetBlscdData`.
+
+blscd is going to exit, if your terminal does not match the allowed height and width. See the head of `Blscd::DrawScreen` for this.
+
+##### TIPS
 
 You can reduce the start up time of blscd by replacing the tput commands in `Blscd::Init` with ASCII codes for your terminal. In this way, you may avoid a lot of subshells.
+
+blscd stores directory stats in associative arrays just for once; any filesystem events after that will be ignored. If you want to see the current files in a directory, quit blscd or reload everything via ^R.

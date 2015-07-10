@@ -1,4 +1,4 @@
-"blscd" "1" "Fri Jul 10 12:33:43 UTC 2015" "0.2.0" "README"
+"blscd" "1" "Fri Jul 10 13:43:10 UTC 2015" "0.2.0" "README"
 
 ##### README
 
@@ -10,7 +10,7 @@
 
 ##### BUGS & REQUESTS
 
-Get in touch with blscd by reading the [USAGE](../../doc/USAGE.md) text file. Please feel free to open an issue or put in a pull request on https://github.com/D630/blscd
+Get in touch with blscd by reading the [USAGE](../doc/USAGE.md) text file. Please feel free to open an issue or put in a pull request on https://github.com/D630/blscd
 
 ##### GIT
 
@@ -47,7 +47,7 @@ For opening and editing files in blscd, I used:
 - Vi IMproved 7.4 (Included patches: 1-712)
 - less 458 (GNU regular expressions)
 
-blscd is not portable; it does not work in [ksh](http://www.kornshell.com/), [mksh](https://www.mirbsd.org/mksh.htm) or [zsh](http://www.zsh.org/). Your bash version needs to handle associative arrays and namerefs.
+blscd is not portable; it does not work in [ksh](http://www.kornshell.com/), [mksh](https://www.mirbsd.org/mksh.htm) or [zsh](http://www.zsh.org/). Your bash version needs to handle associative arrays and namerefs via typeset/declare.
 
 The usage of stat is not BSD-like (`grep -c stat blscd.sh` := 3). Please open and issue with the correct invocation for your system.
 

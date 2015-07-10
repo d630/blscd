@@ -458,7 +458,7 @@ IN
 
         function Blscd__GetDi
         {
-                builtin eval "${1}=\$(command stat --format="%d:%i" "$2" 2>>/tmp/blscd.logg)"
+                builtin eval "${1}=\$(command stat --format="%d:%i" "$2" 2>>/tmp/blscd.log)"
         }
 
         function Blscd__GetInputKeyboard
@@ -527,7 +527,7 @@ IN
                         g)
                                 Blscd__MoveLine 2 -9999999999
                         ;;
-                        h)
+                        h|\~)
                                 Blscd__MoveCol ~
                         ;;
                         e)
@@ -568,6 +568,9 @@ IN
                                 builtin printf "${S[tput_alt]}"
                                 Blscd__SetAction
                                 Blscd__SetResize 2
+                        ;;
+                        -)
+                                Blscd__MoveCol "$OLDPWD"
                         ;;
                         esac
                 ;;
@@ -821,11 +824,12 @@ Key bindings (moving)
         u                     Move five lines up
 
 Key bindings (jumping)
+        g-                    Move to OLDPWD
         gL                    Move to /var/log
         gM                    Move to /mnt
         gd                    Move to /dev
         ge                    Move to /etc
-        gh                    Move to HOME
+        gh    [ g~ ]          Move to HOME
         gl                    Move to /usr/lib
         gm                    Move to /media
         go                    Move to /opt
