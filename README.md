@@ -1,4 +1,4 @@
-"blscd" "1" "Fri Jul 10 13:43:10 UTC 2015" "0.2.0" "README"
+"blscd" "1" "Fri Jul 10 16:36:08 UTC 2015" "0.2.0" "README"
 
 ##### README
 
@@ -10,7 +10,7 @@
 
 ##### BUGS & REQUESTS
 
-Get in touch with blscd by reading the [USAGE](../doc/USAGE.md) text file. Please feel free to open an issue or put in a pull request on https://github.com/D630/blscd
+Get in touch with blscd by reading the [USAGE](../master/doc/USAGE.md) text file. Please feel free to open an issue or put in a pull request on https://github.com/D630/blscd
 
 ##### GIT
 

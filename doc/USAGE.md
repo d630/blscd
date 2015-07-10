@@ -1,4 +1,4 @@
-"blscd" "1" "Fri Jul 10 13:43:10 UTC 2015" "USAGE"
+"blscd" "1" "Fri Jul 10 16:36:08 UTC 2015" "USAGE"
 
 ##### HELP
 
@@ -9,13 +9,16 @@ Usage
 Key bindings (basics)
         E                     Edit the current file in EDITOR
                               (fallback: vi)
-        S                     Fork SHELL' in the current directory
+        S                     Fork SHELL in the current directory
                               (fallback: bash, LC_COLLATE=C)
         ^L                    Redraw the screen
         ^R                    Reload everything
         g?                    Open this help in PAGER
                               (fallback: less)
         q                     Quit
+
+Key bindings (settings)
+        ^H                    Toggle filtering of dotfiles
 
 Key bindings (moving)
         D                     Move ten lines down
@@ -61,8 +64,19 @@ Awk will only be used, if a directory contains 800 or more files. You may modify
 
 blscd is going to exit, if your terminal does not match the allowed height and width. See the head of `Blscd::DrawScreen` for this.
 
+Filtering of dotfiles works via GLOBIGNORE in `Blscd::GetBlscdData`. You can extend it easily; `man 1 bash` says:
+
+```
+       GLOBIGNORE
+              A  colon-separated  list of patterns defining the set of
+              filenames to be ignored by  pathname  expansion.   If  a
+              filename  matched  by  a pathname expansion pattern also
+              matches one of the patterns in GLOBIGNORE, it is removed
+              from the list of matches.
+```
+
 ##### TIPS
 
 You can reduce the start up time of blscd by replacing the tput commands in `Blscd::Init` with ASCII codes for your terminal. In this way, you may avoid a lot of subshells.
 
-blscd stores directory stats in associative arrays just for once; any filesystem events after that will be ignored. If you want to see the current files in a directory, quit blscd or reload everything via ^R.
+blscd stores directory stats in associative arrays just for once; any filesystem events after that will be ignored. If you want to see all current files in a directory, quit blscd or reload everything via ^R.
