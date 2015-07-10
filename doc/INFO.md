@@ -1,3 +1,17 @@
+### Used versions
+
+```
+Linux version 3.16.0-4-586 (debian-kernel@lists.debian.org) (gcc version 4.8.4 (Debian 4.8.4-1) ) #1 Debian 3.16.7-ckt4-3 (2015-02-03)
+GNU bash, version 4.3.30(1)-release (i586-pc-linux-gnu)
+GNU coreutils 8.23: ls, md5sum, numfmt, paste, sort, stty, tr
+XTerm(312)
+file-5.20
+find (GNU findutils) 4.4.2
+grep (GNU grep) 2.20
+sed (GNU sed) 4.2.2
+ncurses 5.9.20140913: tput
+```
+
 ### Conventions
 
 - Shell functions (procedures and functions in the stricter sense) are declared without the reserved word `function`, only when they are not nested. Their names are prefixed with `__blscd_`. The bodies may contain every compound command, but the group command is prefered, when we need to declare variables first.

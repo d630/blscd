@@ -476,7 +476,7 @@ __blscd_draw_screen ()
     builtin printf "$_blscd_tput_reset"
 
     # Print the browser.
-    for ((i=0 ; i < _blscd_screen_lines_browser ; ++i))
+    for ((i=0 ; i < _blscd_screen_lines_browser ; i++))
     do
         __blscd_draw_screen_lines 2
         builtin printf "${_blscd_data[color prae ${_blscd_dir_col_0_string}/${_blscd_col_1_view[$i]}]}${screen_lines_browser_col_1_color_1}%-${screen_col_1_width}.${screen_col_1_width}s${_blscd_data[color post ${_blscd_dir_col_0_string}/${_blscd_col_1_view[$i]}]}${screen_lines_browser_col_1_color_reset} ${_blscd_data[color prae ${_blscd_dir_col_1_string}/${_blscd_col_2_view[$i]}]}${screen_lines_browser_col_2_color_1}%-${screen_col_2_width}.${screen_col_2_width}s%${screen_col_2_1_width}s${_blscd_data[color post ${_blscd_dir_col_1_string}/${_blscd_col_2_view[$i]}]}${screen_lines_browser_col_2_color_reset} ${_blscd_data[color prae ${_blscd_dir_col_1_string}/${_blscd_screen_lines_browser_col_2_cursor_string}/${_blscd_col_3_view[$i]}]}${screen_lines_browser_col_3_color_1}%-${screen_col_3_width}.${screen_col_3_width}s${_blscd_data[color post ${_blscd_dir_col_1_string}/${_blscd_screen_lines_browser_col_2_cursor_string}/${_blscd_col_3_view[$i]}]}${screen_lines_browser_col_3_color_reset}\n" " ${_blscd_col_1_view[$i]} " " ${_blscd_col_2_view[$i]} " "${_blscd_data[size ${_blscd_dir_col_1_string}/${_blscd_col_2_view[$i]}]} " " ${_blscd_col_3_view[$i]} "
