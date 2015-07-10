@@ -396,12 +396,12 @@ IN
                                 }
 
                                 {
-                                        printf("D[%s,%d]=%s;D[%s,type]=%c;D[%s,idx]=%d;D[%s,str]='\''%s'\'';", "'$FILE_INODE'", idx, $2, $2, substr($1,0,1), $2, idx, $2, Blscd__getBasename($3));
+                                        printf("D[%s,%d,%d]=%s;D[%s,type]=%c;D[%s,%d,idx]=%d;D[%s,str]='\''%s'\'';", "'$FILE_INODE'", "'${I[hidden]}'", idx, $2, $2, substr($1,0,1), $2, "'${I[hidden]}'", idx, $2, Blscd__getBasename($3));
                                         idx += 1
                                 }
 
                                 END {
-                                        printf("D['$FILE_NAME',di]=%s;D[%s,cnt]=%d", "'$FILE_INODE'", "'$FILE_INODE'", idx)
+                                        printf("D['$FILE_NAME','${I[hidden]}',di]=%s;D[%s,'${I[hidden]}',cnt]=%d", "'$FILE_INODE'", "'$FILE_INODE'", idx)
                                 }
                         ' 2>>/tmp/blscd.log
                 }
@@ -438,19 +438,19 @@ IN
                 then
                         builtin shopt -s dotglob
                         (( ${I[hidden]} == 0 )) && GLOBIGNORE="${FILE_NAME}/".*
-                        #~ builtin set -- *
-                        #~ if
-                                #~ (( $# > 799 ))
-                        #~ then
-                                #~ builtin source <(
-                                        #~ 2>>/tmp/blscd.log \
-                                        #~ command stat \
-                                                #~ --printf="%A|%d:%i|%n\0" "$FILE_NAME"/* \
-                                        #~ | Blscd__GetBlscdDataByAwk
-                                #~ )
-                        #~ else
+                        builtin set -- *
+                        if
+                                (( $# > 799 ))
+                        then
+                                builtin source <(
+                                        2>>/tmp/blscd.log \
+                                        command stat \
+                                                --printf="%A|%d:%i|%n\0" "$FILE_NAME"/* \
+                                        | Blscd__GetBlscdDataByAwk
+                                )
+                        else
                                 Blscd__GetBlscdDataByBash
-                        #~ fi
+                        fi
                         builtin unset -v GLOBIGNORE
                         builtin shopt -u dotglob
                 fi
