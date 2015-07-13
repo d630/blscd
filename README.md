@@ -1,4 +1,4 @@
-"blscd" "1" "Mon Jul 13 03:10:01 UTC 2015" "0.2.0" "README"
+"blscd" "1" "Mon Jul 13 03:58:06 UTC 2015" "0.2.0" "README"
 
 ##### README
 
@@ -57,7 +57,7 @@ For opening and editing files in blscd, I used:
 
 blscd is not portable; it does not work in [ksh](http://www.kornshell.com/), [mksh](https://www.mirbsd.org/mksh.htm) or [zsh](http://www.zsh.org/). Your bash version needs to handle associative arrays and namerefs via typeset/declare.
 
-The usage of stat is not BSD-like (`grep -c stat blscd.sh` := 3). Please open and issue with the correct invocation for your system.
+The usage of stat is not BSD-like (`grep -c stat blscd` := 3). Please open and issue with the correct invocation for your system.
 
 When using blscd in the virtual console, some tput commands may not work.
 
@@ -67,7 +67,7 @@ blscd is a fork and rewrite of [lscd v0.1](https://github.com/hut/lscd/blob/989c
 
 ##### SEE ALSO
 
-Similar to this project and independent from lscd is [deer](https://github.com/vifon/deer), which is written in `zsh`(1).
+Similar to this project and independent from lscd is [deer](https://github.com/vifon/deer), which is written in zsh.
 
 ##### LICENCE
 

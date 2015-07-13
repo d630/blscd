@@ -1,6 +1,6 @@
-"blscd" "1" "Mon Jul 13 03:10:01 UTC 2015" "USAGE"
+"blscd" "1" "Mon Jul 13 03:58:06 UTC 2015" "USAGE"
 
-#### INOVOCATION
+#### INVOCATION
 
 blscd has been written as pseudo-module. In an interactive bash session do:
 
@@ -101,4 +101,4 @@ There is no configuration file at present; you can use some environment variable
 ##### TIPS
 
 - You can reduce the start up time of blscd by replacing all tput commands in `Blscd::Init` with ASCII codes for your terminal. In this way, you may avoid a lot of subshells.
-- blscd stores directory listings and inode infos in associative arrays just for once; any filesystem events after that will be ignored. If you want to see all current entries in a directory, quit blscd or reload everything via ^R. The Status bar data at the bottom is different: its associated with the current cursor position and the size of the terminal columns number.
+- blscd stores directory listings and inode infos in associative arrays just for once; any filesystem events after that will be ignored. If you want to see all current entries in a directory, quit blscd or reload everything via ^R. The Status bar data at the bottom is different: it is associated with the current cursor position and the size of the terminal columns number.
