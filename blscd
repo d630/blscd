@@ -1,0 +1,1222 @@
+#!/usr/bin/env bash
+
+# blscd
+# Copyright (C) 2014f. D630, GNU GPLv3
+# <https://github.com/D630/blscd>
+
+# Fork and rewrite in GNU bash of lscd v0.1 [2014, GNU GPLv3] by Roman
+# Zimbelmann aka. hut, <https://github.com/hut/lscd>
+
+# -- DEBUGGING.
+
+#printf '%s (%s)\n' "$BASH_VERSION" "${BASH_VERSINFO[5]}" && exit 0
+#set -o errexit
+#set -o errtrace
+#set -o noexec
+#set -o nounset
+#set -o pipefail
+#set -o verbose
+#set -o xtrace
+#trap '(read -p "[$BASH_SOURCE:$LINENO] $BASH_COMMAND?")' DEBUG
+#exec 2>> ~/blscd.sh.log
+#typeset vars_base=$(set -o posix ; set)
+#fgrep -v -e "$vars_base" < <(set -o posix ; set) |
+#egrep -v -e "^BASH_REMATCH=" \
+#         -e "^OPTIND=" \
+#         -e "^REPLY=" \
+#         -e "^BASH_LINENO=" \
+#         -e "^BASH_SOURCE=" \
+#         -e "^FUNCNAME=" |
+#less
+
+Blscd ()
+{
+        # -- FUNCTIONS.
+
+        function Blscd::DrawScreen
+        {
+                builtin typeset -i \
+                        i= \
+                        c1_w= \
+                        c2_w= \
+                        c3_w= \
+                        dim_cols= \
+                        dim_lines=;
+
+                Blscd::SetScreen
+
+                if
+                        ((
+                                dim_cols < 40 ||
+                                dim_lines < ${I[ofs]]} + ${I[step]]} ||
+                                dim_lines < 3
+                        ))
+                then
+                        Blscd::Exit
+                        builtin printf '%s\n' "${BASH_SOURCE[0]}:Error: Bad dimension: ${dim_cols},${dim_lines}" 1>&2
+                        builtin return 1
+                fi
+
+                if
+                        (( ${I[reprint]} > 0 ))
+                then
+                        builtin printf "${S[tput_clear]}"
+                        Blscd::SetWd
+                        if
+                                [[ ${S[cwd_str]} == / ]]
+                        then
+                                S[pwd_str]=
+                        else
+                                DIR_NAME=${S[pwd_str]} Blscd::GetBlscdData
+                        fi
+                        I[c1_total]=${D[dir:cnt|${S[pwd_str]}|${I[hidden]}]}
+                        DIR_NAME=${S[cwd_str]} Blscd::GetBlscdData
+                        ((
+                                I[c1_vis] =
+                                ${I[c1_total]} > ${I[bsr_h]}
+                                ? ${I[bsr_h]}
+                                : ${I[c1_total]}
+                        ))
+                        Blscd::MoveLine 1 "${D[idx|${S[cwd_str]}|${I[hidden]}]}"
+                        I[c1_csr]=${D[dir:csr|${S[pwd_str]}|${I[bsr_h]}]:-${I[c1_csr]}}
+                        I[c1_ofs]=${D[dir:ofs|${S[pwd_str]}|${I[bsr_h]}]:-${I[c1_ofs]}}
+                        I[c2_csr]=${D[dir:csr|${S[cwd_str]}|${I[bsr_h]}]:-${I[c2_csr]}}
+                        I[c2_ofs]=${D[dir:ofs|${S[cwd_str]}|${I[bsr_h]}]:-${I[c2_ofs]}}
+                else
+                        # Delete obsolete lines in column 3.
+                        if
+                                (( ${I[c3_total]} <= 15 ))
+                        then
+                                ((
+                                        i =
+                                        ${I[c3_total]} < ${I[bsr_h]}
+                                        ? ${I[c3_total]}
+                                        : ${I[bsr_h]}
+                                ))
+                                for (( i=$i ; i > 1 ; --i ))
+                                do
+                                        builtin printf "\033[$((i + 1));$((c1_w + c2_w + 3))H${S[tput_eel]}"
+                                done
+                        elif
+                                ((
+                                        ${I[c3_total]} < ${I[bsr_h]} &&
+                                        ${I[c1_vis]:-0} > 5
+                                ))
+                        then
+                                builtin printf "${S[tput_cup_2_0]}"
+                                for (( i=${I[c3_total]} ; i < ${I[bsr_h]} ; ++i ))
+                                do
+                                        builtin printf "%-${c1_w}.${c1_w}s\n" ""
+                                done
+                        fi
+                fi
+
+                I[c2_total]=${D[dir:cnt|${S[cwd_str]}|${I[hidden]}]}
+                S[file_str]=${S[cwd_str]}/${D[dir:idx|${S[cwd_str]}|${I[hidden]}|$((${I[c2_ofs]} + ${I[c2_csr]} - 1))]}
+                S[file_str]=${S[file_str]/\/\//\/}
+
+                DIR_NAME=${S[file_str]} Blscd::GetBlscdData
+                I[c3_total]=${D[dir:cnt|${S[file_str]}|${I[hidden]}]}
+                I[c3_csr]=0
+                I[c3_ofs]=1
+
+                ((
+                        I[c3_csr] =
+                        ${I[c3_total]} == 0
+                        ? 0
+                        : ${D[dir:csr|${S[file_str]}|${I[bsr_h]}]:-${I[c3_csr]}}
+                ))
+
+                ((
+                        I[c3_ofs] =
+                        ${I[c3_total]} == 0
+                        ? 1
+                        : ${D[dir:ofs|${S[file_str]}|${I[bsr_h]}]:-${I[c3_ofs]}}
+                ))
+
+                S[preview_str]=${D[dir:idx|${S[file_str]}|${I[hidden]}|$((${I[c3_ofs]} + ${I[c3_csr]} - 1))]}
+
+                D[dir:csr|${S[pwd_str]}|${I[bsr_h]}]=${I[c1_csr]}
+                D[dir:ofs|${S[pwd_str]}|${I[bsr_h]}]=${I[c1_ofs]}
+                D[dir:csr|${S[cwd_str]}|${I[bsr_h]}]=${I[c2_csr]}
+                D[dir:ofs|${S[cwd_str]}|${I[bsr_h]}]=${I[c2_ofs]}
+                D[dir:csr|${S[file_str]}|${I[bsr_h]}]=${I[c3_csr]}
+                D[dir:ofs|${S[file_str]}|${I[bsr_h]}]=${I[c3_ofs]}
+
+                ((
+                        I[c2_vis] =
+                        ${I[c2_total]} > ${I[bsr_h]}
+                        ? ${I[bsr_h]}
+                        : ${I[c2_total]}
+                ))
+
+                ((
+                        I[c3_vis] =
+                        ${I[c3_total]} > ${I[bsr_h]}
+                        ? ${I[bsr_h]}
+                        : ${I[c3_total]}
+                ))
+
+                if
+                        [[
+                                ! -d ${S[file_str]} ||
+                                -z ${S[file_str]} ||
+                                ${I[show_c3]} == 0 ||
+                                ${I[c2_total]} -eq 0
+                        ]]
+                then
+                        ((
+                                c2_w *= 2,
+                                c3_w = 0
+                        ))
+                fi
+
+                Blscd::DrawScreenTbar
+                builtin printf '%s\n' "${S[tput_home]}${S[tput_eel]}${D[tbar|${S[file_str]}|${dim_cols}]//\/\//\/}"
+
+                Blscd::DrawScreenSbar
+                Blscd::DrawScreenBsr
+
+                builtin printf '%s' "${D[sbar|${S[file_string]}|${dim_cols}]}"
+
+                builtin printf "${S[tput_reset]}\033[$((${I[c2_csr]} + 2));$((c1_w + 2))H"
+        }
+
+        function Blscd::DrawScreenBsr
+        {
+                builtin typeset \
+                        i= \
+                        c1_color= \
+                        c2_color= \
+                        c3_color= ;
+
+                builtin printf '%s' "${S[tput_cup_1_0]}"
+
+                [[ ${S[pwd_str]} == / ]] && typeset pwd_workaround=
+                [[ ${S[cwd_str]} == / ]] && typeset cwd_workaround=
+
+                for (( i=0 ; i < ${I[bsr_h]} ; ++i ))
+                do
+                        c1_color=
+                        c2_color=
+                        c3_color=
+                        (( i == ${I[c1_csr]} )) && {
+                                if
+                                        (( ${I[c1_total]} == 0 ))
+                                then
+                                        c1_color=${S[c1_err|csr|color]}
+                                else
+                                        c1_color=${S[c1|csr|color]}
+                                fi
+                        }
+                        (( i == ${I[c2_csr]} )) && {
+                                if
+                                        (( ${I[c2_total]} == 0 ))
+                                then
+                                        c2_color=${S[c2_err|csr|color]}
+                                else
+                                        c2_color=${S[c2|csr|color]}
+                                fi
+                        }
+                        (( i == ${I[c3_csr]} )) && {
+                                if
+                                        (( ${I[c3_total]} == 0 ))
+                                then
+                                        c3_color=${S[c3_err|csr|color]}
+                                else
+                                        c3_color=${S[c3|csr|color]}
+                                fi
+                        }
+                        builtin printf "${S[${D[type|${pwd_workaround-${S[pwd_str]}}/${D[dir:idx|${S[pwd_str]}|${I[hidden]}|$((${I[c1_ofs]} + i - 1))]}]}|color]}${c1_color}%-${c1_w}.${c1_w}s${S[tput_reset]} " " ${D[dir:idx|${S[pwd_str]}|${I[hidden]}|$((${I[c1_ofs]} + i - 1))]//$'\n'/?} "
+
+                        builtin printf "${S[${D[type|${cwd_workaround-${S[cwd_str]}}/${D[dir:idx|${S[cwd_str]}|${I[hidden]}|$((${I[c2_ofs]} + i - 1))]}]}|color]}${c2_color}%-${c2_w}.${c2_w}s${S[tput_reset]} " " ${D[dir:idx|${S[cwd_str]}|${I[hidden]}|$((${I[c2_ofs]} + i - 1))]//$'\n'/?} "
+
+                        builtin printf "${S[${D[type|${S[file_str]}/${D[dir:idx|${S[file_str]}|${I[hidden]}|$((${I[c3_ofs]} + i - 1))]}]}|color]}${c3_color}%-${c3_w}.${c3_w}s${S[tput_reset]}\n" " ${D[dir:idx|${S[file_str]}|${I[hidden]}|$((${I[c3_ofs]} + i - 1))]//$'\n'/?} "
+                done
+        }
+
+        function Blscd::DrawScreenSbar
+        {
+                [[ -n ${D[sbar|${S[file_str]}|${dim_cols}]} ]] || {
+                        builtin typeset \
+                                sbar_color=${S[sbar|color]}
+                                sbar0=. \
+                                sbar_str=. \
+                                sbar1=. \
+                                sbar2=. \
+                                sbar3=. \
+                                sbar4=. \
+                                sbar5=.;
+
+                        (( ${I[c2_total]} == 0 )) || {
+                                sbar0=$(command ls -lAdqh "${S[file_str]}")
+
+                                if
+                                        [[ ${sbar0:0:1} == l ]]
+                                then
+                                        builtin set -- ${sbar0}
+                                        1>/dev/null 2>&1 \
+                                        command ls -Ld "${S[file_str]}" || {
+                                                sbar_color=${S[sbar_err|color]}
+                                                D[type|${S[file_str]}]=o
+                                        }
+                                        sbar0="${sbar0%% /*} -> ${@:$#}"
+                                        builtin set -- ${sbar0}
+                                else
+                                        sbar0=${sbar0%% /*}
+                                        builtin set -- ${sbar0}
+                                fi
+                                builtin read -r sbar1 sbar2 sbar3 <<IN
+$((${I[c2_ofs]} + ${I[c2_csr]})) \
+${I[c2_total]} \
+$((100 * (${I[c2_ofs]} + ${I[c2_csr]}) / ${I[c2_total]}))
+IN
+                        }
+
+                        if
+                                (( ${I[c2_total]} <= ${I[bsr_h]} ))
+                        then
+                                sbar4=All
+                        elif
+                                ((
+                                        ${I[c2_total]} > ${I[bsr_h]} &&
+                                        ${I[c2_csr]} + ${I[c2_ofs]} <= ${I[c2_vis]}
+                                ))
+                        then
+                                sbar4=Top
+                        elif
+                                ((
+                                        ${I[c2_total]} > ${I[bsr_h]} &&
+                                        ${I[c2_csr]} + ${I[c2_ofs]} >= ${I[c2_total]} - ${I[bsr_h]} + 1
+                                ))
+                        then
+                                sbar4=Bot
+                        else
+                                sbar4=Mid
+                        fi
+
+                        if
+                                [[ -d ${S[file_str]} ]]
+                        then
+                                sbar5=${I[c3_total]}
+                        else
+                                sbar5=-
+                        fi
+
+                        builtin printf -v sbar_str "%s %s  %*s/%s  %s%% %s  %s" "$1" "${*:2}" "$((dim_cols - ${#sbar0} - 8 - ${#sbar1} - ${#sbar2} - ${#sbar3} - ${#sbar4} - ${#sbar5}))" "$sbar1" "$sbar2" "$sbar3" "$sbar4" "$sbar5"
+
+                        (( ${#sbar_str} > dim_cols )) && sbar_str=${sbar_str:0:dim_cols}
+
+                        builtin printf -v sbar_str "${sbar_color}_\033[$((${I[bsr_h]} + 2));0H${S[tput_eel]}%s${S[tput_reset]} %s" "$1" "${sbar_str#* }"
+
+                        D[sbar|${S[file_di]}|${dim_cols}]=$sbar_str
+                }
+        }
+
+        function Blscd::DrawScreenTbar
+        {
+                [[ -n ${D[tbar|${S[file_str]}|${dim_cols}]} ]] || {
+                        builtin typeset tbar_str=
+
+                        COLUMNS=$dim_cols \
+                        SPATH_MARK=" ... " \
+                        SPATH_LENGTH=$(((dim_cols / 3) + 1 - ${#USER} - 1 - ${#HOSTNAME} - 1)) \
+                                __spath_do "tbar_str" "${S[file_str]//$'\n'/?}"
+
+                        tbar_str=${S[tput_blue_f]}${S[tput_bold]}${USER}@${HOSTNAME}:${S[tput_green_f]}${tbar_str%/*}/${S[tput_white_f]}${tbar_str##*/}${S[tput_reset]}
+                        tbar_str=${tbar_str//\/\//\/}
+                        #tbar_str=${tbar_str/${HOME}/"~"}
+
+                        D[tbar|${S[file_str]}|${dim_cols}]=$tbar_str
+                }
+        }
+
+        function Blscd::EditFile
+        {
+            Blscd::SetAction
+            command "${EDITOR:-vi}" "${S[file_str]}"
+        }
+
+        function Blscd::Exit
+        {
+                command stty ${S[saved_stty]}
+                builtin trap - SIGWINCH SIGINT SIGALRM
+                builtin eval "${S[saved_traps]}"
+                builtin eval "${S[saved_bopts]}"
+                builtin printf "${S[tput_clear]}${S[tput_ealt]}${S[tput_show]}${S[tput_am_on]}"
+                builtin typeset -x LC_COLLATE=${S[saved_LC_COLLATE]}
+                [[ ${S[saved_GLOBIGNORE]} == saved_GLOBIGNORE ]] || {
+                        builtin typeset -g GLOBIGNORE=${S[saved_GLOBIGNORE]}
+                }
+                builtin unset -v \
+                        BlscdData \
+                        BlscdSettingsInt \
+                        BlscdSettingsStr \
+                        D \
+                        I \
+                        S;
+        }
+
+        function Blscd::GetArgs
+        case $1 in
+        -h|--help)
+                Blscd::PrintHelp
+        ;;
+        -v|--version)
+                Blscd::PrintVersion
+        ;;
+        *)
+                builtin return 1
+        ;;
+        esac
+
+        function Blscd::GetBlscdData
+        {
+                Blscd::GetBlscdDataByAwk()
+                {
+                        command awk '
+                                function Blscd__getBasename(str) {
+                                        sub(/.*\//, "", str);
+                                        return str
+                                }
+
+                                function Blscd__quoteString(str) {
+                                        gsub(/\047/, "\047\\\047\047", str);
+                                        return str
+                                }
+
+                                BEGIN {
+                                        idx = 0;
+                                        FS = "|";
+                                        RS = "\0";
+                                        hidden = "'${I[hidden]}'";
+                                        dir_tmp = Blscd__quoteString("'"${DIR_TMP}"'");
+                                        dirname = Blscd__quoteString("'"${DIR_NAME}"'")
+                                }
+
+                                {
+                                        basename = Blscd__quoteString(Blscd__getBasename($2));
+                                        printf( \
+                                                "D[type|\047%s/%s\047]=%c;D[idx|\047%s/%s\047|%d]=%d;D[dir:idx|\047%s\047|%d|%d]=\047%s\047;\n",
+                                                dir_tmp,
+                                                basename,
+                                                substr($1,0,1),
+                                                dir_tmp,
+                                                basename,
+                                                hidden,
+                                                idx,
+                                                dirname,
+                                                hidden,
+                                                idx,
+                                                basename \
+                                        );
+                                        idx += 1
+                                }
+
+                                END {
+                                        printf("D[dir:cnt|\047%s\047|%d]=%d;\n", dirname, hidden, idx)
+                                }
+                        ' 2>/dev/null
+                }
+
+                Blscd::GetBlscdDataByBash()
+                {
+                        builtin typeset -i idx=
+                        builtin typeset \
+                                A \
+                                n;
+
+                        while
+                                IFS='|' builtin read -r -d '' A n
+                        do
+                                D[type|${n}]=${A:0:1}
+                                D[idx|${n}|${I[hidden]}]=$idx
+                                D[dir:idx|${DIR_NAME}|${I[hidden]}|${idx}]=${n##*/}
+                                (( idx++ ))
+                        done < <(
+                                2>/dev/null \
+                                command stat --printf="%A|%n\0" "${arg//\/\//\/}"*
+                        )
+
+                        D[dir:cnt|${DIR_NAME}|${I[hidden]}]=$idx
+                }
+
+                [[ -z ${D[dir|${DIR_NAME}|${I[hidden]}]} ]] && {
+                        if
+                                [[ -d $DIR_NAME ]]
+                        then
+                                D[dir|${DIR_NAME}|${I[hidden]}]=1
+                                builtin shopt -s dotglob
+                                builtin typeset arg="${DIR_NAME}/"
+                                (( ${I[hidden]} == 0 )) && GLOBIGNORE="${arg//\/\//\/}".*
+                                builtin set -- *
+                                if
+                                        (( $# > 799 ))
+                                then
+                                        builtin typeset DIR_NAME="${DIR_NAME//$'\n'/\\n}"
+                                        builtin source <(
+                                                2>/dev/null \
+                                                command stat \
+                                                        --printf="%A|%n\0" "${arg//\/\//\/}"* \
+                                                | DIR_NAME=$DIR_NAME \
+                                                  DIR_TMP=${DIR_NAME%/} \
+                                                        Blscd::GetBlscdDataByAwk
+                                        )
+                                else
+                                        Blscd::GetBlscdDataByBash
+                                fi
+                                builtin unset -v GLOBIGNORE
+                                builtin shopt -u dotglob
+                        else
+                                D[dir|${DIR_NAME}|${I[hidden]}]=0
+                        fi
+                }
+        }
+
+        #~ function Blscd::GetDi
+        #~ {
+                #~ builtin typeset -gn ref=${1}
+                #~ ref=$(
+                        #~ 2>/dev/null \
+                        #~ command stat --format="%d:%i" "$2"
+                #~ )
+                #~ builtin unset -v ref
+        #~ }
+
+        function Blscd::GetInputKeyboard
+        {
+                builtin typeset \
+                        input \
+                        k1 \
+                        k2 \
+                        k3;
+
+                builtin read -s -n 1 input
+                builtin read -s -N 1 -t 0.0001 k1
+                builtin read -s -N 1 -t 0.0001 k2
+                builtin read -s -N 1 -t 0.0001 k3
+
+                S[input]=${input}${k1}${k2}${k3}
+
+                case ${S[input]} in
+                j|$'\e[B')
+                        Blscd::MoveLine 2 1
+                ;;
+                k|$'\e[A')
+                        Blscd::MoveLine 2 -1
+                ;;
+                h|$'\e[D')
+                        Blscd::MoveCol ..
+                ;;
+                l|$'\e[C')
+                        Blscd::OpenFile "${S[file_str]}"
+                ;;
+                $'\x06'|$'\e[6~') # Ctrl+F | <PAGE-DOWN>
+                        Blscd::MoveLine 2 "${I[bsr_h]}"
+                ;;
+                $'\x02'|$'\e[5~') # Ctrl+B | <PAGE-UP>
+                        Blscd::MoveLine 2 "-${I[bsr_h]}"
+                ;;
+                $'\e[H'|$'\eOH') # <HOME>
+                        Blscd::MoveLine 2 -9999999999
+                ;;
+                G|$'\e[F'|$'\eOF') # <END>
+                        Blscd::MoveLine 2 9999999999
+                ;;
+                J)
+                        Blscd::MoveLine 2 "$((${I[bsr_h]} / 2))"
+                ;;
+                K)
+                        Blscd::MoveLine 2 "-$((${I[bsr_h]} / 2))"
+                ;;
+                d)
+                        Blscd::MoveLine 2 5
+                ;;
+                D)
+                        Blscd::MoveLine 2 10
+                ;;
+                u)
+                        Blscd::MoveLine 2 -5
+                ;;
+                U)
+                        Blscd::MoveLine 2 -10
+                ;;
+                g)
+                        builtin read -n 1 input
+                        case $input in
+                        g)
+                                Blscd::MoveLine 2 -9999999999
+                        ;;
+                        h|\~)
+                                Blscd::MoveCol ~
+                        ;;
+                        e)
+                                Blscd::MoveCol "/etc"
+                        ;;
+                        u)
+                                Blscd::MoveCol "/usr"
+                        ;;
+                        d)
+                                Blscd::MoveCol "/dev"
+                        ;;
+                        l)
+                                Blscd::MoveCol "/usr/lib"
+                        ;;
+                        L)
+                                Blscd::MoveCol "/var/log"
+                        ;;
+                        o)
+                                Blscd::MoveCol "/opt"
+                        ;;
+                        v)
+                                Blscd::MoveCol "/var"
+                        ;;
+                        m)
+                                Blscd::MoveCol "/media"
+                        ;;
+                        M)
+                                Blscd::MoveCol "/mnt"
+                        ;;
+                        s)
+                                Blscd::MoveCol "/srv"
+                        ;;
+                        r|/)
+                                Blscd::MoveCol /
+                        ;;
+                        \?)
+                                Blscd::PrintHelp | command "${PAGER:-less}"
+                                builtin printf "${S[tput_alt]}"
+                                Blscd::SetAction
+                                Blscd::SetResize 2
+                        ;;
+                        -)
+                                Blscd::MoveCol "$OLDPWD"
+                        ;;
+                        esac
+                ;;
+                z)
+                        builtin read -n 1 input
+                        case $input in
+                        a)
+                                Blscd::ToggleHidden
+                        ;;
+                        o)
+                                Blscd::ToggleCol3
+                        ;;
+                        esac
+                ;;
+                $'\x12') # CTRl+R
+                         Blscd::Reload
+                ;;
+                $'\x0c') # CTRL+L
+                        Blscd::SetResize 2
+                        builtin printf "${S[tput_cup_99999_0]}${S[tput_eel]}"
+                ;;
+                E)
+                        Blscd::EditFile
+                        builtin printf "${S[tput_alt]}"
+                        Blscd::SetResize 2
+                ;;
+                S)
+                        builtin printf "${S[tput_show]}${S[tput_am_on]}"
+                        Blscd::OpenShell
+                        builtin printf "${S[tput_alt]}"
+                        Blscd::SetResize 2
+                ;;
+                q)
+                        Blscd::Exit
+                        builtin break
+                ;;
+                esac
+        }
+
+        function Blscd::Init
+        {
+                {
+                    builtin typeset i="$(</dev/fd/0)"
+                }  <<-'INIT'
+builtin unset -v \
+        BlscdData \
+        BlscdSettings \
+        BlscdSettingsInt \
+        D \
+        I \
+        S;
+
+builtin typeset -gA BlscdData
+
+Blscd::Opener () { IFS= command less "$1" ; }
+
+builtin typeset -gA "BlscdSettingsStr=(
+        [action_last]=
+        [console_command_name]=
+        [cwd_di]=
+        [cwd_str]='$PWD'
+        [file_di]=
+        [file_str]=
+        [preview_di]=
+        [preview_str]=
+        [pwd_di]=
+        [pwd_str]=
+        [saved_LC_COLLATE]=$LC_COLLATE
+        [saved_stty]='$(command stty -g)'
+        [saved_bopts]='$(builtin shopt -p)'
+        [saved_traps]='$(builtin trap)'
+        [tput_alt]='$(command tput smcup || command tput ti)'
+        [tput_am_off]='$(command tput rmam)'
+        [tput_am_on]='$(command tput am)'
+        [tput_bold]='$(command tput bold || command tput md)'
+        [tput_clear]='$(command tput clear)'
+        [tput_cup_1_0]='$(command tput cup 1 0)'
+        [tput_cup_2_0]='$(command tput cup 2 0)'
+        [tput_cup_99999_0]='$(command tput cup 99999 0)'
+        [tput_ealt]='$(command tput rmcup || command tput te)'
+        [tput_eel]='$(command tput el || command tput ce)'
+        [tput_hide]='$(command tput civis || command tput vi)'
+        [tput_home]='$(command tput home)'
+        [tput_reset]='$(command tput sgr0 || command tput me)'
+        [tput_show]='$(command tput cnorm || command tput ve)'
+        [tput_white_f]='$(command tput setaf 7 || command tput AF 7)'
+)"
+
+if
+        [[ $TERM != *-m ]]
+then
+        BlscdSettingsStr+=(
+                [tput_black_f]=$(command tput setaf 0 || command tput AF 0)
+                [tput_blue_f]=$(command tput setaf 4 || command tput AF 4)
+                [tput_cyan_f]=$(command tput setaf 6 || command tput AF 6)
+                [tput_green_b]=$(command tput setab 2)
+                [tput_green_f]=$(command tput setaf 2 || command tput AF 2)
+                [tput_red_b]=$(command tput setab 1)
+                [tput_red_f]=$(command tput setaf 1 || command tput AF 1)
+                [tput_white_b]=$(command tput setab 7)
+                [tput_yellow_b]=$(command tput setab 3)
+                [tput_yellow_f]=$(command tput setaf 3 || command tput AF 3)
+        )
+fi
+
+#      -        regular file
+#      ?        some other file type
+#      C        high performance ('contiguous data') file
+#      D        door (Solaris 2.5 and up)
+#      M        off-line ('migrated') file (Cray DMF)
+#      P        port (Solaris 10 and up)
+#      b        block special file
+#      c        character special file
+#      d        directory
+#      l        symbolic link
+#      n        network special file (HP-UX)
+#      p        FIFO (named pipe)
+#      s        socket
+
+#      o        orphan (dead symlink)
+
+BlscdSettingsStr+=(
+        [-|color]=
+        [?|color]=${BlscdSettingsStr[tput_red_f]}
+        [C|color]=
+        [D|color]=
+        [M|color]=
+        [P|color]=
+        [b|color]=${BlscdSettingsStr[tput_bold]}${BlscdSettingsStr[tput_blue_f]}
+        [c1_err|csr|color]=${BlscdSettingsStr[tput_bold]}${BlscdSettingsStr[tput_black_f]}${BlscdSettingsStr[tput_red_b]}
+        [c1|csr|color]=${BlscdSettingsStr[tput_bold]}${BlscdSettingsStr[tput_black_f]}${BlscdSettingsStr[tput_green_b]}
+        [c2_err|csr|color]=${BlscdSettingsStr[tput_bold]}${BlscdSettingsStr[tput_black_f]}${BlscdSettingsStr[tput_red_b]}
+        [c2|csr|color]=${BlscdSettingsStr[tput_bold]}${BlscdSettingsStr[tput_black_f]}${BlscdSettingsStr[tput_green_b]}
+        [c3_err|csr|color]=${BlscdSettingsStr[tput_bold]}${BlscdSettingsStr[tput_black_f]}${BlscdSettingsStr[tput_red_b]}
+        [c3|csr|color]=${BlscdSettingsStr[tput_bold]}${BlscdSettingsStr[tput_black_f]}${BlscdSettingsStr[tput_green_b]}
+        [c|color]=${BlscdSettingsStr[tput_bold]}${BlscdSettingsStr[tput_white_f]}
+        [d|color]=${BlscdSettingsStr[tput_blue_f]}
+        [l|color]=${BlscdSettingsStr[tput_green_f]}
+        [n|color]=
+        [o|color]=${BlscdSettingsStr[tput_red_f]}
+        [p|color]=${BlscdSettingsStr[tput_bold]}${BlscdSettingsStr[tput_yellow_f]}
+        [sbar_err|color]=${BlscdSettingsStr[tput_red_f]}${BlscdSettingsStr[tput_bold]}
+        [sbar|color]=${BlscdSettingsStr[tput_blue_f]}${BlscdSettingsStr[tput_bold]}
+        [s|color]=${BlscdSettingsStr[tput_bold]}${BlscdSettingsStr[tput_yellow_f]}
+)
+
+builtin typeset -gAi "BlscdSettingsInt=(
+        [bsr_h]=
+        [c1_csr]=
+        [c1_ofs]=1
+        [c1_total]=
+        [c1_vis]=
+        [c2_csr]=
+        [c2_ofs]=1
+        [c2_total]=
+        [c2_vis]=
+        [c3_csr]=
+        [c3_ofs]=1
+        [c3_total]=
+        [c3_vis]=
+        [hidden]=${BLSCD_HIDDEN:-1}
+        [ofs]=4
+        [redraw]=1
+        [redraw_cnt]=
+        [reprint]=1
+        [show_c3]=${BLSCD_SHOW_COL3:-1}
+        [step]=6
+)"
+
+if
+        [[ ${GLOBIGNORE+x} == x ]]
+then
+        BlscdSettingsStr[saved_GLOBIGNORE]=$GLOBIGNORE
+else
+        BlscdSettingsStr[saved_GLOBIGNORE]=saved_GLOBIGNORE
+fi
+
+builtin typeset -x LC_COLLATE=C
+
+builtin typeset -gn \
+        D=BlscdData \
+        I=BlscdSettingsInt \
+        S=BlscdSettingsStr;
+INIT
+
+                builtin printf '%s\n' "$i"
+        } 2>/dev/null
+
+        function Blscd::Main
+        {
+                builtin source spath.sh || {
+                        builtin printf '%s\n' "${BASH_SOURCE[0]}:Error: Could not source module: spath.sh" 1>&2
+                        builtin return 1
+                }
+
+                Blscd::GetArgs "$@" || {
+                        builtin source <(Blscd::Init)
+                        Blscd::SetEnv
+                        Blscd::MainLoop
+                }
+        }
+
+        function Blscd::MainLoop
+        while
+                builtin :
+        do
+                builtin printf "${S[tput_hide]}${S[tput_am_off]}"
+                (( ${I[redraw]} == 0 )) || {
+                        Blscd::DrawScreen || builtin break
+                        Blscd::SetResize 0
+                        (( ++${I[redraw_cnt]} ))
+                }
+                Blscd::GetInputKeyboard
+        done
+
+        function Blscd::MoveCol
+        {
+                Blscd::SetResize 2
+
+                function Blscd::MoveColUp
+                {
+                        Blscd::SetAction
+                }
+
+                function Blscd::MoveColDown
+                {
+                        Blscd::SetAction
+                }
+
+                if
+                        [[ ${1:-..} == .. ]]
+                then
+                        Blscd::MoveColUp
+                else
+                        Blscd::MoveColDown
+                fi
+
+                I[c1_ofs]=1
+                I[c1_csr]=0
+                I[c2_ofs]=1
+                I[c2_csr]=0
+
+                builtin cd -- "${1:-..}"
+        }
+
+        function Blscd::MoveLine
+        {
+                Blscd::SetResize 1
+
+                function Blscd::MoveLineDo
+                {
+                        builtin typeset -i \
+                                col=$1 \
+                                difference= \
+                                list_total=$2 \
+                                max_cursor= \
+                                max_index= \
+                                old_index=$view_offset \
+                                step_l=
+
+                        max_cursor="bsr_vis - 1"
+                        max_index="list_total - bsr_vis + 1"
+
+                        # Add the argument to the current bsr_csr
+                        bsr_csr="bsr_csr + arg"
+
+                        if
+                                (( bsr_csr >= bsr_vis ))
+                        then
+                                # bsr_csr moved past the bottom of the list.
+                                if
+                                        (( bsr_vis >= list_total ))
+                                then
+                                        # The list fits entirely on the screen.
+                                        sview_offset=1
+                                else
+                                        # The list doesn't fit on the screen.
+                                        if
+                                                (( view_offset + bsr_csr > list_total ))
+                                        then
+                                                # bsr_csr out of bounds. Put it at the very bottom.
+                                                view_offset=$max_index
+                                        else
+                                            # Move the view_offset down so the visible part of the list,
+                                            # also shows the bsr_csr.
+                                            difference="bsr_vis - 1 - bsr_csr"
+                                            view_offset="view_offset - difference"
+                                        fi
+                                fi
+                                # In any case, place the bsr_csr on the last file.
+                                bsr_csr=$max_cursor
+                        elif
+                                (( bsr_csr <= 0 ))
+                        then
+                                # bsr_csr is above the list, so scroll up.
+                                view_offset="view_offset + bsr_csr"
+                                bsr_csr=0
+                        fi
+
+                        # The view_offset should always be >0 and <$max_index.
+                        (( view_offset > max_index )) && \
+                                view_offset=$max_index
+
+                        (( view_offset < 1 )) && \
+                                view_offset=1
+
+                        (( view_offset == old_index )) || {
+                                # redraw if the view_offset (and thus the visible files) has changed.
+                                #I[reprint]=1
+
+                                # Jump a step_l when scrolling.
+                                if
+                                        (( view_offset > old_index ))
+                                then
+                                        # Jump a step_l down.
+                                        step_l="max_index - view_offset"
+                                        (( step_l > ${I[step]} )) && \
+                                                step_l=${I[step]}
+                                        view_offset="view_offset + step_l"
+                                        bsr_csr="bsr_csr - step_l"
+                                else
+                                        # Jump a step_l up.
+                                        step_l="view_offset - 1"
+                                        (( step_l > ${I[step]} )) && \
+                                                step_l=${I[step]}
+                                        view_offset="view_offset - step_l"
+                                        bsr_csr="bsr_csr + step_l"
+                                fi
+                        }
+
+                        # The view_offset should always be >0 and <$max_index.
+                        (( view_offset > max_index )) && \
+                                view_offset=$max_index
+                        (( view_offset < 1 )) && \
+                                view_offset=1
+            }
+
+                builtin typeset -i arg=$2
+
+                case $1 in
+                1)
+                        builtin typeset -i \
+                                bsr_csr=${I[c1_csr]} \
+                                bsr_vis=${I[c1_vis]} \
+                        view_offset=${I[c1_ofs]}
+                        Blscd::MoveLineDo "$1" "${I[c1_total]}"
+                        I[c1_ofs]=$view_offset
+                        I[c1_csr]=$bsr_csr
+                        I[c1_vis]=$bsr_vis
+                ;;
+                2)
+                        Blscd::SetAction
+                        builtin typeset -i \
+                                bsr_csr=${I[c2_csr]} \
+                                bsr_vis=${I[c2_vis]} \
+                        view_offset=${I[c2_ofs]}
+                        Blscd::MoveLineDo "$1" "${I[c2_total]}"
+                        I[c2_ofs]=$view_offset
+                        I[c2_csr]=$bsr_csr
+                        I[c2_vis]=$bsr_vis
+                ;;
+                3)
+                        :
+                ;;
+                esac
+        }
+
+        function Blscd::OpenFile
+        if
+                [[ -d $1 ]]
+        then
+                Blscd::MoveCol "$1"
+        else
+                [[ -e $1 ]] && {
+                        Blscd::SetAction
+                        Blscd::SetResize 2
+                        Blscd::Opener "$1"
+                        builtin printf "${S[tput_alt]}"
+                }
+        fi
+
+        function Blscd::OpenShell
+        {
+            command stty ${S[saved_stty]}
+            builtin printf "${S[tput_ealt]}"
+            command "${SHELL:-bash}"
+            command stty -echo
+        }
+
+        function Blscd::PrintHelp
+        {
+                {
+                        builtin typeset help="$(</dev/fd/0)"
+                }  <<-'HELP'
+Usage
+        . blscd
+        Blscd Blscd::Main [ -h | --help | -v | --version ]
+
+Key bindings (basics)
+        E                     Edit the current file in EDITOR
+                              (fallback: vi)
+        S                     Fork SHELL in the current directory
+                              (fallback: bash, LC_COLLATE=C)
+        ^L                    Redraw the screen
+        ^R                    Reload everything
+        g?                    Open this help in PAGER
+                              (fallback: less)
+        q                     Quit
+
+Key bindings (settings)
+        za                    Toggle filtering of dotfiles
+        zo                    Toggle drawing of Column 3
+
+Key bindings (moving)
+        D                     Move ten lines down
+        G     [ END ]         Move to bottom
+        J                     Move half page down
+        K                     Move half page up
+        U                     Move ten lines up
+        ^B    [ PAGE-UP ]     Move page up
+        ^F    [ PAGE-DOWN ]   Move page down
+        d                     Move five lines down
+        gg    [ HOME ]        Move to top
+        h     [ LEFTARROW ]   Move left
+        j     [ DOWNARROW ]   Move down
+        k     [ UPARROW ]     Move up
+        l     [ RIGHTARROW ]  Move right
+        u                     Move five lines up
+
+Key bindings (jumping)
+        g-                    Move to OLDPWD
+        gL                    Move to /var/log
+        gM                    Move to /mnt
+        gd                    Move to /dev
+        ge                    Move to /etc
+        gh    [ g~ ]          Move to HOME
+        gl                    Move to /usr/lib
+        gm                    Move to /media
+        go                    Move to /opt
+        gr    [ g/ ]          Move to /
+        gs                    Move to /srv
+        gu                    Move to /usr
+        gv                    Move to /var
+
+Environment variables
+        BLSCD_HIDDEN          Default: 1
+        BLSCD_SHOW_COL3       Default: 1
+HELP
+
+                builtin printf '%s\n' "$help"
+        }
+
+        function Blscd::PrintVersion
+        {
+            builtin typeset version=0.2.0
+            builtin typeset md5sum=$(command md5sum "${BASH_SOURCE[0]}")
+            builtin printf 'v%s (%s)\n' "${version}" "${md5sum%  *}"
+        }
+
+        function Blscd::Reload
+        {
+                builtin trap - SIGWINCH SIGINT SIGALRM
+                command stty ${S[saved_stty]}
+                builtin eval "${S[saved_bopts]}"
+                builtin typeset LC_COLLATE=${S[saved_LC_COLLATE]}
+                [[ ${S[saved_GLOBIGNORE]} == saved_GLOBIGNORE ]] || {
+                        builtin typeset -g GLOBIGNORE=${S[saved_GLOBIGNORE]}
+                }
+                builtin unset -v \
+                        BlscdData \
+                        BlscdSettingsInt \
+                        BlscdSettingsStr \
+                        D \
+                        I \
+                        S;
+                builtin source <(Blscd::Init)
+                Blscd::SetEnv
+        }
+
+        function Blscd::SetAction
+        {
+            S[action_last]=${FUNCNAME[1]}
+        }
+
+        function Blscd::SetEnv
+        {
+                builtin printf "${S[tput_alt]}"
+                command stty -echo
+                builtin trap '
+                        Blscd::SetResize 2
+                        builtin printf \
+                                "${S[tput_cup_99999_0]}" \
+                                "${S[tput_eel]}"
+                ' SIGWINCH
+                builtin trap 'printf "${S[tput_clear]}"' SIGINT
+                builtin trap '' SIGALRM
+                builtin unset -v GLOBIGNORE
+                builtin shopt -s checkhash
+                builtin shopt -s checkwinsize
+                builtin shopt -s extquote
+                builtin shopt -u dotglob
+                builtin shopt -u failglob
+                builtin shopt -u globstar
+                builtin shopt -u nocaseglob
+                builtin shopt -u nocasematch
+                builtin shopt -u nullglob
+        }
+
+        function Blscd::SetResize
+        case $1 in
+        1)
+                I[redraw]=1
+                I[reprint]=0
+        ;;
+        2)
+                I[redraw]=1
+                I[reprint]=1
+        ;;
+        *)
+                I[redraw]=0
+                I[reprint]=0
+        ;;
+        esac
+
+        function Blscd::SetScreen
+        {
+                builtin read -r dim_cols dim_lines <<< $(
+                        command tput -S <<< cols$'\n'lines
+                )
+                c1_w="(dim_cols - 2) / 5"
+                c2_w="c1_w * 2"
+                c3_w="c1_w * 2"
+                I[bsr_h]="dim_lines - ${I[ofs]} + 1"
+        }
+
+        function Blscd::SetWd
+        {
+                S[cwd_str]=${PWD:-$(builtin pwd)}
+                S[cwd_str]=${S[cwd_str]//\/\//\/}
+                S[pwd_str]=${S[cwd_str]%/*}
+                S[pwd_str]=${S[pwd_str]:-/}
+        }
+
+        function Blscd::ToggleCol3
+        {
+                Blscd::SetAction
+                Blscd::SetResize 2
+
+                ((
+                        I[show_c3] =
+                        ${I[show_c3]}
+                        ? 0
+                        : 1
+                ))
+        }
+
+        function Blscd::ToggleHidden
+        {
+                Blscd::SetAction
+                Blscd::SetResize 2
+
+                ((
+                        I[hidden] =
+                        ${I[hidden]}
+                        ? 0
+                        : 1
+                ))
+
+                D[dir:csr|${S[cwd_str]}|${I[bsr_h]}]=
+                D[dir:ofs|${S[cwd_str]}|${I[bsr_h]}]=
+                D[dir:csr|${S[file_str]}|${I[bsr_h]}]=
+                D[dir:ofs|${S[file_str]}|${I[bsr_h]}]=
+                D[dir:csr|${S[preview_str]}|${I[bsr_h]}]=
+                D[dir:ofs|${S[preview_str]}|${I[bsr_h]}]=
+                D[dir:csr|${S[pwd_str]}|${I[bsr_h]}]=
+                D[dir:ofs|${S[pwd_str]}|${I[bsr_h]}]=
+                I[c1_csr]=0
+                I[c1_ofs]=1
+                I[c2_csr]=0
+                I[c2_ofs]=1
+                I[c3_csr]=0
+                I[c3_ofs]=1
+        }
+
+        # -- MAIN.
+
+        builtin typeset -i ret
+
+        builtin eval "$@"
+        ret=$?
+
+        builtin unset -f \
+                Blscd::DrawScreen \
+                Blscd::DrawScreenBsr \
+                Blscd::DrawScreenSbar \
+                Blscd::DrawScreenTbar \
+                Blscd::EditFile \
+                Blscd::Exit \
+                Blscd::GetArgs \
+                Blscd::GetBlscdData \
+                Blscd::GetBlscdDataByAwk \
+                Blscd::GetBlscdDataByBash \
+                Blscd::GetInputKeyboard \
+                Blscd::Init \
+                Blscd::Main \
+                Blscd::MainLoop \
+                Blscd::MoveCol \
+                Blscd::MoveColDown \
+                Blscd::MoveColUp \
+                Blscd::MoveLine \
+                Blscd::MoveLineDo \
+                Blscd::OpenFile \
+                Blscd::OpenShell \
+                Blscd::Opener \
+                Blscd::PrintHelp \
+                Blscd::PrintVersion \
+                Blscd::Reload \
+                Blscd::SetAction \
+                Blscd::SetEnv \
+                Blscd::SetResize \
+                Blscd::SetScreen \
+                Blscd::SetWd \
+                Blscd::ToggleCol3 \
+                Blscd::ToggleHidden \
+                __spath_do \
+                __spath_get_cols ;
+
+        builtin return "$ret"
+}

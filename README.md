@@ -1,178 +1,76 @@
-## blscd v0.1.4.13 [GNU GPLv3]
+"blscd" "1" "Mon Jul 13 03:10:01 UTC 2015" "0.2.0" "README"
 
-`blscd`(1) is a stupid [ranger](http://ranger.nongnu.org/)-like file browser/navigator (not manager) for the command line using `stty`(1), `tput`(1) and other Unix commands. At the moment, you may merely browse your file system with some basic actions like sorting, searching and opening files. `blscd`(1) is written in `GNU bash`(1) and has mainly been tested with `xterm`(1) on `Debian GNU/Linux`.
+##### README
 
-![](https://raw.githubusercontent.com/D630/blscd/master/doc/blscd.png)
+[blscd](https://github.com/D630/blscd) is a stupid [ranger](http://ranger.nongnu.org/)-like file browser/navigator (not manager) for the command line using `stty`(1), `tput`(1) and other Unix utilities.
 
-### Install
+![](https://raw.githubusercontent.com/D630/blscd/master/doc/blscd.gif)
 
-* Get the newest version of `blscd`(1) with `$ git clone https://github.com/D630/blscd.git` or
-  download its last release on https://github.com/D630/blscd/tags
-* If you like, reduce the code with:
-```sh
-$ cd ./blscd
-$ chmod 755 blscd.sh
-$ blscd.sh --dump
-$ chmod 755 blscd
-```
-* Copy one of the executables `blscd.sh` and `blscd` elsewhere into `<PATH>`
+(Suckless Terminal, Droid Sans Mono 11, Solarized Dark)
 
-Explicitly required:
-- `GNU bash`(1) >= 4.0
-- `file`(1)
-- `find`(1)
-- `grep`(1)
-- `ls`(1)
-- `md5sum`(1)
-- `numfmt`(1)
-- `paste`(1)
-- `sed`(1)
-- `sort`(1)
-- `stty`(1)
-- `tput`(1)
-- `tr`(1)
+##### BUGS & REQUESTS
 
-Optional:
-- `vi`(1)
-- `less`(1) and its scripts under `lessopen`(1)
-- `w3m`(1) and its patch `w3m-img`
+Please feel free to open an issue or put in a pull request on https://github.com/D630/blscd
 
-### Help
+##### GIT
+
+To download the very latest source code:
 
 ```
-usage: [source] blscd [-h | --help | -d | --dump | -v | --version]
-
-    Key bindings (basics)
-      :                     Open the console
-      E                     Edit the current file in '<EDITOR>'
-                            (fallback: 'vi')
-      S                     Fork '<SHELL>' in the current directory
-                            (fallback: 'bash')
-      ^L                    Redraw the screen
-      ^R                    Reload everything
-      g?                    Open this help in '<PAGER>'
-                            (fallback: 'less')
-      q                     Quit
-
-    Key bindings (settings)
-      ^H                    Toggle '_blscd_show_hidden'
-
-    Key bindings (moving)
-      D                     Move ten lines down
-      G     [ END ]         Move to bottom
-      J                     Move half page down
-      K                     Move half page up
-      U                     Move ten lines up
-      ^B    [ PAGE-UP ]     Move page up
-      ^F    [ PAGE-DOWN ]   Move page down
-      d                     Move five lines down
-      gg    [ HOME ]        Move to top
-      h     [ LEFTARROW ]   Move left
-      j     [ DOWNARROW ]   Move down
-      k     [ UPARROW ]     Move up
-      l     [ RIGHTARROW ]  Move right
-      u                     Move five lines up
-
-    Key bindings (jumping)
-      gL                    Move to /var/log
-      gM                    Move to /mnt
-      gd                    Move to /dev
-      ge                    Move to /etc
-      gh                    Move to <HOME>
-      gl                    Move to /usr/lib
-      gm                    Move to /media
-      go                    Move to /opt
-      gr    [ g/ ]          Move to /
-      gs                    Move to /srv
-      gu                    Move to /usr
-      gv                    Move to /var
-
-    Key bindings (searching)
-      /                     Search for files in the current directory
-                            (console command 'search')
-      N                     Go to previous file
-      n                     Go to next file. By default, go to newest
-                            file; but after 'search' go to next match
-
-    Key bindings (sorting)
-      oA                    Sort by access time, oldest first
-      oB                    Sort by basename (LC_COLLATE=C),
-                            descend
-      oC                    Sort by change time, oldest first
-      oM                    Sort by modification time, oldest first
-      oN                    Sort basenames naturally (LC_COLLATE=$LANG),
-                            descend
-      oS                    Sort by file size, smallest first
-      oT                    Sort by type, descend
-      oa                    Sort by access time, newest first
-      ob                    Sort by basename (LC_COLLATE=C),
-                            ascend
-      oc                    Sort by change time, newest first
-      om                    Sort by modification time, newest first
-      on                    Sort basenames naturally (LC_COLLATE=$LANG),
-                            ascend
-      or                    Reverse whatever the sorting method is
-      os                    Sort by file size, largest first
-      ot                    Sort by type, ascend
-
-    File type indicators (browser; via 'find')
-      D                     door (Solaris)
-      b                     block (buffered) special
-      c                     character (unbuffered) special
-      d                     directory
-      f                     regular file
-      l                     symbolic link
-      p                     named pipe (FIFO)
-      r                     non-link
-      s                     socket
-
-    File type indicators (statusbar; via 'ls')
-      -                     regular file
-      ?                     some other file type
-      C                     high performance ('contiguous data') file
-      D                     door (Solaris 2.5 and up)
-      M                     off-line ('migrated') file (Cray DMF)
-      P                     port (Solaris 10 and up)
-      b                     block special file
-      c                     character special file
-      d                     directory
-      l                     symbolic link
-      n                     network special file (HP-UX)
-      p                     FIFO (named pipe)
-      s                     socket
-
-    Console commands
-      During line editing in the console you may use your configured
-      Readline key bindings, just as well the other features of it
-      ('read -e' obtains the line in an interactive shell).
-
-      search '<PATTERN>'    Search for files in the current directory,
-                            that match the given (case insensitive)
-                            regular expression pattern (regextype is
-                            'posix-egrep')
+git clone --recursive https://github.com/D630/blscd
 ```
 
-### Notes
+In order to use the latest tagged version, do also something like this:
 
-- There is no configuration file at present, but to use different file handlers and some settings (hidden filter, colors in the bars, cursor), have a look at the functions called `__blscd_open_line`, `__blscd_draw_screen_lines` and `__blscd_set_declare`.
-- The coloration in the browser pane works via `ls`(1) and the `<LS_COLORS>` environment variable; you may write your own specific database and source it with `dircolors`(1) into the environment before executing `blscd`(1):
 ```
-eval $(dircolors -b "DATABASE")
+cd ./blscd
+git checkout $(git describe --abbrev=0 --tags)
 ```
-- In this version file names may not contain nongraphic characters like newlines etc. Try it out.
 
-### To do
+##### INSTALL
 
-[A lot](../master/doc/TODO.md), and step-by-step.
+Just put `./blscd` and `./modules/spath.sh/spath.sh` on your PATH. blscd will execute spath.sh via `source`.
 
-### Bugs & Requests
+##### USAGE
 
-Report it on https://github.com/D630/blscd/issues and see the [info file](../master/doc/INFO.md) in the docs.
+Get in touch with blscd by reading the [USAGE](../master/doc/USAGE.md) text file.
 
-### Credits
+##### NOTICE
 
-`blscd`(1) is a fork and rewrite of [lscd v0.1](https://github.com/hut/lscd/blob/989cb7e045a4e5e879db9af0f7f7c721d8a93acc/lscd) (2014, GNU GPLv3) by Roman Zimbelmann aka. [hut](https://github.com/hut).
+blscd has been written in [GNU bash](http://www.gnu.org/software/bash/) on [Debian GNU/Linux 9 (stretch/sid)](https://www.debian.org) with these programs/packages:
 
-### See also
+- GNU Awk 4.1.1, API: 1.1 (GNU MPFR 3.1.3, GNU MP 6.0.0)
+- GNU bash 4.3.33(1)-release
+- GNU coreutils 8.23: ls, md5sum, stat, stty
+- ncurses 5.9.20150516: tput
 
-Similar to this project and independent from `lscd` is [deer](https://github.com/vifon/deer) (2014, GNU GPLv3), which is written in `zsh` by Wojciech Siewierski aka. [Vifon](https://github.com/vifon).
+And has been tested in these terminal emulators:
+
+- XTerm(318)
+- rxvt-unicode (urxvt) v9.21
+- st 0.5
+
+For opening and editing files in blscd, I used:
+
+- Vi IMproved 7.4 (Included patches: 1-712)
+- less 458 (GNU regular expressions)
+
+blscd is not portable; it does not work in [ksh](http://www.kornshell.com/), [mksh](https://www.mirbsd.org/mksh.htm) or [zsh](http://www.zsh.org/). Your bash version needs to handle associative arrays and namerefs via typeset/declare.
+
+The usage of stat is not BSD-like (`grep -c stat blscd.sh` := 3). Please open and issue with the correct invocation for your system.
+
+When using blscd in the virtual console, some tput commands may not work.
+
+##### CREDITS
+
+blscd is a fork and rewrite of [lscd v0.1](https://github.com/hut/lscd/blob/989cb7e045a4e5e879db9af0f7f7c721d8a93acc/lscd).
+
+##### SEE ALSO
+
+Similar to this project and independent from lscd is [deer](https://github.com/vifon/deer), which is written in `zsh`(1).
+
+##### LICENCE
+
+[Copyrights](../master/doc/COPYRIGHT)
+
+[GNU GPLv3](../master/doc/LICENCE)
