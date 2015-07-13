@@ -1,4 +1,4 @@
-"blscd" "1" "Fri Jul 10 22:34:37 UTC 2015" "0.2.0" "README"
+"blscd" "1" "Mon Jul 13 03:10:01 UTC 2015" "0.2.0" "README"
 
 ##### README
 
@@ -6,7 +6,7 @@
 
 ![](https://raw.githubusercontent.com/D630/blscd/master/doc/blscd.gif)
 
-(suckless terminal, Droid Sans Mono 11, Solarized Dark)
+(Suckless Terminal, Droid Sans Mono 11, Solarized Dark)
 
 ##### BUGS & REQUESTS
 
@@ -20,7 +20,7 @@ To download the very latest source code:
 git clone --recursive https://github.com/D630/blscd
 ```
 
-If you want to use the latest tagged version, do also something like this:
+In order to use the latest tagged version, do also something like this:
 
 ```
 cd ./blscd
@@ -59,13 +59,15 @@ blscd is not portable; it does not work in [ksh](http://www.kornshell.com/), [mk
 
 The usage of stat is not BSD-like (`grep -c stat blscd.sh` := 3). Please open and issue with the correct invocation for your system.
 
+When using blscd in the virtual console, some tput commands may not work.
+
 ##### CREDITS
 
-blscd is a fork and rewrite of [lscd v0.1](https://github.com/hut/lscd/blob/989cb7e045a4e5e879db9af0f7f7c721d8a93acc/lscd) by Roman Zimbelmann aka. [hut](https://github.com/hut).
+blscd is a fork and rewrite of [lscd v0.1](https://github.com/hut/lscd/blob/989cb7e045a4e5e879db9af0f7f7c721d8a93acc/lscd).
 
 ##### SEE ALSO
 
-Similar to this project and independent from lscd is [deer](https://github.com/vifon/deer), which is written in `zsh`(1) by Wojciech Siewierski aka. [Vifon](https://github.com/vifon).
+Similar to this project and independent from lscd is [deer](https://github.com/vifon/deer), which is written in `zsh`(1).
 
 ##### LICENCE
 

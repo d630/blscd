@@ -1,4 +1,4 @@
-"blscd" "1" "Fri Jul 10 22:34:37 UTC 2015" "USAGE"
+"blscd" "1" "Mon Jul 13 03:10:01 UTC 2015" "USAGE"
 
 #### INOVOCATION
 
@@ -83,9 +83,9 @@ Jumping
 
 There is no configuration file at present; you can use some environment variables instead.
 
-- To use another opener and different colors see the functions `Blscd::Init` and `Blscd::DrawScreenTbar`.
+- In order to use another opener and different colors see the functions `Blscd::Init` and `Blscd::DrawScreenTbar`.
 - Modify keybindings in function `Blscd::GetInputKeyboard`.
-- Awk will only be used, if a directory contains 800 or more files. You may edit this value in function `Blscd::GetBlscdData`.
+- Awk will only be used, if a directory lists 800 or more entries. You may edit this value in function `Blscd::GetBlscdData`.
 - blscd is going to exit, if your terminal does not match the allowed height and width. See the head of `Blscd::DrawScreen` for this.
 - Filtering of dotfiles works via GLOBIGNORE in `Blscd::GetBlscdData`. You can extend it easily; `man 1 bash` says:
 
@@ -101,4 +101,4 @@ There is no configuration file at present; you can use some environment variable
 ##### TIPS
 
 - You can reduce the start up time of blscd by replacing all tput commands in `Blscd::Init` with ASCII codes for your terminal. In this way, you may avoid a lot of subshells.
-- blscd stores directory stats in associative arrays just for once; any filesystem events after that will be ignored. If you want to see all current files in a directory, quit blscd or reload everything via ^R.
+- blscd stores directory listings and inode infos in associative arrays just for once; any filesystem events after that will be ignored. If you want to see all current entries in a directory, quit blscd or reload everything via ^R. The Status bar data at the bottom is different: its associated with the current cursor position and the size of the terminal columns number.
