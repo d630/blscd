@@ -6,7 +6,7 @@
 
 ![](https://raw.githubusercontent.com/D630/blscd/master/doc/blscd.gif)
 
-(Suckless Terminal, Droid Sans Mono 11, Solarized Dark)
+(Simple Terminal, Droid Sans Mono 11, Solarized Dark)
 
 ##### BUGS & REQUESTS
 
@@ -37,7 +37,7 @@ Get in touch with blscd by reading the [USAGE](../master/doc/USAGE.md) text file
 
 ##### NOTICE
 
-blscd has been written in [GNU bash](http://www.gnu.org/software/bash/) on [Debian GNU/Linux 9 (stretch/sid)](https://www.debian.org) with these programs/packages:
+blscd has been written in [GNU bash](http://www.gnu.org/software/bash/) on [Debian GNU/Linux 9 (stretch/sid)](https://www.debian.org) using these programs/packages:
 
 - GNU Awk 4.1.1, API: 1.1 (GNU MPFR 3.1.3, GNU MP 6.0.0)
 - GNU bash 4.3.33(1)-release
