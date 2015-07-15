@@ -98,5 +98,5 @@ There is no configuration file at present; you can use some environment variable
 
 ##### TIPS
 
-- Reduce the start up time of blscd by replacing all tput commands in `Blscd::Init` with ASCII codes for your terminal. In this way, you may avoid a lot of subshells.
+- Reduce the start up time of blscd by replacing all tput commands in `Blscd::Init` with ANSI escape code for your terminal. In this way, you may avoid a lot of subshells.
 - blscd stores directory listings and inode infos in associative arrays just for once; any filesystem event after that will be ignored. If you want to see all current entries in a directory, quit blscd or reload everything via ^R. The Status bar data at the bottom is different: it is associated with the current cursor position and the size of the terminal columns number.
