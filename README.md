@@ -1,5 +1,3 @@
-"blscd" "1" "Mon Jul 13 03:58:06 UTC 2015" "0.2.0" "README"
-
 ##### README
 
 [blscd](https://github.com/D630/blscd) is a stupid [ranger](http://ranger.nongnu.org/)-like file browser/navigator (not manager) for the command line using `stty`(1), `tput`(1) and other Unix utilities.

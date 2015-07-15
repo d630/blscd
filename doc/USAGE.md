@@ -1,5 +1,3 @@
-"blscd" "1" "Mon Jul 13 03:58:06 UTC 2015" "USAGE"
-
 #### INVOCATION
 
 blscd has been written as pseudo-module. In an interactive bash session do:
