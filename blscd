@@ -161,7 +161,7 @@ Blscd ()
                         [[
                                 ! -d ${S[file_str]} ||
                                 -z ${S[file_str]} ||
-                                ${I[show_c3]} == 0 ||
+                                ${I[show_c3]} -eq 0 ||
                                 ${I[c2_total]} -eq 0
                         ]]
                 then
@@ -227,9 +227,13 @@ Blscd ()
                                         c3_color=${S[c3|csr|color]}
                                 fi
                         }
-                        builtin printf "${S[${D[type|${pwd_workaround-${S[pwd_str]}}/${D[dir:idx|${S[pwd_str]}|${I[hidden]}|$((${I[c1_ofs]} + i - 1))]}]}|color]}${c1_color}%-${c1_w}.${c1_w}s${S[tput_reset]} " " ${D[dir:idx|${S[pwd_str]}|${I[hidden]}|$((${I[c1_ofs]} + i - 1))]//$'\n'/?} "
+                        builtin printf "${S[${D[type|${pwd_workaround-${S[pwd_str]}}/${D[dir:idx|${S[pwd_str]}|${I[hidden]}|$((${I[c1_ofs]} + i - 1))]}]}|color]}${c1_color}%-${c1_w}.${c1_w}s${S[tput_reset]}" " ${D[dir:idx|${S[pwd_str]}|${I[hidden]}|$((${I[c1_ofs]} + i - 1))]//$'\n'/?} "
 
-                        builtin printf "${S[${D[type|${cwd_workaround-${S[cwd_str]}}/${D[dir:idx|${S[cwd_str]}|${I[hidden]}|$((${I[c2_ofs]} + i - 1))]}]}|color]}${c2_color}%-${c2_w}.${c2_w}s${S[tput_reset]} " " ${D[dir:idx|${S[cwd_str]}|${I[hidden]}|$((${I[c2_ofs]} + i - 1))]//$'\n'/?} "
+                        builtin printf '%c' ' '
+
+                        builtin printf "${S[${D[type|${cwd_workaround-${S[cwd_str]}}/${D[dir:idx|${S[cwd_str]}|${I[hidden]}|$((${I[c2_ofs]} + i - 1))]}]}|color]}${c2_color}%-${c2_w}.${c2_w}s${S[tput_reset]}" " ${D[dir:idx|${S[cwd_str]}|${I[hidden]}|$((${I[c2_ofs]} + i - 1))]//$'\n'/?} "
+
+                        builtin printf '%c' ' '
 
                         builtin printf "${S[${D[type|${S[file_str]}/${D[dir:idx|${S[file_str]}|${I[hidden]}|$((${I[c3_ofs]} + i - 1))]}]}|color]}${c3_color}%-${c3_w}.${c3_w}s${S[tput_reset]}\n" " ${D[dir:idx|${S[file_str]}|${I[hidden]}|$((${I[c3_ofs]} + i - 1))]//$'\n'/?} "
                 done
@@ -1045,7 +1049,7 @@ HELP
 
         function Blscd::PrintVersion
         {
-            builtin typeset version=0.2.0
+            builtin typeset version=0.2.1
             builtin typeset md5sum=$(command md5sum "${BASH_SOURCE[0]}")
             builtin printf 'v%s (%s)\n' "${version}" "${md5sum%  *}"
         }
