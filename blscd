@@ -53,12 +53,12 @@ Blscd ()
                         ))
                 then
                         Blscd::Exit
-                        builtin printf '%s\n' "${BASH_SOURCE[0]}:Error: Bad dimension: ${dim_cols},${dim_lines}" 1>&2
+                        builtin printf '%s:Error: Bad dimension: %s, %s\n' "${BASH_SOURCE[0]}" "$dim_cols" "$dim_lines" 1>&2
                         builtin return 1
                 fi
 
                 if
-                        (( ${I[reprint]} > 0 ))
+                        (( ${I[reprint]} ))
                 then
                         builtin printf "${S[tput_clear]}"
                         Blscd::SetWd
@@ -176,7 +176,6 @@ Blscd ()
 
                 Blscd::DrawScreenSbar
                 Blscd::DrawScreenBsr
-
                 builtin printf '%s' "${D[sbar|${S[file_string]}|${dim_cols}]}"
 
                 builtin printf "${S[tput_reset]}\033[$((${I[c2_csr]} + 2));$((c1_w + 2))H"
@@ -192,8 +191,8 @@ Blscd ()
 
                 builtin printf '%s' "${S[tput_cup_1_0]}"
 
-                [[ ${S[pwd_str]} == / ]] && typeset pwd_workaround=
-                [[ ${S[cwd_str]} == / ]] && typeset cwd_workaround=
+                [[ ${S[pwd_str]} == / ]] && builtin typeset pwd_workaround=
+                [[ ${S[cwd_str]} == / ]] && builtin typeset cwd_workaround=
 
                 for (( i=0 ; i < ${I[bsr_h]} ; ++i ))
                 do
@@ -202,29 +201,29 @@ Blscd ()
                         c3_color=
                         (( i == ${I[c1_csr]} )) && {
                                 if
-                                        (( ${I[c1_total]} == 0 ))
+                                        (( ${I[c1_total]} ))
                                 then
-                                        c1_color=${S[c1_err|csr|color]}
-                                else
                                         c1_color=${S[c1|csr|color]}
+                                else
+                                        c1_color=${S[c1_err|csr|color]}
                                 fi
                         }
                         (( i == ${I[c2_csr]} )) && {
                                 if
-                                        (( ${I[c2_total]} == 0 ))
+                                        (( ${I[c2_total]} ))
                                 then
-                                        c2_color=${S[c2_err|csr|color]}
-                                else
                                         c2_color=${S[c2|csr|color]}
+                                else
+                                        c2_color=${S[c2_err|csr|color]}
                                 fi
                         }
                         (( i == ${I[c3_csr]} )) && {
                                 if
-                                        (( ${I[c3_total]} == 0 ))
+                                        (( ${I[c3_total]} ))
                                 then
-                                        c3_color=${S[c3_err|csr|color]}
-                                else
                                         c3_color=${S[c3|csr|color]}
+                                else
+                                        c3_color=${S[c3_err|csr|color]}
                                 fi
                         }
                         builtin printf "${S[${D[type|${pwd_workaround-${S[pwd_str]}}/${D[dir:idx|${S[pwd_str]}|${I[hidden]}|$((${I[c1_ofs]} + i - 1))]}]}|color]}${c1_color}%-${c1_w}.${c1_w}s${S[tput_reset]}" " ${D[dir:idx|${S[pwd_str]}|${I[hidden]}|$((${I[c1_ofs]} + i - 1))]//$'\n'/?} "
@@ -243,7 +242,7 @@ Blscd ()
         {
                 [[ -n ${D[sbar|${S[file_str]}|${dim_cols}]} ]] || {
                         builtin typeset \
-                                sbar_color=${S[sbar|color]}
+                                sbar_color=${S[sbar|color]} \
                                 sbar0=. \
                                 sbar_str=. \
                                 sbar1=. \
@@ -252,7 +251,7 @@ Blscd ()
                                 sbar4=. \
                                 sbar5=.;
 
-                        (( ${I[c2_total]} == 0 )) || {
+                        (( ${I[c2_total]} )) && {
                                 sbar0=$(command ls -lAdqh "${S[file_str]}")
 
                                 if
@@ -338,7 +337,7 @@ IN
         function Blscd::EditFile
         {
             Blscd::SetAction
-            command "${EDITOR:-vi}" "${S[file_str]}"
+            command ${EDITOR:-vi} "${S[file_str]}"
         }
 
         function Blscd::Exit
@@ -350,7 +349,7 @@ IN
                 builtin printf "${S[tput_clear]}${S[tput_ealt]}${S[tput_show]}${S[tput_am_on]}"
                 builtin typeset -x LC_COLLATE=${S[saved_LC_COLLATE]}
                 [[ ${S[saved_GLOBIGNORE]} == saved_GLOBIGNORE ]] || {
-                        builtin typeset -g GLOBIGNORE=${S[saved_GLOBIGNORE]}
+                        builtin typeset -g +i GLOBIGNORE=${S[saved_GLOBIGNORE]}
                 }
                 builtin unset -v \
                         BlscdData \
@@ -436,7 +435,7 @@ IN
                                 D[type|${n}]=${A:0:1}
                                 D[idx|${n}|${I[hidden]}]=$idx
                                 D[dir:idx|${DIR_NAME}|${I[hidden]}|${idx}]=${n##*/}
-                                (( idx++ ))
+                                idx=idx+=1
                         done < <(
                                 2>/dev/null \
                                 command stat --printf="%A|%n\0" "${arg//\/\//\/}"*
@@ -452,7 +451,7 @@ IN
                                 D[dir|${DIR_NAME}|${I[hidden]}]=1
                                 builtin shopt -s dotglob
                                 builtin typeset arg="${DIR_NAME}/"
-                                (( ${I[hidden]} == 0 )) && GLOBIGNORE="${arg//\/\//\/}".*
+                                (( ${I[hidden]} )) || GLOBIGNORE="${arg//\/\//\/}".*
                                 builtin set -- *
                                 if
                                         (( $# > 799 ))
@@ -476,16 +475,6 @@ IN
                         fi
                 }
         }
-
-        #~ function Blscd::GetDi
-        #~ {
-                #~ builtin typeset -gn ref=${1}
-                #~ ref=$(
-                        #~ 2>/dev/null \
-                        #~ command stat --format="%d:%i" "$2"
-                #~ )
-                #~ builtin unset -v ref
-        #~ }
 
         function Blscd::GetInputKeyboard
         {
@@ -588,7 +577,7 @@ IN
                                 Blscd::MoveCol /
                         ;;
                         \?)
-                                Blscd::PrintHelp | command "${PAGER:-less}"
+                                Blscd::PrintHelp | command ${PAGER:-less}
                                 builtin printf "${S[tput_alt]}"
                                 Blscd::SetAction
                                 Blscd::SetResize 2
@@ -636,9 +625,7 @@ IN
 
         function Blscd::Init
         {
-                {
-                    builtin typeset i="$(</dev/fd/0)"
-                }  <<-'INIT'
+                { builtin typeset i="$(</dev/fd/0)" ; }  <<-'INIT'
 builtin unset -v \
         BlscdData \
         BlscdSettings \
@@ -649,7 +636,7 @@ builtin unset -v \
 
 builtin typeset -gA BlscdData
 
-Blscd::Opener () { IFS= command less "$1" ; }
+Blscd::Opener () { command less "$1" ; }
 
 builtin typeset -gA "BlscdSettingsStr=(
         [action_last]=
@@ -786,7 +773,7 @@ INIT
         function Blscd::Main
         {
                 builtin source spath.sh || {
-                        builtin printf '%s\n' "${BASH_SOURCE[0]}:Error: Could not source module: spath.sh" 1>&2
+                        builtin printf '%s:Error: Could not source module: spath.sh\n' "${BASH_SOURCE[0]}" 1>&2
                         builtin return 1
                 }
 
@@ -802,10 +789,10 @@ INIT
                 builtin :
         do
                 builtin printf "${S[tput_hide]}${S[tput_am_off]}"
-                (( ${I[redraw]} == 0 )) || {
+                (( ${I[redraw]} )) && {
                         Blscd::DrawScreen || builtin break
                         Blscd::SetResize 0
-                        (( ++${I[redraw_cnt]} ))
+                        (( ++I[redraw_cnt] ))
                 }
                 Blscd::GetInputKeyboard
         done
@@ -853,7 +840,7 @@ INIT
                                 max_cursor= \
                                 max_index= \
                                 old_index=$view_offset \
-                                step_l=
+                                step_l=;
 
                         max_cursor="bsr_vis - 1"
                         max_index="list_total - bsr_vis + 1"
@@ -986,9 +973,7 @@ INIT
 
         function Blscd::PrintHelp
         {
-                {
-                        builtin typeset help="$(</dev/fd/0)"
-                }  <<-'HELP'
+                { builtin typeset help="$(</dev/fd/0)" ; }  <<-'HELP'
 Usage
         . blscd
         Blscd Blscd::Main [ -h | --help | -v | --version ]
@@ -1049,7 +1034,7 @@ HELP
 
         function Blscd::PrintVersion
         {
-            builtin typeset version=0.2.1
+            builtin typeset version=0.2.2
             builtin typeset md5sum=$(command md5sum "${BASH_SOURCE[0]}")
             builtin printf 'v%s (%s)\n' "${version}" "${md5sum%  *}"
         }
@@ -1061,7 +1046,7 @@ HELP
                 builtin eval "${S[saved_bopts]}"
                 builtin typeset LC_COLLATE=${S[saved_LC_COLLATE]}
                 [[ ${S[saved_GLOBIGNORE]} == saved_GLOBIGNORE ]] || {
-                        builtin typeset -g GLOBIGNORE=${S[saved_GLOBIGNORE]}
+                        builtin typeset -g +i GLOBIGNORE=${S[saved_GLOBIGNORE]}
                 }
                 builtin unset -v \
                         BlscdData \
@@ -1122,7 +1107,7 @@ HELP
         function Blscd::SetScreen
         {
                 builtin read -r dim_cols dim_lines <<< $(
-                        command tput -S <<< cols$'\n'lines
+                        command tput -S <<< $'cols\nlines'
                 )
                 c1_w="(dim_cols - 2) / 5"
                 c2_w="c1_w * 2"
