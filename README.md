@@ -21,7 +21,7 @@ git clone --recursive https://github.com/D630/blscd
 In order to use the latest tagged version, do also something like this:
 
 ```
-cd ./blscd
+cd -- ./blscd
 git checkout $(git describe --abbrev=0 --tags)
 ```
 
@@ -40,6 +40,12 @@ source blscd
 Blscd Blscd::Main [ -h | --help | -v | --version ]
 ```
 
+What could also be an alias:
+
+```sh
+alias b='. blscd && BLSCD_HIDDEN=0 Blscd Blscd::Main'
+```
+
 Otherwise put it in a wrapper script like this:
 
 ```sh
@@ -56,8 +62,8 @@ chmod 755 "${HOME}/bin/blscd.sh"
 ###### ENVIRONMENT VARIABLES
 
 ```
-        BLSCD_HIDDEN          Default: 1
-        BLSCD_SHOW_COL3       Default: 1
+BLSCD_HIDDEN          Default: 1
+BLSCD_SHOW_COL3       Default: 1
 ```
 
 ###### SHORTCUTS
