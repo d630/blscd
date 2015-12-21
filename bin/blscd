@@ -317,16 +317,25 @@ IN
         function Blscd::DrawScreenTbar
         {
                 [[ -n ${D[tbar|${S[file_str]}|${dim_cols}]} ]] || {
-                        builtin typeset tbar_str=
+                        builtin typeset tbar_str
+                        builtin typeset -i tbar_ret
 
                         COLUMNS=$dim_cols \
                         SPATH_MARK=" ... " \
-                        SPATH_LENGTH=$(((dim_cols / 3) + 1 - ${#USER} - 1 - ${#HOSTNAME} - 1)) \
-                                __spath_do "tbar_str" "${S[file_str]//$'\n'/?}"
+                        SPATH_LENGTH=$(( (dim_cols / 3) + 1 - ${#USER} - 1 - ${#HOSTNAME} - 1 )) \
+                                Spath::Do "tbar_str" "${S[file_str]//$'\n'/?}"
+                        tbar_ret=$?
 
-                        tbar_str=${S[tput_blue_f]}${S[tput_bold]}${USER}@${HOSTNAME}:${S[tput_green_f]}${tbar_str%/*}/${S[tput_white_f]}${tbar_str##*/}${S[tput_reset]}
+                        if
+                                (( tbar_ret ))
+                        then
+                                tbar_str=${S[tput_blue_f]}${S[tput_bold]}${USER}@${HOSTNAME}:${S[tput_green_f]}${tbar_str%/*}/${S[tput_white_f]}${tbar_str##*/}${S[tput_reset]}
+                        else
+                                tbar_str="${S[tput_blue_f]}${S[tput_bold]}${USER}@${HOSTNAME}:${S[tput_green_f]}${tbar_str% ... *}${S[tput_red_f]} ... ${S[tput_white_f]}${tbar_str#* ... }${S[tput_reset]}"
+                        fi
+
                         tbar_str=${tbar_str//\/\//\/}
-                        #tbar_str=${tbar_str/${HOME}/"~"}
+                        tbar_str=${tbar_str/${HOME}/"~"}
 
                         D[tbar|${S[file_str]}|${dim_cols}]=$tbar_str
                 }
@@ -1025,7 +1034,7 @@ HELP
 
         function Blscd::PrintVersion
         {
-                builtin typeset version=0.2.2
+                builtin typeset version=0.2.3
                 builtin typeset md5sum=$(command md5sum "${BASH_SOURCE[0]}")
                 builtin printf 'v%s (%s)\n' "${version}" "${md5sum%  *}"
         }
@@ -1200,8 +1209,8 @@ HELP
                 Blscd::SetWd \
                 Blscd::ToggleCol3 \
                 Blscd::ToggleHidden \
-                __spath_do \
-                __spath_get_cols;
+                Spath::Do \
+                Spath::GetCols;
 
         builtin return "$ret"
 }
