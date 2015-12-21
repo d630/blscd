@@ -27,7 +27,7 @@ git checkout $(git describe --abbrev=0 --tags)
 
 ##### INSTALL
 
-Just put `./blscd` and `./modules/spath.sh/spath.sh` on your PATH. blscd will execute spath.sh via `source`.
+Just put `./bin/blscd` and `./modules/spath.sh/spath.sh` on your PATH. blscd will execute spath.sh via `source`.
 
 ##### USAGE
 
