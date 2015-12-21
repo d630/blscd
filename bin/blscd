@@ -67,10 +67,12 @@ Blscd ()
                         then
                                 S[pwd_str]=
                         else
-                                DIR_NAME=${S[pwd_str]} Blscd::GetBlscdData
+                                DIR_NAME=${S[pwd_str]} \
+                                        Blscd::GetBlscdData
                         fi
                         I[c1_total]=${D[dir:cnt|${S[pwd_str]}|${I[hidden]}]}
-                        DIR_NAME=${S[cwd_str]} Blscd::GetBlscdData
+                        DIR_NAME=${S[cwd_str]} \
+                                Blscd::GetBlscdData
                         ((
                                 I[c1_vis] =
                                 ${I[c1_total]} > ${I[bsr_h]}
@@ -187,7 +189,7 @@ Blscd ()
                         i= \
                         c1_color= \
                         c2_color= \
-                        c3_color= ;
+                        c3_color=;
 
                 builtin printf '%s' "${S[tput_cup_1_0]}"
 
@@ -227,13 +229,9 @@ Blscd ()
                                 fi
                         }
                         builtin printf "${S[${D[type|${pwd_workaround-${S[pwd_str]}}/${D[dir:idx|${S[pwd_str]}|${I[hidden]}|$((${I[c1_ofs]} + i - 1))]}]}|color]}${c1_color}%-${c1_w}.${c1_w}s${S[tput_reset]}" " ${D[dir:idx|${S[pwd_str]}|${I[hidden]}|$((${I[c1_ofs]} + i - 1))]//$'\n'/?} "
-
                         builtin printf '%c' ' '
-
                         builtin printf "${S[${D[type|${cwd_workaround-${S[cwd_str]}}/${D[dir:idx|${S[cwd_str]}|${I[hidden]}|$((${I[c2_ofs]} + i - 1))]}]}|color]}${c2_color}%-${c2_w}.${c2_w}s${S[tput_reset]}" " ${D[dir:idx|${S[cwd_str]}|${I[hidden]}|$((${I[c2_ofs]} + i - 1))]//$'\n'/?} "
-
                         builtin printf '%c' ' '
-
                         builtin printf "${S[${D[type|${S[file_str]}/${D[dir:idx|${S[file_str]}|${I[hidden]}|$((${I[c3_ofs]} + i - 1))]}]}|color]}${c3_color}%-${c3_w}.${c3_w}s${S[tput_reset]}\n" " ${D[dir:idx|${S[file_str]}|${I[hidden]}|$((${I[c3_ofs]} + i - 1))]//$'\n'/?} "
                 done
         }
@@ -348,9 +346,11 @@ IN
                 builtin eval "${S[saved_bopts]}"
                 builtin printf "${S[tput_clear]}${S[tput_ealt]}${S[tput_show]}${S[tput_am_on]}"
                 builtin typeset -x LC_COLLATE=${S[saved_LC_COLLATE]}
+
                 [[ ${S[saved_GLOBIGNORE]} == saved_GLOBIGNORE ]] || {
                         builtin typeset -g +i GLOBIGNORE=${S[saved_GLOBIGNORE]}
                 }
+
                 builtin unset -v \
                         BlscdData \
                         BlscdSettingsInt \
@@ -370,12 +370,11 @@ IN
         ;;
         *)
                 builtin return 1
-        ;;
         esac
 
         function Blscd::GetBlscdData
         {
-                Blscd::GetBlscdDataByAwk()
+                function Blscd::GetBlscdDataByAwk
                 {
                         command awk '
                                 function Blscd__getBasename(str) {
@@ -422,7 +421,7 @@ IN
                         ' 2>/dev/null
                 }
 
-                Blscd::GetBlscdDataByBash()
+                function Blscd::GetBlscdDataByBash
                 {
                         builtin typeset -i idx=
                         builtin typeset \
@@ -595,7 +594,6 @@ IN
                         ;;
                         o)
                                 Blscd::ToggleCol3
-                        ;;
                         esac
                 ;;
                 $'\x12') # CTRl+R
@@ -619,7 +617,6 @@ IN
                 q)
                         Blscd::Exit
                         builtin break
-                ;;
                 esac
         }
 
@@ -882,11 +879,9 @@ INIT
                         fi
 
                         # The view_offset should always be >0 and <$max_index.
-                        (( view_offset > max_index )) && \
-                                view_offset=$max_index
+                        (( view_offset > max_index && ( view_offset=max_index ) ))
 
-                        (( view_offset < 1 )) && \
-                                view_offset=1
+                        (( view_offset < 1 && ( view_offset=1 ) ))
 
                         (( view_offset == old_index )) || {
                                 # redraw if the view_offset (and thus the visible files) has changed.
@@ -898,25 +893,21 @@ INIT
                                 then
                                         # Jump a step_l down.
                                         step_l="max_index - view_offset"
-                                        (( step_l > ${I[step]} )) && \
-                                                step_l=${I[step]}
+                                        (( step_l > ${I[step]} && ( step_l=${I[step]} ) ))
                                         view_offset="view_offset + step_l"
                                         bsr_csr="bsr_csr - step_l"
                                 else
                                         # Jump a step_l up.
                                         step_l="view_offset - 1"
-                                        (( step_l > ${I[step]} )) && \
-                                                step_l=${I[step]}
+                                        (( step_l > ${I[step]} && ( step_l=${I[step]} ) ))
                                         view_offset="view_offset - step_l"
                                         bsr_csr="bsr_csr + step_l"
                                 fi
                         }
 
                         # The view_offset should always be >0 and <$max_index.
-                        (( view_offset > max_index )) && \
-                                view_offset=$max_index
-                        (( view_offset < 1 )) && \
-                                view_offset=1
+                        (( view_offset > max_index && ( view_offset=max_index ) ))
+                        (( view_offset < 1 && ( view_offset=1 ) ))
             }
 
                 builtin typeset -i arg=$2
@@ -926,7 +917,7 @@ INIT
                         builtin typeset -i \
                                 bsr_csr=${I[c1_csr]} \
                                 bsr_vis=${I[c1_vis]} \
-                        view_offset=${I[c1_ofs]}
+                                view_offset=${I[c1_ofs]};
                         Blscd::MoveLineDo "$1" "${I[c1_total]}"
                         I[c1_ofs]=$view_offset
                         I[c1_csr]=$bsr_csr
@@ -937,7 +928,7 @@ INIT
                         builtin typeset -i \
                                 bsr_csr=${I[c2_csr]} \
                                 bsr_vis=${I[c2_vis]} \
-                        view_offset=${I[c2_ofs]}
+                                view_offset=${I[c2_ofs]};
                         Blscd::MoveLineDo "$1" "${I[c2_total]}"
                         I[c2_ofs]=$view_offset
                         I[c2_csr]=$bsr_csr
@@ -1034,9 +1025,9 @@ HELP
 
         function Blscd::PrintVersion
         {
-            builtin typeset version=0.2.2
-            builtin typeset md5sum=$(command md5sum "${BASH_SOURCE[0]}")
-            builtin printf 'v%s (%s)\n' "${version}" "${md5sum%  *}"
+                builtin typeset version=0.2.2
+                builtin typeset md5sum=$(command md5sum "${BASH_SOURCE[0]}")
+                builtin printf 'v%s (%s)\n' "${version}" "${md5sum%  *}"
         }
 
         function Blscd::Reload
@@ -1045,9 +1036,11 @@ HELP
                 command stty ${S[saved_stty]}
                 builtin eval "${S[saved_bopts]}"
                 builtin typeset LC_COLLATE=${S[saved_LC_COLLATE]}
+
                 [[ ${S[saved_GLOBIGNORE]} == saved_GLOBIGNORE ]] || {
                         builtin typeset -g +i GLOBIGNORE=${S[saved_GLOBIGNORE]}
                 }
+
                 builtin unset -v \
                         BlscdData \
                         BlscdSettingsInt \
@@ -1055,25 +1048,28 @@ HELP
                         D \
                         I \
                         S;
+
                 builtin source <(Blscd::Init)
                 Blscd::SetEnv
         }
 
         function Blscd::SetAction
         {
-            S[action_last]=${FUNCNAME[1]}
+                S[action_last]=${FUNCNAME[1]}
         }
 
         function Blscd::SetEnv
         {
                 builtin printf "${S[tput_alt]}"
                 command stty -echo
+
                 builtin trap '
                         Blscd::SetResize 2
                         builtin printf \
                                 "${S[tput_cup_99999_0]}" \
                                 "${S[tput_eel]}"
                 ' SIGWINCH
+
                 builtin trap 'printf "${S[tput_clear]}"' SIGINT
                 builtin trap '' SIGALRM
                 builtin unset -v GLOBIGNORE
@@ -1101,7 +1097,6 @@ HELP
         *)
                 I[redraw]=0
                 I[reprint]=0
-        ;;
         esac
 
         function Blscd::SetScreen
@@ -1109,6 +1104,7 @@ HELP
                 builtin read -r dim_cols dim_lines <<< $(
                         command tput -S <<< $'cols\nlines'
                 )
+
                 c1_w="(dim_cols - 2) / 5"
                 c2_w="c1_w * 2"
                 c3_w="c1_w * 2"
@@ -1205,7 +1201,7 @@ HELP
                 Blscd::ToggleCol3 \
                 Blscd::ToggleHidden \
                 __spath_do \
-                __spath_get_cols ;
+                __spath_get_cols;
 
         builtin return "$ret"
 }
