@@ -146,7 +146,7 @@ blscd has been written in [GNU bash](http://www.gnu.org/software/bash/) on [Debi
 
 - GNU Awk 4.1.1, API: 1.1 (GNU MPFR 3.1.3, GNU MP 6.0.0)
 - GNU bash 4.3.33(1)-release
-- GNU coreutils 8.23: ls, md5sum, stat, stty
+- GNU coreutils 8.23: ls, stat, stty
 - ncurses 5.9.20150516: tput
 
 And has been tested in these terminal emulators:

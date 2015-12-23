@@ -1031,8 +1031,7 @@ HELP
         function Blscd::PrintVersion
         {
                 builtin typeset version=0.2.3
-                builtin typeset md5sum=$(command md5sum "${BASH_SOURCE[0]}")
-                builtin printf 'v%s (%s)\n' "${version}" "${md5sum%  *}"
+                builtin printf 'v%s\n' "$version"
         }
 
         function Blscd::Reload
