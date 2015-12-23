@@ -38,6 +38,10 @@ blscd has been written as pseudo-module. In an interactive bash session do:
 ```sh
 source blscd
 Blscd Blscd::Main [ -h | --help | -v | --version ]
+
+# or
+Blscd Blscd::PrintHelp
+Blscd Blscd::PrintVersion
 ```
 
 What could also be an alias:

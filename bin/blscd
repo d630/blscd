@@ -973,6 +973,8 @@ INIT
 Usage
         . blscd
         Blscd Blscd::Main [ -h | --help | -v | --version ]
+        Blscd Blscd::PrintHelp
+        Blscd Blscd::PrintVersion
 
 Key bindings (basics)
         E                     Edit the current file in EDITOR
