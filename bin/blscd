@@ -117,7 +117,8 @@ Blscd ()
                 S[file_str]=${S[cwd_str]}/${D[dir:idx|${S[cwd_str]}|${I[hidden]}|$((${I[c2_ofs]} + ${I[c2_csr]} - 1))]}
                 S[file_str]=${S[file_str]/\/\//\/}
 
-                DIR_NAME=${S[file_str]} Blscd::GetBlscdData
+                DIR_NAME=${S[file_str]} \
+                        Blscd::GetBlscdData
                 I[c3_total]=${D[dir:cnt|${S[file_str]}|${I[hidden]}]}
                 I[c3_csr]=0
                 I[c3_ofs]=1
