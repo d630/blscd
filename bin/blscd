@@ -267,11 +267,9 @@ Blscd ()
                                         sbar0=${sbar0%% /*}
                                         builtin set -- ${sbar0}
                                 fi
-                                builtin read -r sbar1 sbar2 sbar3 <<IN
-$((${I[c2_ofs]} + ${I[c2_csr]})) \
-${I[c2_total]} \
-$((100 * (${I[c2_ofs]} + ${I[c2_csr]}) / ${I[c2_total]}))
-IN
+                                sbar1=$(( ${I[c2_ofs]} + ${I[c2_csr]} ))
+                                sbar2=${I[c2_total]}
+                                sbar3=$(( 100 * (${I[c2_ofs]} + ${I[c2_csr]}) / ${I[c2_total]} ))
                         }
 
                         if
