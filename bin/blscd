@@ -316,20 +316,17 @@ Blscd ()
         {
                 [[ -n ${D[tbar|${S[file_str]}|${dim_cols}]} ]] || {
                         builtin typeset tbar_str
-                        builtin typeset -i tbar_ret
-
-                        COLUMNS=$dim_cols \
-                        SPATH_MARK=" ... " \
-                        SPATH_LENGTH=$(( (dim_cols / 3) + 1 - ${#USER} - 1 - ${#HOSTNAME} - 1 )) \
-                                Spath::Do "tbar_str" "${S[file_str]//$'\n'/?}"
-                        tbar_ret=$?
 
                         if
-                                (( tbar_ret ))
+                                COLUMNS=$dim_cols \
+                                SPATH_MARK=" ... " \
+                                SPATH_LENGTH=$(( (dim_cols / 3) + 1 - ${#USER} - 1 - ${#HOSTNAME} - 1 )) \
+                                        Spath::Do "tbar_str" "${S[file_str]//$'\n'/?}"
                         then
-                                tbar_str=${S[tput_blue_f]}${S[tput_bold]}${USER}@${HOSTNAME}:${S[tput_green_f]}${tbar_str%/*}/${S[tput_white_f]}${tbar_str##*/}${S[tput_reset]}
-                        else
                                 tbar_str="${S[tput_blue_f]}${S[tput_bold]}${USER}@${HOSTNAME}:${S[tput_green_f]}${tbar_str% ... *}${S[tput_red_f]} ... ${S[tput_white_f]}${tbar_str#* ... }${S[tput_reset]}"
+
+                        else
+                                tbar_str=${S[tput_blue_f]}${S[tput_bold]}${USER}@${HOSTNAME}:${S[tput_green_f]}${tbar_str%/*}/${S[tput_white_f]}${tbar_str##*/}${S[tput_reset]}
                         fi
 
                         tbar_str=${tbar_str//\/\//\/}
