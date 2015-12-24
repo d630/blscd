@@ -47,7 +47,7 @@ Blscd Blscd::PrintVersion
 What could also be an alias:
 
 ```sh
-alias b='. blscd && BLSCD_HIDDEN=0 Blscd Blscd::Main'
+alias b='. blscd && BLSCD_SHOW_HIDDEN=0 Blscd Blscd::Main'
 ```
 
 Otherwise put it in a wrapper script like this:
@@ -57,7 +57,7 @@ cat >> "${HOME}/bin/blscd.sh" <<'CODE'
 #!/usr/bin/env bash
 
 source blscd
-Blscd Blscd::Main "$@"
+BLSCD_SHOW_HIDDEN=0 Blscd Blscd::Main "$@"
 CODE
 
 chmod 755 "${HOME}/bin/blscd.sh"
@@ -66,7 +66,7 @@ chmod 755 "${HOME}/bin/blscd.sh"
 ###### ENVIRONMENT VARIABLES
 
 ```
-BLSCD_HIDDEN          Default: 1
+BLSCD_SHOW_HIDDEN     Default: 1
 BLSCD_SHOW_COL3       Default: 1
 ```
 

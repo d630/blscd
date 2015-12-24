@@ -744,7 +744,7 @@ builtin typeset -gAi "BlscdSettingsInt=(
         [c3_ofs]=1
         [c3_total]=
         [c3_vis]=
-        [hidden]=${BLSCD_HIDDEN:-1}
+        [hidden]=${BLSCD_SHOW_HIDDEN:-1}
         [ofs]=4
         [redraw]=1
         [redraw_cnt]=
@@ -1023,7 +1023,7 @@ Key bindings (jumping)
         gv                    Move to /var
 
 Environment variables
-        BLSCD_HIDDEN          Default: 1
+        BLSCD_SHOW_HIDDEN     Default: 1
         BLSCD_SHOW_COL3       Default: 1
 HELP
 
