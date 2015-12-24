@@ -66,6 +66,7 @@ chmod 755 "${HOME}/bin/blscd.sh"
 ###### ENVIRONMENT VARIABLES
 
 ```
+BLSCD_AWK_IF          Default: '\>799'
 BLSCD_SHOW_HIDDEN     Default: 1
 BLSCD_SHOW_COL3       Default: 1
 ```
@@ -120,10 +121,28 @@ Moving and jumping
 
 ##### CONFIGURATION
 
-There is no configuration file at present; you can use some environment variables instead.
+There is no configuration file at present.
 
-- In order to change the default opener and colors see the functions `Blscd::Init` and `Blscd::DrawScreenTbar`.
-- Modify keybindings in function `Blscd::GetInputKeyboard`. You can use following functions:
+###### COLORS
+
+In order to change the default colors see the functions `Blscd::Init` and `Blscd::DrawScreenTbar`.
+
+###### FILTER
+
+Filtering of dotfiles works via GLOBIGNORE in `Blscd::GetBlscdData`. You can extend it easily; `man 1 bash` says:
+
+```
+        GLOBIGNORE
+                A  colon-separated  list of patterns defining the set of
+                filenames to be ignored by  pathname  expansion.   If  a
+                filename  matched  by  a pathname expansion pattern also
+                matches one of the patterns in GLOBIGNORE, it is removed
+                from the list of matches.
+```
+
+###### KEYS
+
+Modify keybindings in function `Blscd::Init`. You can use following functions:
 
 ```
         10_down
@@ -152,18 +171,27 @@ There is no configuration file at present; you can use some environment variable
         up
 ```
 
-- Awk will only be used, if a directory lists 800 or more entries. You may edit this value in function `Blscd::GetBlscdData`.
-- blscd is going to exit, if your terminal does not match the allowed height and width. See the head of `Blscd::DrawScreen` for this.
-- Filtering of dotfiles works via GLOBIGNORE in `Blscd::GetBlscdData`. You can extend it easily; `man 1 bash` says:
+You may configure a binding like `g?` and `ge` by doing:
 
 ```
-        GLOBIGNORE
-                A  colon-separated  list of patterns defining the set of
-                filenames to be ignored by  pathname  expansion.   If  a
-                filename  matched  by  a pathname expansion pattern also
-                matches one of the patterns in GLOBIGNORE, it is removed
-                from the list of matches.
+BlscdKeys=(
+        [g]=get_key
+        [g?]=help
+        [ge]='chdir /etc'
+)
 ```
+
+###### OPENER
+
+If a selected file is not a directory, the `enter` function will invoke `Blscd::Opener`. Modify it in `Blscd::Init`. By default, we have:
+
+```
+function Blscd::Opener { command less "$1" ; }
+```
+
+###### SIZE
+
+blscd is going to exit, if your terminal does not match the allowed height and width. See the head of `Blscd::DrawScreen` for this.
 
 ##### TIPS
 
@@ -174,20 +202,20 @@ There is no configuration file at present; you can use some environment variable
 
 blscd has been written in [GNU bash](http://www.gnu.org/software/bash/) on [Debian GNU/Linux 9 (stretch/sid)](https://www.debian.org) using these programs/packages:
 
-- GNU Awk 4.1.1, API: 1.1 (GNU MPFR 3.1.3, GNU MP 6.0.0)
-- GNU bash 4.3.33(1)-release
+- GNU Awk 4.1.1, API: 1.1 (GNU MPFR 3.1.3-p5, GNU MP 6.1.0)
+- GNU bash 4.3.42(1)-release
 - GNU coreutils 8.23: ls, stat, stty
-- ncurses 5.9.20150516: tput
+- ncurses 6.0.20151024: tput
 
 And has been tested in these terminal emulators:
 
-- XTerm(318)
+- XTerm(320)
 - rxvt-unicode (urxvt) v9.21
-- st 0.5
+- st 0.6
 
 For opening and editing files in blscd, I used:
 
-- Vi IMproved 7.4 (Included patches: 1-712)
+- Vi IMproved 7.4 (Included patches: 1-963)
 - less 458 (GNU regular expressions)
 
 blscd is not portable; it does not work in [ksh](http://www.kornshell.com/), [mksh](https://www.mirbsd.org/mksh.htm) or [zsh](http://www.zsh.org/). Your bash version needs to handle associative arrays and namerefs via typeset/declare.

@@ -458,7 +458,7 @@ Blscd ()
                                 (( ${I[hidden]} )) || GLOBIGNORE="${arg//\/\//\/}".*
                                 builtin set -- *
                                 if
-                                        (( $# > 799 ))
+                                        (( $# ${S[awk_if]} ))
                                 then
                                         builtin typeset DIR_NAME="${DIR_NAME//$'\n'/\\n}"
                                         builtin source <(
@@ -470,6 +470,7 @@ Blscd ()
                                                         Blscd::GetBlscdDataByAwk
                                         )
                                 else
+                                        builtin typeset DIR_NAME="${DIR_NAME//$'\n'/\\n}"
                                         Blscd::GetBlscdDataByBash
                                 fi
                                 builtin unset -v GLOBIGNORE
@@ -594,9 +595,10 @@ builtin unset -v \
 
 builtin typeset -gA BlscdData
 
-Blscd::Opener () { command less "$1" ; }
+function Blscd::Opener { command less "$1" ; }
 
 builtin typeset -gA "BlscdSettingsStr=(
+        [awk_if]=${BLSCD_AWK_IF:-\>799}
         [action_last]=
         [console_command_name]=
         [cwd_di]=
@@ -1055,6 +1057,7 @@ Key bindings (functions)
         up
 
 Environment variables
+        BLSCD_AWK_IF          Default: '\>799'
         BLSCD_SHOW_HIDDEN     Default: 1
         BLSCD_SHOW_COL3       Default: 1
 HELP
