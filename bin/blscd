@@ -520,7 +520,7 @@ Blscd ()
                         builtin printf "${S[tput_alt]}"
                         Blscd::SetResize 2
                 ;;
-                enter)
+                child)
                         Blscd::OpenFile "${S[file_str]}"
                 ;;
                 get_key)
@@ -542,7 +542,7 @@ Blscd ()
                 chdir*)
                         builtin eval Blscd::MoveCol "${BlscdKeys[${S[input]}]/chdir /}"
                 ;;
-                leave)
+                parent)
                         Blscd::MoveCol ..
                 ;;
                 page_down)
@@ -718,8 +718,8 @@ builtin typeset -A "BlscdKeys=(
         [$'\e[6~']=page_down
         [$'\e[A']=up
         [$'\e[B']=down
-        [$'\e[C']=enter
-        [$'\e[D']=leave
+        [$'\e[C']=child
+        [$'\e[D']=parent
         [$'\e[F']=bottom
         [$'\e[H']=top
         [$'\x02']=page_up
@@ -752,10 +752,10 @@ builtin typeset -A "BlscdKeys=(
         [g/]='chdir /'
         [g?]=help
         [g-]='chdir ~-'
-        [h]=leave
+        [h]=parent
         [j]=down
         [k]=up
-        [l]=enter
+        [l]=child
         [q]=quit
         [u]=10_down
         [z]=get_key
@@ -1024,10 +1024,10 @@ Key bindings (moving and jumping)
         gs                    Jump to /srv [chdir]
         gu                    Jump to /usr [chdir]
         gv                    Jump to /var [chdir]
-        h     [ LEFTARROW ]   Jump up [leave]
+        h     [ LEFTARROW ]   Jump up [parent]
         j     [ DOWNARROW ]   Move down [down]
         k     [ UPARROW ]     Move up [up]
-        l     [ RIGHTARROW ]  Open file [enter]
+        l     [ RIGHTARROW ]  Open file [child]
         u                     Move five lines up [5_up]
 
 Key bindings (functions)
@@ -1037,16 +1037,16 @@ Key bindings (functions)
         5_up
         bottom
         chdir DIR
+        child
         down
         edit
-        enter
         get_key
         help
         hpage_down
         hpage_up
-        leave
         page_down
         page_up
+        parent
         quit
         redraw
         reload

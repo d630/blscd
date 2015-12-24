@@ -112,10 +112,10 @@ Moving and jumping
         gs                    Jump to /srv [chdir]
         gu                    Jump to /usr [chdir]
         gv                    Jump to /var [chdir]
-        h     [ LEFTARROW ]   Jump up [leave]
+        h     [ LEFTARROW ]   Jump up [parent]
         j     [ DOWNARROW ]   Move down [down]
         k     [ UPARROW ]     Move up [up]
-        l     [ RIGHTARROW ]  Open file [enter]
+        l     [ RIGHTARROW ]  Open file [child]
         u                     Move five lines up [5_up]
 ```
 
@@ -151,16 +151,16 @@ Modify keybindings in function `Blscd::Init`. You can use following functions:
         5_up
         bottom
         chdir DIR
+        child
         down
         edit
-        enter
         get_key
         help
         hpage_down
         hpage_up
-        leave
         page_down
         page_up
+        parent
         quit
         redraw
         reload
@@ -183,7 +183,7 @@ BlscdKeys=(
 
 ###### OPENER
 
-If a selected file is not a directory, the `enter` function will invoke `Blscd::Opener`. Modify it in `Blscd::Init`. By default, we have:
+If a selected file is not a directory, the `child` function will invoke `Blscd::Opener`. Modify it in `Blscd::Init`. By default, we have:
 
 ```
 function Blscd::Opener { command less "$1" ; }
