@@ -75,57 +75,83 @@ BLSCD_SHOW_COL3       Default: 1
 ```
 Basics
         E                     Edit the current file in EDITOR
-                              (fallback: vi)
+                              (fallback: vi) [edit]
         S                     Fork SHELL in the current directory
-                              (fallback: bash, LC_COLLATE=C)
-        ^L                    Redraw the screen
-        ^R                    Reload everything
-        g?                    Open this help in PAGER
+                              (fallback: bash, LC_COLLATE=C) [shell]
+        ^L                    Redraw the screen [redraw]
+        ^R                    Reload everything [reload]
+        g?                    Open this help in PAGER [help]
                               (fallback: less)
-        q                     Quit
+        q                     Quit [quit]
 
 Settings
-        za                    Toggle filtering of dotfiles
-        zo                    Toggle drawing of Column 3
+        za                    Toggle filtering of dotfiles [toggle_hidden]
+        zo                    Toggle drawing of Column 3 [toggle_col3]
 
-Moving
-        D                     Move ten lines down
-        G     [ END ]         Move to bottom
-        J                     Move half page down
-        K                     Move half page up
-        U                     Move ten lines up
-        ^B    [ PAGE-UP ]     Move page up
-        ^F    [ PAGE-DOWN ]   Move page down
-        d                     Move five lines down
-        gg    [ HOME ]        Move to top
-        h     [ LEFTARROW ]   Move left
-        j     [ DOWNARROW ]   Move down
-        k     [ UPARROW ]     Move up
-        l     [ RIGHTARROW ]  Move right
-        u                     Move five lines up
-
-Jumping
-        g-                    Move to OLDPWD
-        gL                    Move to /var/log
-        gM                    Move to /mnt
-        gd                    Move to /dev
-        ge                    Move to /etc
-        gh    [ g~ ]          Move to HOME
-        gl                    Move to /usr/lib
-        gm                    Move to /media
-        go                    Move to /opt
-        gr    [ g/ ]          Move to /
-        gs                    Move to /srv
-        gu                    Move to /usr
-        gv                    Move to /var
+Moving and jumping
+        D                     Move ten lines down [10_down]
+        G     [ END ]         Move to bottom [bottom]
+        J                     Move half page down [page_down]
+        K                     Move half page up [page_up]
+        U                     Move ten lines up [10_up]
+        ^B    [ PAGE-UP ]     Move page up [page_up]
+        ^F    [ PAGE-DOWN ]   Move page down [page_down]
+        d                     Move five lines down [5_down]
+        g-                    Jump to OLDPWD [chdir]
+        gL                    Jump to /var/log [chdir]
+        gM                    Jump to /mnt [chdir]
+        gd                    Jump to /dev [chdir]
+        ge                    Jump to /etc [chdir]
+        gg    [ HOME ]        Move to top [top]
+        gh    [ g~ ]          Jump to HOME [chdir]
+        gl                    Jump to /usr/lib [chdir]
+        gm                    Jump to /media [chdir]
+        go                    Jump to /opt [chdir]
+        gr    [ g/ ]          Jump to / [chdir]
+        gs                    Jump to /srv [chdir]
+        gu                    Jump to /usr [chdir]
+        gv                    Jump to /var [chdir]
+        h     [ LEFTARROW ]   Jump up [leave]
+        j     [ DOWNARROW ]   Move down [down]
+        k     [ UPARROW ]     Move up [up]
+        l     [ RIGHTARROW ]  Open file [enter]
+        u                     Move five lines up [5_up]
 ```
 
-###### CONFIGURATION
+##### CONFIGURATION
 
 There is no configuration file at present; you can use some environment variables instead.
 
 - In order to change the default opener and colors see the functions `Blscd::Init` and `Blscd::DrawScreenTbar`.
-- Modify keybindings in function `Blscd::GetInputKeyboard`.
+- Modify keybindings in function `Blscd::GetInputKeyboard`. You can use following functions:
+
+```
+        10_down
+        10_up
+        5_down
+        5_up
+        bottom
+        chdir DIR
+        down
+        edit
+        enter
+        get_key
+        help
+        hpage_down
+        hpage_up
+        leave
+        page_down
+        page_up
+        quit
+        redraw
+        reload
+        shell
+        toggle_col3
+        toggle_hidden
+        top
+        up
+```
+
 - Awk will only be used, if a directory lists 800 or more entries. You may edit this value in function `Blscd::GetBlscdData`.
 - blscd is going to exit, if your terminal does not match the allowed height and width. See the head of `Blscd::DrawScreen` for this.
 - Filtering of dotfiles works via GLOBIGNORE in `Blscd::GetBlscdData`. You can extend it easily; `man 1 bash` says:
@@ -139,7 +165,7 @@ There is no configuration file at present; you can use some environment variable
                 from the list of matches.
 ```
 
-###### TIPS
+##### TIPS
 
 - Reduce the start up time of blscd by replacing all tput commands in `Blscd::Init` with ANSI escape code for your terminal. In this way, you may avoid a lot of subshells.
 - blscd stores directory listings and inode infos in associative arrays just for once; any filesystem event after that will be ignored. If you want to see all current entries in a directory, quit blscd or reload everything via ^R. The Status bar data at the bottom is different: it is associated with the current cursor position and the size of the terminal columns number.
