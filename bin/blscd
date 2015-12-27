@@ -61,7 +61,7 @@ Blscd ()
                         (( ${I[reprint]} ))
                 then
                         builtin printf "${S[tput_clear]}"
-                        Blscd::SetWd
+                        #Blscd::SetWd
                         if
                                 [[ ${S[cwd_str]} == / ]]
                         then
@@ -540,10 +540,54 @@ Blscd ()
                         Blscd::MoveLine 2 "-$(( ${I[bsr_h]} / 2 ))"
                 ;;
                 chdir*)
-                        builtin eval Blscd::MoveCol "${BlscdKeys[${S[input]}]/chdir /}"
+                        if
+                                builtin eval Blscd::OpenFile "${BlscdKeys[${S[input]}]/chdir /}"
+                        then
+                                I[c1_csr]=0
+                                I[c1_ofs]=1
+                                I[c2_csr]=0
+                                I[c2_ofs]=1
+                                [[ -n ${D[idx|${S[cwd_str]}|${I[hidden]}]} ]] && {
+                                        I[c1_total]=${D[dir:cnt|${S[pwd_str]}|${I[hidden]}]}
+                                        ((
+                                                I[c1_vis] =
+                                                ${I[c1_total]} > ${I[bsr_h]}
+                                                ? ${I[bsr_h]}
+                                                : ${I[c1_total]}
+                                        ))
+                                        Blscd::MoveLine 1 -9999999999
+                                        Blscd::MoveLine 1 "${D[idx|${S[cwd_str]}|${I[hidden]}]}"
+                                        D[dir:csr|${S[pwd_str]}|${I[bsr_h]}]=${I[c1_csr]}
+                                        D[dir:ofs|${S[pwd_str]}|${I[bsr_h]}]=${I[c1_ofs]}
+                                }
+                        fi
                 ;;
                 parent)
-                        Blscd::MoveCol ..
+                        Blscd::OpenFile "${S[pwd_str]}"
+                ;;
+                parent_down)
+                        typeset dir=${D[dir:idx|${S[pwd_str]}|${I[hidden]}|$((${I[c1_ofs]} + ${I[c1_csr]} - 0))]}
+                        [[ -n $dir ]] && {
+                                if
+                                        Blscd::OpenFile "${S[pwd_str]}/${dir}"
+                                then
+                                        Blscd::MoveLine 1 1
+                                        D[dir:csr|${S[pwd_str]}|${I[bsr_h]}]=${I[c1_csr]}
+                                        D[dir:ofs|${S[pwd_str]}|${I[bsr_h]}]=${I[c1_ofs]}
+                                fi
+                        }
+                ;;
+                parent_up)
+                        typeset dir=${D[dir:idx|${S[pwd_str]}|${I[hidden]}|$((${I[c1_ofs]} + ${I[c1_csr]} - 2))]}
+                        [[ -n $dir ]] && {
+                                if
+                                        Blscd::OpenFile "${S[pwd_str]}/${dir}"
+                                then
+                                        Blscd::MoveLine 1 -1
+                                        D[dir:csr|${S[pwd_str]}|${I[bsr_h]}]=${I[c1_csr]}
+                                        D[dir:ofs|${S[pwd_str]}|${I[bsr_h]}]=${I[c1_ofs]}
+                                fi
+                        }
                 ;;
                 page_down)
                         Blscd::MoveLine 2 "${I[bsr_h]}"
@@ -602,13 +646,15 @@ builtin typeset -gA "BlscdSettingsStr=(
         [action_last]=
         [console_command_name]=
         [cwd_di]=
-        [cwd_str]='$PWD'
+        [cwd_str]='${PWD:-$(builtin pwd)}'
         [file_di]=
         [file_str]=
+        [oldcwd_str]='$OLDPWD'
+        [oldpwd_str]=
         [preview_di]=
         [preview_str]=
         [pwd_di]=
-        [pwd_str]=
+        [pwd_str]='$(command dirname "${PWD:-$(builtin pwd)}")'
         [saved_LC_COLLATE]=$LC_COLLATE
         [saved_stty]='$(command stty -g)'
         [saved_bopts]='$(builtin shopt -p)'
@@ -733,25 +779,27 @@ builtin typeset -A "BlscdKeys=(
         [K]=hpage_up
         [S]=shell
         [U]=10_up
+        [\[]=parent_up
+        [\]]=parent_down
         [d]=5_down
-        [g]=get_key
-        [gg]=top
-        [gh]='chdir ~'
-        [g~]='chdir ~'
-        [ge]='chdir /etc'
-        [gu]='chdir /usr'
-        [gd]='chdir /dev'
-        [gl]='chdir /usr/lib'
-        [gL]='chdir /var/log'
-        [go]='chdir /opt'
-        [gv]='chdir /var'
-        [gm]='chdir /media'
-        [gM]='chdir /mnt'
-        [gs]='chdir /srv'
-        [gr]='chdir /'
+        [g-]='chdir ~-'
         [g/]='chdir /'
         [g?]=help
-        [g-]='chdir ~-'
+        [gL]='chdir /var/log'
+        [gM]='chdir /mnt'
+        [g]=get_key
+        [gd]='chdir /dev'
+        [ge]='chdir /etc'
+        [gg]=top
+        [gh]='chdir "$HOME"'
+        [gl]='chdir /usr/lib'
+        [gm]='chdir /media'
+        [go]='chdir /opt'
+        [gr]='chdir /'
+        [gs]='chdir /srv'
+        [gu]='chdir /usr'
+        [gv]='chdir /var'
+        [g~]='chdir "$HOME"'
         [h]=parent
         [j]=down
         [k]=up
@@ -811,38 +859,19 @@ INIT
 
         function Blscd::MoveCol
         {
-                Blscd::SetResize 2
-
-                function Blscd::MoveColUp
-                {
-                        Blscd::SetAction
+                [[ $1 != ${S[cwd_str]} ]] && {
+                        Blscd::SetResize 2
+                        builtin cd -- "$1"
+                        Blscd::SetWd
+                        #I[c1_csr]=0
+                        #I[c1_ofs]=1
+                        #I[c2_csr]=0
+                        #I[c2_ofs]=1
                 }
-
-                function Blscd::MoveColDown
-                {
-                        Blscd::SetAction
-                }
-
-                if
-                        [[ ${1:-..} == .. ]]
-                then
-                        Blscd::MoveColUp
-                else
-                        Blscd::MoveColDown
-                fi
-
-                I[c1_ofs]=1
-                I[c1_csr]=0
-                I[c2_ofs]=1
-                I[c2_csr]=0
-
-                builtin cd -- "${1:-..}"
         }
 
         function Blscd::MoveLine
         {
-                Blscd::SetResize 1
-
                 function Blscd::MoveLineDo
                 {
                         builtin typeset -i \
@@ -929,6 +958,8 @@ INIT
 
                 case $1 in
                 1)
+                        Blscd::SetResize 2
+                        Blscd::SetAction
                         builtin typeset -i \
                                 bsr_csr=${I[c1_csr]} \
                                 bsr_vis=${I[c1_vis]} \
@@ -939,6 +970,7 @@ INIT
                         I[c1_vis]=$bsr_vis
                 ;;
                 2)
+                        Blscd::SetResize 1
                         Blscd::SetAction
                         builtin typeset -i \
                                 bsr_csr=${I[c2_csr]} \
@@ -951,7 +983,6 @@ INIT
                 ;;
                 3)
                         :
-                ;;
                 esac
         }
 
@@ -1155,6 +1186,8 @@ HELP
 
         function Blscd::SetWd
         {
+                S[oldcwd_str]=${S[cwd_str]}
+                S[oldpwd_str]=${S[pwd_str]}
                 S[cwd_str]=${PWD:-$(builtin pwd)}
                 S[cwd_str]=${S[cwd_str]//\/\//\/}
                 S[pwd_str]=${S[cwd_str]%/*}
@@ -1225,8 +1258,6 @@ HELP
                 Blscd::Main \
                 Blscd::MainLoop \
                 Blscd::MoveCol \
-                Blscd::MoveColDown \
-                Blscd::MoveColUp \
                 Blscd::MoveLine \
                 Blscd::MoveLineDo \
                 Blscd::OpenFile \
