@@ -1077,7 +1077,7 @@ HELP
 
         function Blscd::PrintVersion
         {
-                builtin typeset version=0.2.3
+                builtin typeset version=0.2.5
                 builtin printf 'v%s\n' "$version"
         }
 
