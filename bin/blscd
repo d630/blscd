@@ -61,7 +61,6 @@ Blscd ()
                         (( ${I[reprint]} ))
                 then
                         builtin printf "${S[tput_clear]}"
-                        #Blscd::SetWd
                         if
                                 [[ ${S[cwd_str]} == / ]]
                         then
@@ -540,30 +539,10 @@ Blscd ()
                         Blscd::MoveLine 2 "-$(( ${I[bsr_h]} / 2 ))"
                 ;;
                 chdir*)
-                        if
-                                builtin eval Blscd::OpenFile "${BlscdKeys[${S[input]}]/chdir /}"
-                        then
-                                I[c1_csr]=0
-                                I[c1_ofs]=1
-                                I[c2_csr]=0
-                                I[c2_ofs]=1
-                                [[ -n ${D[idx|${S[cwd_str]}|${I[hidden]}]} ]] && {
-                                        I[c1_total]=${D[dir:cnt|${S[pwd_str]}|${I[hidden]}]}
-                                        ((
-                                                I[c1_vis] =
-                                                ${I[c1_total]} > ${I[bsr_h]}
-                                                ? ${I[bsr_h]}
-                                                : ${I[c1_total]}
-                                        ))
-                                        Blscd::MoveLine 1 -9999999999
-                                        Blscd::MoveLine 1 "${D[idx|${S[cwd_str]}|${I[hidden]}]}"
-                                        D[dir:csr|${S[pwd_str]}|${I[bsr_h]}]=${I[c1_csr]}
-                                        D[dir:ofs|${S[pwd_str]}|${I[bsr_h]}]=${I[c1_ofs]}
-                                }
-                        fi
+                        builtin eval Blscd::OpenFile "${BlscdKeys[${S[input]}]/chdir /}" && Blscd::SetCol1
                 ;;
                 parent)
-                        Blscd::OpenFile "${S[pwd_str]}"
+                        Blscd::OpenFile "${S[pwd_str]}" && Blscd::SetCol1
                 ;;
                 parent_down)
                         typeset dir=${D[dir:idx|${S[pwd_str]}|${I[hidden]}|$((${I[c1_ofs]} + ${I[c1_csr]} - 0))]}
@@ -1131,6 +1110,27 @@ HELP
                 S[action_last]=${FUNCNAME[1]}
         }
 
+        function Blscd::SetCol1
+        {
+                I[c1_csr]=0
+                I[c1_ofs]=1
+                I[c2_csr]=0
+                I[c2_ofs]=1
+                [[ -n ${D[idx|${S[cwd_str]}|${I[hidden]}]} ]] && {
+                        I[c1_total]=${D[dir:cnt|${S[pwd_str]}|${I[hidden]}]}
+                        ((
+                                I[c1_vis] =
+                                ${I[c1_total]} > ${I[bsr_h]}
+                                ? ${I[bsr_h]}
+                                : ${I[c1_total]}
+                        ))
+                        Blscd::MoveLine 1 -9999999999
+                        Blscd::MoveLine 1 "${D[idx|${S[cwd_str]}|${I[hidden]}]}"
+                        D[dir:csr|${S[pwd_str]}|${I[bsr_h]}]=${I[c1_csr]}
+                        D[dir:ofs|${S[pwd_str]}|${I[bsr_h]}]=${I[c1_ofs]}
+                }
+        }
+
         function Blscd::SetEnv
         {
                 builtin printf "${S[tput_alt]}"
@@ -1267,6 +1267,7 @@ HELP
                 Blscd::PrintVersion \
                 Blscd::Reload \
                 Blscd::SetAction \
+                Blscd::SetCol1 \
                 Blscd::SetEnv \
                 Blscd::SetResize \
                 Blscd::SetScreen \
