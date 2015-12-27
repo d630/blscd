@@ -1012,6 +1012,8 @@ Key bindings (settings)
         zo                    Toggle drawing of Column 3 [toggle_col3]
 
 Key bindings (moving and jumping)
+        [                     Move up in the parent directory [parent_up]
+        ]                     Move down in the parent directory [parent_down]
         D                     Move ten lines down [10_down]
         G     [ END ]         Move to bottom [bottom]
         J                     Move half page down [page_down]
@@ -1057,6 +1059,8 @@ Key bindings (functions)
         page_down
         page_up
         parent
+        parent_down
+        parent_up
         quit
         redraw
         reload

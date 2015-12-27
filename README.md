@@ -90,6 +90,8 @@ Settings
         zo                    Toggle drawing of Column 3 [toggle_col3]
 
 Moving and jumping
+        [                     Move up in the parent directory [parent_up]
+        ]                     Move down in the parent directory [parent_down]
         D                     Move ten lines down [10_down]
         G     [ END ]         Move to bottom [bottom]
         J                     Move half page down [page_down]
@@ -161,6 +163,8 @@ Modify keybindings in function `Blscd::Init`. You can use following functions:
         page_down
         page_up
         parent
+        parent_down
+        parent_up
         quit
         redraw
         reload
