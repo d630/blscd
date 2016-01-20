@@ -11,6 +11,7 @@ printf '%s' text > ./test-dir/FILE
 printf '%s' text > ./test-dir/file
 printf '%s' text > ./test-dir/''\''I'\'' m an evil file'\'''
 printf '%s' text > ./test-dir/$'FILE WITH SPACES'
+printf '%s' text > ./test-dir/$'FILE WITH "'\'
 printf '%s' text > ./test-dir/$'a\nb\nc'/file3
 printf '%s' text > ./test-dir/$'a\nb\nc'/dir3/file4
 
